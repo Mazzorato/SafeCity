@@ -2,12 +2,13 @@
 
 namespace App\Entity;
 
-use App\Repository\ServiceLocalRepository;
+use App\Enum\ServiceTypeEnum;
+use App\Repository\LocalServiceRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: ServiceLocalRepository::class)]
-class ServiceLocal
+#[ORM\Entity(repositoryClass: LocalServiceRepository::class)]
+class LocalService
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -20,8 +21,8 @@ class ServiceLocal
     #[ORM\Column(length: 255)]
     private ?string $address = null;
 
-    #[ORM\Column(length: 50)]
-    private ?string $type = null;
+    #[ORM\Column(enumType: ServiceTypeEnum::class)]
+    private ?ServiceTypeEnum $type = null;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 7)]
     private ?string $latitude = null;
@@ -37,6 +38,10 @@ class ServiceLocal
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $openingHours = null;
+
+    #[ORM\ManyToOne(inversedBy: 'localServices')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?City $city = null;
 
     public function getId(): ?int
     {
@@ -67,12 +72,12 @@ class ServiceLocal
         return $this;
     }
 
-    public function getType(): ?string
+    public function getType(): ?ServiceTypeEnum
     {
         return $this->type;
     }
 
-    public function setType(string $type): static
+    public function setType(ServiceTypeEnum $type): static
     {
         $this->type = $type;
 
@@ -135,6 +140,18 @@ class ServiceLocal
     public function setOpeningHours(?string $openingHours): static
     {
         $this->openingHours = $openingHours;
+
+        return $this;
+    }
+
+    public function getCity(): ?City
+    {
+        return $this->city;
+    }
+
+    public function setCity(?City $city): static
+    {
+        $this->city = $city;
 
         return $this;
     }

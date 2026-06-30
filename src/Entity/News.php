@@ -2,12 +2,12 @@
 
 namespace App\Entity;
 
-use App\Repository\EvenementRepository;
+use App\Repository\NewsRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: EvenementRepository::class)]
-class Evenement
+#[ORM\Entity(repositoryClass: NewsRepository::class)]
+class News
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -17,17 +17,17 @@ class Evenement
     #[ORM\Column(length: 255)]
     private ?string $title = null;
 
-    #[ORM\Column(type: Types::TEXT, nullable: true)]
-    private ?string $description = null;
+    #[ORM\Column(type: Types::TEXT)]
+    private ?string $content = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $location = null;
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $source = null;
+
+    #[ORM\Column(length: 50)]
+    private ?string $category = null;
 
     #[ORM\Column]
-    private ?\DateTime $startedAt = null;
-
-    #[ORM\Column(nullable: true)]
-    private ?\DateTime $endedAt = null;
+    private ?\DateTime $publishedAt = null;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 7, nullable: true)]
     private ?string $latitude = null;
@@ -35,11 +35,12 @@ class Evenement
     #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 7, nullable: true)]
     private ?string $longitude = null;
 
-    #[ORM\Column]
-    private ?bool $isFree = null;
-
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $imageUrl = null;
+
+    #[ORM\ManyToOne(inversedBy: 'news')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?City $city = null;
 
     public function getId(): ?int
     {
@@ -58,50 +59,50 @@ class Evenement
         return $this;
     }
 
-    public function getDescription(): ?string
+    public function getContent(): ?string
     {
-        return $this->description;
+        return $this->content;
     }
 
-    public function setDescription(?string $description): static
+    public function setContent(string $content): static
     {
-        $this->description = $description;
+        $this->content = $content;
 
         return $this;
     }
 
-    public function getLocation(): ?string
+    public function getSource(): ?string
     {
-        return $this->location;
+        return $this->source;
     }
 
-    public function setLocation(string $location): static
+    public function setSource(?string $source): static
     {
-        $this->location = $location;
+        $this->source = $source;
 
         return $this;
     }
 
-    public function getStartedAt(): ?\DateTime
+    public function getCategory(): ?string
     {
-        return $this->startedAt;
+        return $this->category;
     }
 
-    public function setStartedAt(\DateTime $startedAt): static
+    public function setCategory(string $category): static
     {
-        $this->startedAt = $startedAt;
+        $this->category = $category;
 
         return $this;
     }
 
-    public function getEndedAt(): ?\DateTime
+    public function getPublishedAt(): ?\DateTime
     {
-        return $this->endedAt;
+        return $this->publishedAt;
     }
 
-    public function setEndedAt(?\DateTime $endedAt): static
+    public function setPublishedAt(\DateTime $publishedAt): static
     {
-        $this->endedAt = $endedAt;
+        $this->publishedAt = $publishedAt;
 
         return $this;
     }
@@ -130,18 +131,6 @@ class Evenement
         return $this;
     }
 
-    public function isFree(): ?bool
-    {
-        return $this->isFree;
-    }
-
-    public function setIsFree(bool $isFree): static
-    {
-        $this->isFree = $isFree;
-
-        return $this;
-    }
-
     public function getImageUrl(): ?string
     {
         return $this->imageUrl;
@@ -150,6 +139,18 @@ class Evenement
     public function setImageUrl(?string $imageUrl): static
     {
         $this->imageUrl = $imageUrl;
+
+        return $this;
+    }
+
+    public function getCity(): ?City
+    {
+        return $this->city;
+    }
+
+    public function setCity(?City $city): static
+    {
+        $this->city = $city;
 
         return $this;
     }

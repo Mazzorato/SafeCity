@@ -19,6 +19,13 @@ class Photo
     #[ORM\Column]
     private ?\DateTime $uploadedAt = null;
 
+    #[ORM\ManyToOne(inversedBy: 'photos')]
+    private ?User $uploader = null;
+
+    #[ORM\ManyToOne(inversedBy: 'photos')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Report $report = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -44,6 +51,30 @@ class Photo
     public function setUploadedAt(\DateTime $uploadedAt): static
     {
         $this->uploadedAt = $uploadedAt;
+
+        return $this;
+    }
+
+    public function getUploader(): ?User
+    {
+        return $this->uploader;
+    }
+
+    public function setUploader(?User $uploader): static
+    {
+        $this->uploader = $uploader;
+
+        return $this;
+    }
+
+    public function getReport(): ?Report
+    {
+        return $this->report;
+    }
+
+    public function setReport(?Report $report): static
+    {
+        $this->report = $report;
 
         return $this;
     }

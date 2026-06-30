@@ -2,39 +2,39 @@
 
 namespace App\Repository;
 
-use App\Entity\ServiceLocal;
+use App\Entity\LocalService;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<ServiceLocal>
+ * @extends ServiceEntityRepository<LocalService>
  */
-class ServiceLocalRepository extends ServiceEntityRepository
+class LocalServiceRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, ServiceLocal::class);
+        parent::__construct($registry, LocalService::class);
     }
 
     //    /**
-    //     * @return ServiceLocal[] Returns an array of ServiceLocal objects
+    //     * @return LocalService[] Returns an array of LocalService objects
     //     */
     //    public function findByExampleField($value): array
     //    {
-    //        return $this->createQueryBuilder('s')
-    //            ->andWhere('s.exampleField = :val')
+    //        return $this->createQueryBuilder('l')
+    //            ->andWhere('l.exampleField = :val')
     //            ->setParameter('val', $value)
-    //            ->orderBy('s.id', 'ASC')
+    //            ->orderBy('l.id', 'ASC')
     //            ->setMaxResults(10)
     //            ->getQuery()
     //            ->getResult()
     //        ;
     //    }
 
-    //    public function findOneBySomeField($value): ?ServiceLocal
+    //    public function findOneBySomeField($value): ?LocalService
     //    {
-    //        return $this->createQueryBuilder('s')
-    //            ->andWhere('s.exampleField = :val')
+    //        return $this->createQueryBuilder('l')
+    //            ->andWhere('l.exampleField = :val')
     //            ->setParameter('val', $value)
     //            ->getQuery()
     //            ->getOneOrNullResult()

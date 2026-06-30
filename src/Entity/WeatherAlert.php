@@ -2,12 +2,13 @@
 
 namespace App\Entity;
 
-use App\Repository\AlerMeteoRepository;
+use App\Enum\GravityLevelEnum;
+use App\Repository\WeatherAlertRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: AlerMeteoRepository::class)]
-class AlerMeteo
+#[ORM\Entity(repositoryClass: WeatherAlertRepository::class)]
+class WeatherAlert
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -17,8 +18,8 @@ class AlerMeteo
     #[ORM\Column(length: 50)]
     private ?string $type = null;
 
-    #[ORM\Column(length: 50)]
-    private ?string $gravityLevel = null;
+    #[ORM\Column(enumType: GravityLevelEnum::class)]
+    private ?GravityLevelEnum $gravityLevel = null;
 
     #[ORM\Column(type: Types::TEXT)]
     private ?string $message = null;
@@ -28,6 +29,10 @@ class AlerMeteo
 
     #[ORM\Column(nullable: true)]
     private ?\DateTime $endedAt = null;
+
+    #[ORM\ManyToOne(inversedBy: 'weatherAlerts')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?City $city = null;
 
     public function getId(): ?int
     {
@@ -46,12 +51,12 @@ class AlerMeteo
         return $this;
     }
 
-    public function getGravityLevel(): ?string
+    public function getGravityLevel(): ?GravityLevelEnum
     {
         return $this->gravityLevel;
     }
 
-    public function setGravityLevel(string $gravityLevel): static
+    public function setGravityLevel(GravityLevelEnum $gravityLevel): static
     {
         $this->gravityLevel = $gravityLevel;
 
@@ -90,6 +95,18 @@ class AlerMeteo
     public function setEndedAt(?\DateTime $endedAt): static
     {
         $this->endedAt = $endedAt;
+
+        return $this;
+    }
+
+    public function getCity(): ?City
+    {
+        return $this->city;
+    }
+
+    public function setCity(?City $city): static
+    {
+        $this->city = $city;
 
         return $this;
     }

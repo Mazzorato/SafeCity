@@ -1,10 +1,8 @@
 <?php
-
 namespace App\Enum;
-
-enum TypeTransportEnum: string
+enum TransportTypeEnum: string
 {
-    case METRO = 'métro';
+    case METRO = 'metro';
     case BUS = 'bus';
     case TRAM = 'tram';
 }

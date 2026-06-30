@@ -35,6 +35,10 @@ class Parking
     #[ORM\Column]
     private ?int $totalSpots = null;
 
+    #[ORM\ManyToOne(inversedBy: 'parkings')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?City $city = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -105,7 +109,7 @@ class Parking
         return $this->availableSpots;
     }
 
-    public function setAvailableSpots(?int $availableSpots): static
+    public function setAvailableSpots(int $availableSpots): static
     {
         $this->availableSpots = $availableSpots;
 
@@ -120,6 +124,18 @@ class Parking
     public function setTotalSpots(int $totalSpots): static
     {
         $this->totalSpots = $totalSpots;
+
+        return $this;
+    }
+
+    public function getCity(): ?City
+    {
+        return $this->city;
+    }
+
+    public function setCity(?City $city): static
+    {
+        $this->city = $city;
 
         return $this;
     }

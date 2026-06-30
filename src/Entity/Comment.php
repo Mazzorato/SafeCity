@@ -2,12 +2,12 @@
 
 namespace App\Entity;
 
-use App\Repository\CommentaireRepository;
+use App\Repository\CommentRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: CommentaireRepository::class)]
-class Commentaire
+#[ORM\Entity(repositoryClass: CommentRepository::class)]
+class Comment
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -19,6 +19,13 @@ class Commentaire
 
     #[ORM\Column]
     private ?\DateTime $createdAt = null;
+
+    #[ORM\ManyToOne(inversedBy: 'comments')]
+    private ?User $author = null;
+
+    #[ORM\ManyToOne(inversedBy: 'comments')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Report $report = null;
 
     public function getId(): ?int
     {
@@ -45,6 +52,30 @@ class Commentaire
     public function setCreatedAt(\DateTime $createdAt): static
     {
         $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    public function getAuthor(): ?User
+    {
+        return $this->author;
+    }
+
+    public function setAuthor(?User $author): static
+    {
+        $this->author = $author;
+
+        return $this;
+    }
+
+    public function getReport(): ?Report
+    {
+        return $this->report;
+    }
+
+    public function setReport(?Report $report): static
+    {
+        $this->report = $report;
 
         return $this;
     }

@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Enum\TransportTypeEnum;
 use App\Repository\TransportRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
@@ -20,8 +21,8 @@ class Transport
     #[ORM\Column(length: 50)]
     private ?string $line = null;
 
-    #[ORM\Column(length: 50)]
-    private ?string $type = null;
+    #[ORM\Column(enumType: TransportTypeEnum::class)]
+    private ?TransportTypeEnum $type = null;
 
     #[ORM\Column(length: 50)]
     private ?string $status = null;
@@ -30,7 +31,11 @@ class Transport
     private ?string $disruption = null;
 
     #[ORM\Column]
-    private ?\DateTime $updateAt = null;
+    private ?\DateTime $updatedAt = null;
+
+    #[ORM\ManyToOne(inversedBy: 'transports')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?City $city = null;
 
     public function getId(): ?int
     {
@@ -61,12 +66,12 @@ class Transport
         return $this;
     }
 
-    public function getType(): ?string
+    public function getType(): ?TransportTypeEnum
     {
         return $this->type;
     }
 
-    public function setType(string $type): static
+    public function setType(TransportTypeEnum $type): static
     {
         $this->type = $type;
 
@@ -97,14 +102,26 @@ class Transport
         return $this;
     }
 
-    public function getUpdateAt(): ?\DateTime
+    public function getUpdatedAt(): ?\DateTime
     {
-        return $this->updateAt;
+        return $this->updatedAt;
     }
 
-    public function setUpdateAt(\DateTime $updateAt): static
+    public function setUpdatedAt(\DateTime $updatedAt): static
     {
-        $this->updateAt = $updateAt;
+        $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    public function getCity(): ?City
+    {
+        return $this->city;
+    }
+
+    public function setCity(?City $city): static
+    {
+        $this->city = $city;
 
         return $this;
     }

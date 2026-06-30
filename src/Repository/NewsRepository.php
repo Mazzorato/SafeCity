@@ -2,39 +2,39 @@
 
 namespace App\Repository;
 
-use App\Entity\Evenement;
+use App\Entity\News;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<Evenement>
+ * @extends ServiceEntityRepository<News>
  */
-class EvenementRepository extends ServiceEntityRepository
+class NewsRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Evenement::class);
+        parent::__construct($registry, News::class);
     }
 
     //    /**
-    //     * @return Evenement[] Returns an array of Evenement objects
+    //     * @return News[] Returns an array of News objects
     //     */
     //    public function findByExampleField($value): array
     //    {
-    //        return $this->createQueryBuilder('e')
-    //            ->andWhere('e.exampleField = :val')
+    //        return $this->createQueryBuilder('n')
+    //            ->andWhere('n.exampleField = :val')
     //            ->setParameter('val', $value)
-    //            ->orderBy('e.id', 'ASC')
+    //            ->orderBy('n.id', 'ASC')
     //            ->setMaxResults(10)
     //            ->getQuery()
     //            ->getResult()
     //        ;
     //    }
 
-    //    public function findOneBySomeField($value): ?Evenement
+    //    public function findOneBySomeField($value): ?News
     //    {
-    //        return $this->createQueryBuilder('e')
-    //            ->andWhere('e.exampleField = :val')
+    //        return $this->createQueryBuilder('n')
+    //            ->andWhere('n.exampleField = :val')
     //            ->setParameter('val', $value)
     //            ->getQuery()
     //            ->getOneOrNullResult()

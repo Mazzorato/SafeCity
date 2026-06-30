@@ -2,22 +2,22 @@
 
 namespace App\Repository;
 
-use App\Entity\CategorieSignalement;
+use App\Entity\Comment;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<CategorieSignalement>
+ * @extends ServiceEntityRepository<Comment>
  */
-class CategorieSignalementRepository extends ServiceEntityRepository
+class CommentRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, CategorieSignalement::class);
+        parent::__construct($registry, Comment::class);
     }
 
     //    /**
-    //     * @return CategorieSignalement[] Returns an array of CategorieSignalement objects
+    //     * @return Comment[] Returns an array of Comment objects
     //     */
     //    public function findByExampleField($value): array
     //    {
@@ -31,7 +31,7 @@ class CategorieSignalementRepository extends ServiceEntityRepository
     //        ;
     //    }
 
-    //    public function findOneBySomeField($value): ?CategorieSignalement
+    //    public function findOneBySomeField($value): ?Comment
     //    {
     //        return $this->createQueryBuilder('c')
     //            ->andWhere('c.exampleField = :val')

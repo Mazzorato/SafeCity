@@ -2,39 +2,39 @@
 
 namespace App\Repository;
 
-use App\Entity\AlerMeteo;
+use App\Entity\EmergencyService;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<AlerMeteo>
+ * @extends ServiceEntityRepository<EmergencyService>
  */
-class AlerMeteoRepository extends ServiceEntityRepository
+class EmergencyServiceRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, AlerMeteo::class);
+        parent::__construct($registry, EmergencyService::class);
     }
 
     //    /**
-    //     * @return AlerMeteo[] Returns an array of AlerMeteo objects
+    //     * @return EmergencyService[] Returns an array of EmergencyService objects
     //     */
     //    public function findByExampleField($value): array
     //    {
-    //        return $this->createQueryBuilder('a')
-    //            ->andWhere('a.exampleField = :val')
+    //        return $this->createQueryBuilder('e')
+    //            ->andWhere('e.exampleField = :val')
     //            ->setParameter('val', $value)
-    //            ->orderBy('a.id', 'ASC')
+    //            ->orderBy('e.id', 'ASC')
     //            ->setMaxResults(10)
     //            ->getQuery()
     //            ->getResult()
     //        ;
     //    }
 
-    //    public function findOneBySomeField($value): ?AlerMeteo
+    //    public function findOneBySomeField($value): ?EmergencyService
     //    {
-    //        return $this->createQueryBuilder('a')
-    //            ->andWhere('a.exampleField = :val')
+    //        return $this->createQueryBuilder('e')
+    //            ->andWhere('e.exampleField = :val')
     //            ->setParameter('val', $value)
     //            ->getQuery()
     //            ->getOneOrNullResult()

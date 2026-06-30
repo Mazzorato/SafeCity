@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Enum\NotificationTypeEnum;
 use App\Repository\NotificationRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
@@ -20,14 +21,17 @@ class Notification
     #[ORM\Column(type: Types::TEXT)]
     private ?string $message = null;
 
-    #[ORM\Column(length: 50)]
-    private ?string $type = null;
+    #[ORM\Column(enumType: NotificationTypeEnum::class)]
+    private ?NotificationTypeEnum $type = null;
 
     #[ORM\Column]
     private ?\DateTime $sentAt = null;
 
     #[ORM\Column]
     private ?bool $isRead = null;
+
+    #[ORM\ManyToOne(inversedBy: 'notifications')]
+    private ?User $recipient = null;
 
     public function getId(): ?int
     {
@@ -58,12 +62,12 @@ class Notification
         return $this;
     }
 
-    public function getType(): ?string
+    public function getType(): ?NotificationTypeEnum
     {
         return $this->type;
     }
 
-    public function setType(string $type): static
+    public function setType(NotificationTypeEnum $type): static
     {
         $this->type = $type;
 
@@ -90,6 +94,18 @@ class Notification
     public function setIsRead(bool $isRead): static
     {
         $this->isRead = $isRead;
+
+        return $this;
+    }
+
+    public function getRecipient(): ?User
+    {
+        return $this->recipient;
+    }
+
+    public function setRecipient(?User $recipient): static
+    {
+        $this->recipient = $recipient;
 
         return $this;
     }

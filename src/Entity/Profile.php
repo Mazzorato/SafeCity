@@ -2,11 +2,11 @@
 
 namespace App\Entity;
 
-use App\Repository\ProfilRepository;
+use App\Repository\ProfileRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: ProfilRepository::class)]
-class Profil
+#[ORM\Entity(repositoryClass: ProfileRepository::class)]
+class Profile
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -14,16 +14,16 @@ class Profil
     private ?int $id = null;
 
     #[ORM\Column]
-    private ?bool $notifUrgencies = null;
+    private ?bool $emergencyNotifications = null;
 
     #[ORM\Column]
-    private ?bool $notifWeather = null;
+    private ?bool $weatherNotifications = null;
 
     #[ORM\Column]
-    private ?bool $notifTransport = null;
+    private ?bool $transportNotifications = null;
 
     #[ORM\Column]
-    private ?bool $notifEvents = null;
+    private ?bool $eventNotifications = null;
 
     #[ORM\Column]
     private ?bool $microphoneAccess = null;
@@ -42,50 +42,50 @@ class Profil
         return $this->id;
     }
 
-    public function isNotifUrgencies(): ?bool
+    public function isEmergencyNotifications(): ?bool
     {
-        return $this->notifUrgencies;
+        return $this->emergencyNotifications;
     }
 
-    public function setNotifUrgencies(bool $notifUrgencies): static
+    public function setEmergencyNotifications(bool $emergencyNotifications): static
     {
-        $this->notifUrgencies = $notifUrgencies;
+        $this->emergencyNotifications = $emergencyNotifications;
 
         return $this;
     }
 
-    public function isNotifWeather(): ?bool
+    public function isWeatherNotifications(): ?bool
     {
-        return $this->notifWeather;
+        return $this->weatherNotifications;
     }
 
-    public function setNotifWeather(bool $notifWeather): static
+    public function setWeatherNotifications(bool $weatherNotifications): static
     {
-        $this->notifWeather = $notifWeather;
+        $this->weatherNotifications = $weatherNotifications;
 
         return $this;
     }
 
-    public function isNotifTransport(): ?bool
+    public function isTransportNotifications(): ?bool
     {
-        return $this->notifTransport;
+        return $this->transportNotifications;
     }
 
-    public function setNotifTransport(bool $notifTransport): static
+    public function setTransportNotifications(bool $transportNotifications): static
     {
-        $this->notifTransport = $notifTransport;
+        $this->transportNotifications = $transportNotifications;
 
         return $this;
     }
 
-    public function isNotifEvents(): ?bool
+    public function isEventNotifications(): ?bool
     {
-        return $this->notifEvents;
+        return $this->eventNotifications;
     }
 
-    public function setNotifEvents(bool $notifEvents): static
+    public function setEventNotifications(bool $eventNotifications): static
     {
-        $this->notifEvents = $notifEvents;
+        $this->eventNotifications = $eventNotifications;
 
         return $this;
     }
