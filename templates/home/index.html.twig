@@ -6,23 +6,23 @@
 
 
 <div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
+    <h1>Bienvenue {{ app.user.firstName}} ! ✅</h1>
 
     This friendly message is coming from:
     <ul>
-        Action Rapide 
+        <li>Action Rapide</li> 
 
-        Signaler un incident 
+        <li>Signaler un incident</li> 
 
-        Carte incident en direct
+        <li>Carte incident en direct</li>
 
-        Urgences santé
-        Médecin/Pharmacie
+        <li>Urgences santé</li>
+        <li>Médecin/Pharmacie</li>
 
-        Parkings
-        Gratuit et Payants
+        <li>Parkings</li>
+        <li>Gratuit et Payants</li>
 
-
+    <a href="{{ path('app_logout')}}" class="btn btn-lg btn-danger">Se déconnecter</a>
     </ul>
 </div>
 {% endblock %}
