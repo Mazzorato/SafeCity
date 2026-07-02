@@ -26,6 +26,7 @@
         <p>{{ report.address ?? 'Adresse non renseignée' }}</p>
         <a href="{{ path('app_report_show', {'id': report.id})}}">Voir le signalement</a>
         <a href="{{ path('app_report_edit', {'id': report.id})}}">Modifier le signalement</a>
+        <a href="{{ path('app_report_follow_up', {'id': report.id})}}">Suivi du signalement</a>
     </div>
 
         {% endfor %}

@@ -64,7 +64,7 @@ public function myReports(): Response
 }
 
     #[Route('/{id}/follow-up', name: 'app_report_follow_up', methods: ['GET', 'POST'])]
-    public function followUp(Request $request, Report $report, EntityManagerInterface $entityManager): Response
+    public function followUp(Report $report): Response
     {
         $this->denyAccessUnlessGranted('ROLE_USER');
 
