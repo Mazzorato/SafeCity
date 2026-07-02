@@ -1,0 +1,36 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mes signalements{% endblock %}
+
+{% block body %}
+<div>
+    <h1>Mes signalements </h1>
+
+    {% for flash in app.flashes('success') %} 
+
+    <div>{{ flash }} </div>
+
+ {% endfor %}
+    {% if reports is empty %}
+        <p> Vous n'avez pas crée de signalement pour le moment. </p>
+        <a href="{{ path('app_report_new') }}"> + Nouveau signalement</a>
+        {% else %}
+        <p>{{reports|length}} signalement(s) créé(s)</p> 
+    {% for report in reports %}
+    <div>
+        <span>{{ report.category.name }}</span>
+        <span>{{ report.gravityLevel.value }}</span>
+        <span>{{ report.status.value }}</span>
+        <p>{{ report.description}}</p>
+        <small>{{ report.createdAt|date('d/m/Y H:i') }}</small>
+        <p>{{ report.address ?? 'Adresse non renseignée' }}</p>
+        <a href="{{ path('app_report_show', {'id': report.id})}}">Voir le signalement</a>
+        <a href="{{ path('app_report_edit', {'id': report.id})}}">Modifier le signalement</a>
+    </div>
+
+        {% endfor %}
+    {% endif %}
+
+    <a href="{{ path('app_report_new') }}">+ Nouveau signalement</a>
+</div>
+{% endblock %}

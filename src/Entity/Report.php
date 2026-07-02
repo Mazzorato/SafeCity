@@ -27,10 +27,10 @@ class Report
     #[ORM\Column(enumType: ReportStatusEnum::class)]
     private ?ReportStatusEnum $status = null;
 
-    #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 7)]
+    #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 7, nullable: true)]
     private ?string $latitude = null;
 
-    #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 7)]
+    #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 7, nullable: true)]
     private ?string $longitude = null;
 
     #[ORM\Column(length: 255, nullable: true)]

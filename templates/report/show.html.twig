@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Signalement #{{ report.id }}{% endblock %}
+
+{% block body %}
+<h1>Signalement #{{ report.id }}</h1>
+
+<p>Catégorie : {{ report.category.name }}</p>
+<p>Gravité : {{ report.gravityLevel.value }}</p>
+<p>Statut : {{ report.status.value }}</p>
+<p>Description : {{ report.description }}</p>
+<p>Adresse : {{ report.address }}</p>
+<p>Date : {{ report.createdAt|date('d/m/Y H:i') }}</p>
+<p>Updated At : {{ report.updatedAt ? report.updateAt |date ('d/m/Y H:i') : ''}}
+
+<a href="{{ path('app_report_index') }}">Retour à la liste</a>
+{% endblock %}

@@ -28,11 +28,15 @@ security:
                 # target: app_any_route
 
     access_control:
-        - { path: ^/admin, roles: ROLE_ADMIN }
-        - { path: ^/profile, roles: ROLE_USER }
-        - { path: ^/login, roles: PUBLIC_ACCESS }
-        - { path: ^/register, roles: PUBLIC_ACCESS }
-        - { path: ^/signalement/new, roles: ROLE_USER }
+    - { path: ^/admin, roles: ROLE_ADMIN }
+    - { path: ^/profile, roles: ROLE_USER }
+    - { path: ^/login, roles: PUBLIC_ACCESS }
+    - { path: ^/register, roles: PUBLIC_ACCESS }
+    - { path: ^/reset-password, roles: PUBLIC_ACCESS }
+    - { path: ^/report/my-reports, roles: ROLE_USER }
+    - { path: ^/report/new, roles: ROLE_USER }
+    - { path: ^/report, roles: ROLE_ADMIN }
+    - { path: ^/, roles: ROLE_USER }
 
 when@test:
     security:
