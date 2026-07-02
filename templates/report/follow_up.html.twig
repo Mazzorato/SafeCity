@@ -1,0 +1,122 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Suivi du signalement #{{ report.id }}
+{% endblock %}
+
+{% block body %}
+	<header>
+		<div>
+			<a href="{{ path('app_report_show', {id: report.id}) }}">← Retour</a>
+		</div>
+	</header>
+	<main>
+		<div class="signalement">
+			<div>
+				<h2>Suivi de mon signalement #{{ report.id }}</h2>
+
+
+				<div class="card">
+					<div>
+						<div>
+							<small>Signalement #{{ report.id}}</small>
+							<h3>
+								{{ report.category.name }}
+							</h3>
+							<p>
+								{{ report.address}}
+							</p>
+						</div>
+						<span>
+							{{ report.status.value }}
+						</span>
+					</div>
+				</div>
+
+
+				<!-- {# Barre de progression #} -->
+				{% set currentStep = 1 %}
+
+				{% if report.status.value == 'Pris en compte' %}
+					{% set currentStep = 2 %}
+				{% elseif report.status.value == 'Résolu' %}
+					{% set currentStep = 3 %}
+				{% endif %}
+
+				<div class="progress-steps">
+
+					<div class="step {{ currentStep >= 1 ? 'active' : '' }}">
+						Envoyé
+					</div>
+
+					<div class="step {{ currentStep >= 2 ? 'active' : '' }}">
+						Pris en compte
+					</div>
+
+					<div class="step {{ currentStep >= 3 ? 'active' : '' }}">
+						Résolu
+					</div>
+
+				</div>
+
+				{#  Transmissions #}
+				<div class="transmission">
+					{% if report.emergencyService%}
+						<p>Transmis à
+							{{ report.emergencyService.name}}</p>
+					{% else %}
+						<p>
+							En attente de transmission</p>
+					{% endif %}
+					<small>{{ report.updatedAt ? report.updatedAt|date('H:i') : report.createdAt|date('H:i') }}</small>
+				</div>
+
+				<div class="historique">
+					<div>
+						<div>
+							<h4>Historique des événements</h4>
+						</div>
+
+						<div>
+							<div>
+								<p>Signalement envoyé</p>
+								<small>{{ report.createdAt|date('H:i') }}</small>
+                                
+							</div>
+
+							<div>
+								<p>Triage automatique effectué</p>
+								{% if report.status.value in ['reported', 'in_progress', 'resolved'] %}
+									<small>{{ report.updatedAt|date('H:i') }}</small>
+								{% endif %}
+							</div>
+
+							<div>
+								<p>Pris en compte</p>
+								<small>{{ report.updatedAt|date('H:i') }}</small>	
+							</div>
+                            <div>
+                            <p> Résolu</p>
+                            <small>{{ report.updatedAt|date('H:i') }}</small> 
+                            </div>
+						</div>
+					</div>
+				</div>
+
+			</main>
+
+
+			<div class="notiftoogle">
+				<div>
+					<p>Notifications activée</p><br>
+					<small>Vous serez alerté à chaque mis à jours du statut</small>
+				</div>
+
+				<div>
+					<input type="checkbox" id="notiftoogle" name="notiftoogle" checked>
+				</div>
+			</div>
+
+
+			<footer></footer>
+
+		{% endblock %}
