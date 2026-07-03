@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use App\Entity\Photo;
+use App\Service\FileUploader;
 use App\Entity\Report;
 use App\Form\ReportType;
 use App\Repository\ReportRepository;
@@ -24,7 +26,11 @@ final class ReportController extends AbstractController
     }
 
     #[Route('/new', name: 'app_report_new', methods: ['GET', 'POST'])]
-public function new(Request $request, EntityManagerInterface $entityManager): Response
+public function new(
+    Request $request,
+    EntityManagerInterface $entityManager,
+    FileUploader $fileUploader
+): Response
 {
     $this->denyAccessUnlessGranted('ROLE_USER');
 
@@ -33,16 +39,39 @@ public function new(Request $request, EntityManagerInterface $entityManager): Re
     $form->handleRequest($request);
 
     if ($form->isSubmitted() && $form->isValid()) {
+
         $report->setReporter($this->getUser());
         $report->setStatus(\App\Enum\ReportStatusEnum::REPORTED);
         $report->setCreatedAt(new \DateTime());
+
+        // Enregistrement des 3 photos
+        foreach (['photo1', 'photo2', 'photo3'] as $field) {
+
+            $photoFile = $form->get($field)->getData();
+
+            if ($photoFile === null) {
+                continue;
+            }
+
+            $filename = $fileUploader->upload($photoFile);
+
+            $photo = new Photo();
+            $photo->setUrl('/uploads/photos/' . $filename);
+            $photo->setUploadedAt(new \DateTime());
+            $photo->setUploader($this->getUser());
+            $photo->setReport($report);
+
+            $entityManager->persist($photo);
+        }
 
         $entityManager->persist($report);
         $entityManager->flush();
 
         $this->addFlash('success', 'Votre signalement a bien été envoyé.');
 
-        return $this->redirectToRoute('app_report_show', ['id' => $report->getId()]);
+        return $this->redirectToRoute('app_report_show', [
+            'id' => $report->getId(),
+        ]);
     }
 
     return $this->render('report/new.html.twig', [

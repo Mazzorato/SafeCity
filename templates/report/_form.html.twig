@@ -1,4 +1,40 @@
 {{ form_start(form) }}
-    {{ form_widget(form) }}
-    <button class="btn">{{ button_label|default('Save') }}</button>
+
+    
+    {{ form_row(form.category) }}
+    {{ form_row(form.gravityLevel) }}
+    {{ form_row(form.description) }}
+
+    <div data-controller="photo-preview">
+        <div class="photo-grid">
+            {% for field in [form.photo1, form.photo2, form.photo3] %}
+
+                <div class="slot" data-photo-preview-target="slot">
+
+                    {{ form_widget(field, {
+                        attr: {
+                            class: "d-none",
+                            "data-photo-preview-target": "input",
+                            "data-action": "change->photo-preview#preview"
+                        }
+                    })}}
+
+                    <button type="button" class="remove d-none" data-action= "click->photo-preview#remove"> x </button>
+                    <img class="preview-image d-none" alt="Prévisualisation">
+                    <span class="placeholder"> + </span>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+        
+
+    {{ form_widget(form.address) }}
+    {{ form_widget(form.latitude) }}
+    {{ form_widget(form.longitude) }}
+    {{ form_widget(form.audioLanguage) }}
+
+    <button type="submit"> Envoyer le formulaire </button>
+
+
+
 {{ form_end(form) }}
