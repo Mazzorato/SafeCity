@@ -1,0 +1,94 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mon Profil
+{% endblock %}
+
+{% block body %}
+	<div>
+		<h1>Mon Profil
+		</h1>
+
+		{% for flash in app.flashes('success') %}
+			<div>
+				{{ flash }}
+			</div>
+		{% endfor %}
+
+		{# Section personnelle #}
+		<section>
+			<h2>Informations Personnelles</h2>
+			<div>
+				{{ user.firstName }}
+				{{ user.lastName }}
+				<p>
+					{{ user.city ? user.city.name : 'Ville non renseigné '}}
+				</p>
+			</div>
+
+			{{ form_start(userForm) }}
+			{{ form_row(userForm.firstName) }}
+			{{ form_row(userForm.lastName) }}
+			{{ form_row(userForm.email) }}
+			{{ form_row(userForm.city) }}
+			<button type="submit">
+				Modifier les informations
+			</button>
+			{{ form_end(userForm) }}
+		</section>
+
+		{# Section Notifications & Alerte #}
+		<h2>
+			Notifications et Alertes
+		</h2>
+
+
+		{{ form_start(profileForm) }}
+		<div>
+			<h3>
+				Notifications
+			</h3>
+			{{ form_row (profileForm.emergencyNotifications) }}
+			{{ form_row (profileForm.weatherNotifications) }}
+			{{ form_row (profileForm.transportNotifications) }}
+			{{ form_row (profileForm.eventNotifications) }}
+		</div>
+
+		<div>
+			<h3>Permissions</h3>
+			{{ form_row (profileForm.microphoneAccess) }}
+			{{ form_row (profileForm.cameraAccess) }}
+			{{ form_row (profileForm.locationAccess) }}
+		</div>
+
+		<div>
+			<h3>Langue</h3>
+			{{ form_row (profileForm.language) }}
+		</div>
+
+		<button type="submit">
+			Enregistrer les préférences.</button>
+		{{ form_end(profileForm) }}
+	</section>
+
+	{# Section historique des signalements. #}
+	<section>
+		<h2>
+			Historique des signalements
+		</h2>
+		<a href="{{ path('app_report_my_reports') }}">
+			Voir mes signalements
+		</a>
+	</section>
+
+	{# Section sécurité. #}
+	<h2>
+		Sécurité et Confidentialité</h2>
+
+	<a href="{{ path('app_logout') }}">
+		Se déconnecter</a>
+
+	<form action="{{ path('app_profile_delete') }}" methods="POST" onsubmit="return confirm('Etes-vous sûr de vouloir supprimer votre compte?')">
+		<input type="hidden" name="_token" value="{{ csrf_token('delete_account') }}">
+		<button type="submit">Supprimer mon compte</button>
+	</form>
+</section></div>{% endblock %}
