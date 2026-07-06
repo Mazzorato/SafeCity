@@ -14,7 +14,7 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/profile')]
 final class ProfileController extends AbstractController
 {
-    #[Route('/profile', name: 'app_profile', methods: ['GET', 'POST'])]
+    #[Route('', name: 'app_profile', methods: ['GET', 'POST'])]
     public function index(Request $request, EntityManagerInterface $em): Response
     {
         $this->denyAccessUnlessGranted('ROLE_USER');
@@ -36,7 +36,7 @@ final class ProfileController extends AbstractController
 
             //Détection automatique de la langue du navigateur
             $browserLanguage = substr(
-                $request->getPreferredLanguage()(['fr', 'en', 'es', 'pt', 'it', 'de', 'ja', 'ar', 'ru', 'tr', 'pl', 'nl']) ?? 'fr',
+                $request->getPreferredLanguage(['fr', 'en', 'es', 'pt', 'it', 'de', 'ja', 'ar', 'ru', 'tr', 'pl', 'nl']) ?? 'fr',
                 0, 2
             );
             $profile->setLanguage($browserLanguage);
@@ -47,7 +47,7 @@ final class ProfileController extends AbstractController
         }
 
         $userForm = $this->createForm(UserFormType::class, $user);
-        $profileForm = $this->createForm(ProfileFormType::class, $user);
+        $profileForm = $this->createForm(ProfileFormType::class, $profile);
 
         $userForm->handleRequest($request);
         $profileForm->handleRequest($request);
