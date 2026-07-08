@@ -55,22 +55,25 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToOne(cascade: ['persist', 'remove'])]
     private ?Profile $profile = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $deleteRequestedAt = null;
+
     /**
      * @var Collection<int, Report>
      */
-    #[ORM\OneToMany(targetEntity: Report::class, mappedBy: 'reporter')]
+    #[ORM\OneToMany(targetEntity: Report::class, mappedBy: 'reporter', cascade: ['remove'])]
     private Collection $reports;
 
     /**
      * @var Collection<int, Comment>
      */
-    #[ORM\OneToMany(targetEntity: Comment::class, mappedBy: 'author')]
+    #[ORM\OneToMany(targetEntity: Comment::class, mappedBy: 'author', cascade: ['remove'])]
     private Collection $comments;
 
     /**
      * @var Collection<int, Photo>
      */
-    #[ORM\OneToMany(targetEntity: Photo::class, mappedBy: 'uploader')]
+    #[ORM\OneToMany(targetEntity: Photo::class, mappedBy: 'uploader', cascade: ['remove'])]
     private Collection $photos;
 
     /**
@@ -103,7 +106,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setFirstName(string $firstName): static
     {
         $this->firstName = $firstName;
-
         return $this;
     }
 
@@ -115,7 +117,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setLastName(string $lastName): static
     {
         $this->lastName = $lastName;
-
         return $this;
     }
 
@@ -127,7 +128,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setEmail(string $email): static
     {
         $this->email = $email;
-
         return $this;
     }
 
@@ -139,7 +139,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setPassword(string $password): static
     {
         $this->password = $password;
-
         return $this;
     }
 
@@ -151,7 +150,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setGoogleId(?string $googleId): static
     {
         $this->googleId = $googleId;
-
         return $this;
     }
 
@@ -163,7 +161,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setRegistrationDate(\DateTime $registrationDate): static
     {
         $this->registrationDate = $registrationDate;
-
         return $this;
     }
 
@@ -175,7 +172,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setRole(RoleEnum $role): static
     {
         $this->role = $role;
-
         return $this;
     }
 
@@ -187,7 +183,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setCguAccepted(bool $cguAccepted): static
     {
         $this->cguAccepted = $cguAccepted;
-
         return $this;
     }
 
@@ -199,7 +194,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setAccountActive(bool $accountActive): static
     {
         $this->accountActive = $accountActive;
-
         return $this;
     }
 
@@ -211,7 +205,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setCity(?City $city): static
     {
         $this->city = $city;
-
         return $this;
     }
 
@@ -223,133 +216,45 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setProfile(?Profile $profile): static
     {
         $this->profile = $profile;
-
         return $this;
     }
 
-    /**
-     * @return Collection<int, Report>
-     */
+    public function getDeleteRequestedAt(): ?\DateTimeImmutable
+    {
+        return $this->deleteRequestedAt;
+    }
+
+    public function setDeleteRequestedAt(?\DateTimeImmutable $deleteRequestedAt): static
+    {
+        $this->deleteRequestedAt = $deleteRequestedAt;
+        return $this;
+    }
+
     public function getReports(): Collection
     {
         return $this->reports;
     }
 
-    public function addReport(Report $report): static
-    {
-        if (!$this->reports->contains($report)) {
-            $this->reports->add($report);
-            $report->setReporter($this);
-        }
-
-        return $this;
-    }
-
-    public function removeReport(Report $report): static
-    {
-        if ($this->reports->removeElement($report)) {
-            // set the owning side to null (unless already changed)
-            if ($report->getReporter() === $this) {
-                $report->setReporter(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Comment>
-     */
     public function getComments(): Collection
     {
         return $this->comments;
     }
 
-    public function addComment(Comment $comment): static
-    {
-        if (!$this->comments->contains($comment)) {
-            $this->comments->add($comment);
-            $comment->setAuthor($this);
-        }
-
-        return $this;
-    }
-
-    public function removeComment(Comment $comment): static
-    {
-        if ($this->comments->removeElement($comment)) {
-            // set the owning side to null (unless already changed)
-            if ($comment->getAuthor() === $this) {
-                $comment->setAuthor(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Photo>
-     */
     public function getPhotos(): Collection
     {
         return $this->photos;
     }
 
-    public function addPhoto(Photo $photo): static
-    {
-        if (!$this->photos->contains($photo)) {
-            $this->photos->add($photo);
-            $photo->setUploader($this);
-        }
-
-        return $this;
-    }
-
-    public function removePhoto(Photo $photo): static
-    {
-        if ($this->photos->removeElement($photo)) {
-            // set the owning side to null (unless already changed)
-            if ($photo->getUploader() === $this) {
-                $photo->setUploader(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Notification>
-     */
     public function getNotifications(): Collection
     {
         return $this->notifications;
     }
 
-    public function addNotification(Notification $notification): static
-    {
-        if (!$this->notifications->contains($notification)) {
-            $this->notifications->add($notification);
-            $notification->setRecipient($this);
-        }
-
-        return $this;
-    }
-
-    public function removeNotification(Notification $notification): static
-    {
-        if ($this->notifications->removeElement($notification)) {
-            // set the owning side to null (unless already changed)
-            if ($notification->getRecipient() === $this) {
-                $notification->setRecipient(null);
-            }
-        }
-
-        return $this;
-    }
     public function getUserIdentifier(): string
     {
         return (string) $this->email;
     }
+
     public function getRoles(): array
     {
         $roles = [$this->role?->value ?? 'ROLE_USER'];
@@ -357,10 +262,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return array_unique($roles);
     }
-    public function eraseCredentials(): void
-    {
-        // Efface les données sensibles de l'utilisateur, si nécessaire.
-    }
+
+    public function eraseCredentials(): void {}
 
     public function isVerified(): bool
     {
@@ -370,8 +273,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setIsVerified(bool $isVerified): static
     {
         $this->isVerified = $isVerified;
-
         return $this;
     }
 }
-

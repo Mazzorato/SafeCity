@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Profile;
+use App\Entity\User;
 use App\Form\ProfileFormType;
 use App\Form\UserFormType;
 use Doctrine\ORM\EntityManagerInterface;
@@ -19,11 +20,12 @@ final class ProfileController extends AbstractController
     {
         $this->denyAccessUnlessGranted('ROLE_USER');
 
-        /** @var \App\Entity\User $user */
+        /** @var User $user */
         $user = $this->getUser();
 
-        //Crée le profil automatiquement si il n'existe pas.
+        // Création automatiquement si profile non existant
         $profile = $user->getProfile();
+
         if (!$profile) {
             $profile = new Profile();
             $profile->setEmergencyNotifications(true);
@@ -34,48 +36,80 @@ final class ProfileController extends AbstractController
             $profile->setCameraAccess(false);
             $profile->setLocationAccess(false);
 
-            //Détection automatique de la langue du navigateur
             $browserLanguage = substr(
                 $request->getPreferredLanguage(['fr', 'en', 'es', 'pt', 'it', 'de', 'ja', 'ar', 'ru', 'tr', 'pl', 'nl']) ?? 'fr',
-                0, 2
+                0,
+                2
             );
+
             $profile->setLanguage($browserLanguage);
 
             $user->setProfile($profile);
             $em->persist($profile);
-            $em->flush();
         }
 
+        // Formulaire Utilisateur
         $userForm = $this->createForm(UserFormType::class, $user);
-        $profileForm = $this->createForm(ProfileFormType::class, $profile);
-
         $userForm->handleRequest($request);
-        $profileForm->handleRequest($request);
 
-        if($userForm->isSubmitted() && $userForm->isValid()) {
+        if ($userForm->isSubmitted() && $userForm->isValid()) {
             $em->flush();
-            $this->addFlash('success', 'Preferences mise à jour.');
+
+            $this->addFlash('success', 'Informations mises à jour.');
+
             return $this->redirectToRoute('app_profile');
         }
 
+        // Formulaire Profile
+        $profileForm = $this->createForm(ProfileFormType::class, $profile);
+        $profileForm->handleRequest($request);
+
+        if ($profileForm->isSubmitted() && $profileForm->isValid()) {
+            $em->flush();
+
+            $this->addFlash('success', 'Préférences mises à jour.');
+
+            return $this->redirectToRoute('app_profile');
+        }
 
         return $this->render('profile/index.html.twig', [
             'user' => $user,
-            'userForm' => $userForm,
-            'profileForm' => $profileForm,
+            'userForm' => $userForm->createView(),
+            'profileForm' => $profileForm->createView(),
         ]);
     }
 
     #[Route('/delete', name: 'app_profile_delete', methods: ['POST'])]
-    public function delete(EntityManagerInterface $em) : Response 
+    public function delete(EntityManagerInterface $em, Request $request): Response
     {
         $this->denyAccessUnlessGranted('ROLE_USER');
 
-        /** @var \App\Entity\User $user */
+        /** @var User $user */
         $user = $this->getUser();
+
+        if (!$this->isCsrfTokenValid('delete_account', $request->request->get('_token'))) {
+            throw $this->createAccessDeniedException('Token invalide');
+        }
+
+        // On désactive et on programme la demande — SANS toucher email/nom.
         $user->setAccountActive(false);
+        $user->setDeleteRequestedAt(new \DateTimeImmutable());
+        $user->setEmail('deleted_' . $user->getId() . '@anonymous.local');
+        $user->setFirstName('Deleted');
+        $user->setLastName('User');
+
+        // On révoque les permissions sensibles immédiatement (pas besoin d'attendre 30 jours pour ça).
+        $profile = $user->getProfile();
+        if ($profile) {
+            $profile->setLocationAccess(false);
+            $profile->setCameraAccess(false);
+            $profile->setMicrophoneAccess(false);
+        }
+
         $em->flush();
-        
+
         return $this->redirectToRoute('app_logout');
     }
+
+    
 }
