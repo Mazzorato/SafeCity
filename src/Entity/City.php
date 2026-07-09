@@ -27,6 +27,12 @@ class City
     #[ORM\Column]
     private ?bool $available = null;
 
+    #[ORM\Column(type: 'decimal', precision: 10, scale: 7, nullable:true)]
+    private ?string $latitude = null;
+
+    #[ORM\Column(type: 'decimal', precision: 10, scale: 7, nullable:true)]
+    private ?string $longitude = null;
+
     /**
      * @var Collection<int, User>
      */
@@ -130,6 +136,28 @@ class City
     {
         $this->available = $available;
 
+        return $this;
+    }
+
+    public function getLatitude(): ?string
+    {
+        return $this->latitude;
+    }
+    
+    public function setLatitude(?string $latitude): static
+    {
+        $this->latitude = $latitude;
+        return $this;
+    }
+
+    public function getLongitude(): ?string
+    {
+        return $this->longitude;
+    }
+
+    public function setLongitude(?string $longitude): static
+    {
+        $this->longitude = $longitude;
         return $this;
     }
 
