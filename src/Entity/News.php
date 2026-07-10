@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Enum\NewsCategoryEnum;
 use App\Repository\NewsRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
@@ -23,8 +24,8 @@ class News
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $source = null;
 
-    #[ORM\Column(length: 50)]
-    private ?string $category = null;
+    #[ORM\Column(enumType: NewsCategoryEnum::class)]
+    private ?NewsCategoryEnum $category = null;
 
     #[ORM\Column]
     private ?\DateTime $publishedAt = null;
@@ -37,6 +38,9 @@ class News
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $imageUrl = null;
+
+    #[ORM\Column]
+    private ?bool $isFeatured = null;
 
     #[ORM\ManyToOne(inversedBy: 'news')]
     #[ORM\JoinColumn(nullable: false)]
@@ -83,12 +87,12 @@ class News
         return $this;
     }
 
-    public function getCategory(): ?string
+    public function getCategory(): ?NewsCategoryEnum
     {
         return $this->category;
     }
 
-    public function setCategory(string $category): static
+    public function setCategory(NewsCategoryEnum $category): static
     {
         $this->category = $category;
 
@@ -140,6 +144,16 @@ class News
     {
         $this->imageUrl = $imageUrl;
 
+        return $this;
+    }
+
+    public function isFeatured(): ?bool
+    {
+        return $this->isFeatured;
+    }
+    public function setIsFeatured(?bool $isFeatured): static
+    {
+        $this->isFeatured = $isFeatured;
         return $this;
     }
 

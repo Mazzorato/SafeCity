@@ -1,0 +1,59 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Actualités{% endblock %}
+
+{% block body %}
+<div>
+    <h1>Actualités</h1>
+    <p>{{ city ? city.name ~ ' & Direct' : 'Aucune ville sélectionné' }}</p>
+
+    <nav>
+        <button type="button" class="category-filter active" data-category="all"> Tous</button>
+        <button type="button" class="category-filter" data-category="securite"> Sécurité</button>
+        <button type="button" class="category-filter" data-category="sante"> Santé</button>
+        <button type="button" class="category-filter" data-category="mobilite"> Mobilité</button>
+        <button type="button" class="category-filter" data-category="Travaux"> Travaux</button>
+    </nav>
+
+    {% if featured %}
+        <section class="featured-news">
+            <span class="badge"> {{ featured.category.value }} </span>
+            <h2> {{ featured.title }}</h2>
+            <p>Il y a {{ featured.publishedAt|date('H\\hi') }} </p>
+        </section>
+    {% endif %}
+
+    <h3>Dernières nouvelles </h3>
+
+    {% if news is empty %}
+        <p> Aucune actualité disponible pour votre ville pour le moment.</p>
+    {% else %}
+        <ul>
+            {% for item in news %}
+                <li class="news-item" data-category="{{ item.category.value }}">
+                    {% if item.imageUrl %}
+                        <img src="{{ item.imageUrl }}" alt="{{ item.title }}">
+                    {% endif %}
+                    <span class="badge"> {{ item.category.value }}</span>
+                    <h4>{{ item.title }}</h4>
+                    <p>{{ item.publishedAt|date('d/m/Y') }}</p>
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+</div>
+
+<script>
+    document.querySelector('.category.filter').forEach(function(btn) {
+        btn.addEventListener('click', function(){
+            document.querySelectorAll('.category.filter').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            const category = btn.dataset.category;
+            document.querySelectorAll('.news-item').forEach(function(item) {
+                item.style.display = (category === 'all' || item.dataset.category === category) ? '' : 'none';
+            });
+        });
+    }); 
+</script>
+{% endblock %}

@@ -62,7 +62,7 @@ class UserFixtures extends Fixture implements DependentFixtureInterface
             $user->setProfile($profile);
 
             // Ville aléatoire parmi les disponibles
-            $cities = ['city_toulouse', 'city_blagnac', 'city_colomiers', 'city_labège', 'city_muret', 'city_tournefeuille', 'city_cugnaux', 'city_Plaisance-du-touch', 'city_saint-orens-de-gameville'];
+            $cities = ['city_toulouse', 'city_blagnac', 'city_colomiers', 'city_labège', 'city_muret', 'city_tournefeuille', 'city_cugnaux', 'city_plaisance-du-touch', 'city_saint-orens-de-gameville'];
             $user->setCity($this->getReference($cities[array_rand($cities)], City::class));
 
             $manager->persist($user);
