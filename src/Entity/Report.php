@@ -56,6 +56,10 @@ class Report
     #[ORM\JoinColumn(nullable: false)]
     private ?ReportCategory $category = null;
 
+    #[ORM\ManyToOne(inversedBy:'reports')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?City $city = null;
+
     #[ORM\ManyToOne(inversedBy: 'reports')]
     private ?EmergencyService $emergencyService = null;
 
@@ -222,6 +226,17 @@ class Report
     public function setCategory(?ReportCategory $category): static
     {
         $this->category = $category;
+
+        return $this;
+    }
+
+    public function getCity(): ?City 
+    {
+        return $this->city;
+    }
+    public function setCity(?City $city): static
+    {
+        $this->city = $city;
 
         return $this;
     }
