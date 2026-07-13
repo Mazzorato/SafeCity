@@ -1,0 +1,78 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Communauté{% endblock %}
+
+{% block body %}
+<div>
+    <h1>Communauté</h1>
+    <p> incidents signalés autour de vous</p>
+    
+    <a href=" {{ path('app_report_new') }}"> + </a>
+
+    <div class="stats"> 
+        <span>{{ stats.active }} Actifs</span>
+        <span>{{ stats.thisMonth }} Ce mois</span>
+        <span>{{ stats.resolved }} Résolus</span>
+    </div>
+
+    <div class="map-placeholder">
+        Carte à venir
+    </div>
+
+    <nav>
+        <button type="button" class="status-filter active" data-status="all"> Tous</button>
+        <button type="button" class="status-filter" data-status="reported"> Signalés</button>
+        <button type="button" class="status-filter" data-status="in-progress"> En cours</button>
+        <button type="button" class="status-filter" data-status="resolved"> Résolus</button>
+    </nav>
+
+    <h2>Fil des signalements</h2>
+    
+    {% if reports is empty %}
+        <p> Aucun signalement pour votre ville pour le moment.</p>
+    {% else %}
+        <ul>
+            {% for report in reports %}
+                <li data-status="{{ report.status.value}}">
+                    {{ report.category.name }}
+                    <span> {{ report.status.value }}</span>
+                    {% if report.address %}
+                        <p>{{ report.address }}</p>
+                    {% endif %}
+                    <p>{{ report.createdAt|date('d/m/Y h:i') }}</p>
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    <h2>Commentaires récents <a href="#"> Voir tout</a> </h2>
+
+    {% if reports is empty %}
+        <p>Aucun commentaire pour le moment.</p>
+    {% else %}
+        <ul>
+            {% for comment in comments %}
+                <li>
+                    {{comment.author ? comment.author.firstName : 'Anonyme'}}
+                    <span>{{ comment.createdAt|date('d/m/Y h:i') }}</span>
+                    <p> {{ comment.content }}</p>
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+</div>
+
+<script> 
+document.querySelectorAll('.status-filter').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+        document.querySelectorAll('.status-filter').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        const status = btn.dataset.status;
+        document.querySelectorAll('.report-item').forEach(function (item){
+            item.style.display = (status === 'all' || item.dataset.status === status) ? '' : 'none';
+        });
+    });
+});
+</script>
+{% endblock %}

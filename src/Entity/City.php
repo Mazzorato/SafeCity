@@ -75,6 +75,12 @@ class City
     #[ORM\OneToMany(targetEntity: News::class, mappedBy: 'city')]
     private Collection $news;
 
+    /** 
+     * @var Collection<int, Report>
+     */
+    #[ORM\OneToMany(targetEntity: Report::class, mappedBy: 'city')]
+    private Collection $reports;
+
     public function __construct()
     {
         $this->users = new ArrayCollection();
@@ -84,6 +90,7 @@ class City
         $this->weatherAlerts = new ArrayCollection();
         $this->events = new ArrayCollection();
         $this->news = new ArrayCollection();
+        $this->reports = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -188,6 +195,33 @@ class City
             }
         }
 
+        return $this;
+    }
+
+    /** 
+     * @return Collection<int, Report>
+     */
+    public function getReports(): Collection
+    {
+        return $this->reports;
+    }
+    
+    public function addReport(Report $report): static
+    {
+        if (!$this->reports->contains($report)) {
+            $this->reports->add($report);
+            $report->setCity($this);
+        }
+        return $this;
+    }
+
+    public function removeReport(Report $report): static
+    {
+        if (!$this->reports->removeElement($report)) {
+            if ($report->getCity() === $this) {
+                $report->setCity(null);
+            }
+        }
         return $this;
     }
 
