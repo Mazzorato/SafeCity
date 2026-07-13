@@ -1,0 +1,52 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Service de la ville{% endblock %}
+
+{% block body %}
+<div>
+    <h1>Services de la ville </h1>
+
+    <input type="text" id="serviceSearch" placeholder="Mairie, bibliothèque, urbanisme">
+
+    {% if cityHall %}
+        <div class="Highlight-service">
+        {{ cityHall.name }} ouverte - {{ cityHall.openingHours }}
+        </div>
+    {% endif %}
+
+    
+    {% set sectionLabels =  {
+        'city_hall' : 'Services Administratifs',
+        'library' : 'Culture & Education',
+        'Heath' : 'Santé',
+        'urban_planning' : 'Urbanisme et Environnement'
+    } %}
+
+    {% for type, services in servicesByType %}
+        <section>
+            <h2>{{ sectionLabels[type]|default(type) }}</h2>
+            {% for service in services %}
+                <div class="service-item" data-name="{{ service.name|lower }}">
+                    <p> {{ service.name }} </p>
+                    <p> {{ service.address }} </p>
+                    {% if service.openingHours %}
+                        <p> {{ service.openingHours }} </p>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </section>
+    {% else %}
+        <p> Aucun service pour votre ville pour le moment </p>
+    {% endfor %}
+</div>
+
+<script> 
+document.getElementById('serviceSearch').addEventListener('input', function (e) {
+    const query = e.target.value.toLowerCase();
+    document.querySelectorAll('.service-item').forEach(function (item) {
+        item.style.display = item.dataset.name.includes(query) ? '' : 'none';
+    });
+});
+
+</script>
+{% endblock %}
