@@ -138,4 +138,28 @@ public function myReports(): Response
 
         return $this->redirectToRoute('app_report_index', [], Response::HTTP_SEE_OTHER);
     }
+
+    #[Route('/map/view', name: 'app_report_map', methods: ['GET'])]
+    public function map(EntityManagerInterface $entityManager): Response
+    {
+        $this->denyAccessUnlessGranted('ROLE_USER');
+
+        /** @var \App\Entity\User $user */
+        $user = $this->getUser();
+        $city =$user->getCity();
+
+        $reports = [];
+
+        if ($city) {
+            $reports = $entityManager->getRepository(Report::class)->findBy(
+                ['city' => $city],
+                ['createdAt' => 'DESC']
+            );
+        }
+
+        return $this->render('report/map.html.twig', [
+            'reports' => $reports,
+            'city' => $city,
+        ]);
+    }
 }
