@@ -1,0 +1,60 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Carte des incidents{% endblock %}
+
+{% block body %}
+<div> 
+    <h1> Carte des incidents </h1>
+
+    <nav>
+        <button type="button" class="category-filter active" data-category="all"> Tous</button>
+        <button type="button" class="category-filter" data-category="accidents"> Accident</button>
+        <button type="button" class="category-filter" data-category="travaux"> Travaux</button>
+        <button type="button" class="category-filter" data-category="urgences"> Urgences</button>
+    </nav>
+
+    <div> Carte à venir</div>
+
+    {% if reports is empty %}
+        <p>Aucun signalement dans votre ville pour le moment.</p>
+    {% else %}
+        <ul>
+            {% for report in reports %}
+                <li class="report-item" data-category="{{ report.category.icon }}">
+                    {{ report.category.name }}
+                    <span>{{ report.status.value }}</span>
+                    {% if report.address %}
+                        <p>{{ report.address }}</p>
+                    {% endif %}
+                    <p> {{ report.createdAt|date('d/m/Y h:i') }} - {{ report.comments|length }} commentaire(s), {{ report.photos|length }} photo(s) </p>
+                    <a href="{{ path('app_report_show', {id: report.id}) }}"> Voir détail</a>
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+</div>
+
+<script> 
+const categoryGroups = {
+    accidents : ['accident', 'route'],
+    travaux : ['travaux'],
+    urgences : ['incendie', 'sante']
+};
+
+document.querySelectorAll('.category-filter').forEach(function(btn){
+    btn.addEventListener('click', function(){
+        document.querySelectorAll('.category-filter').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        const filter = btn.dataset.category;
+
+        document.querySelectorAll('.report-item').forEach(function (item){
+            const itemCategory = item.dataset.category;
+            const visible = filter === 'all' || (categoryGroups[filter] && categoryGroups[filter].includes(itemCategory));
+            item.style.display = visible ? '' : 'none';
+        });
+    });
+});
+
+</script>
+{% endblock %}
