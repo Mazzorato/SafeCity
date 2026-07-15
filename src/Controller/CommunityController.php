@@ -8,12 +8,13 @@ use App\Enum\ReportStatusEnum;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
 
 final class CommunityController extends AbstractController
 {
     #[Route('/community', name: 'app_community')]
-    public function index(EntityManagerInterface $em): Response
+    public function index(EntityManagerInterface $em, Request $request): Response
     {
         $this->denyAccessUnlessGranted('ROLE_USER');
 
@@ -21,20 +22,22 @@ final class CommunityController extends AbstractController
         $user = $this->getUser();
         $city = $user->getCity();
 
+        $status = $request->query->get('status', 'all');
+
         $reports = [];
         $comments = [];
         $stats = ['active' => 0, 'thisMonth' => 0, 'resolved' => 0];
 
         if ($city) {
-            $reports = $em->getRepository(Report::class)->findBy(
+            $allReports = $em->getRepository(Report::class)->findBy(
                 ['city' => $city],
                 ['createdAt' => 'DESC']
             );
 
             $now = new \DateTime();
-            $startOfMonth = new \DateTime($now->format('Y-m-01') . '    00:00:00');
+            $startOfMonth = new \DateTime($now->format('Y-m-01') . ' 00:00:00');
 
-            foreach ($reports as $report){
+            foreach ($allReports as $report){
                 if ($report->getStatus() !== ReportStatusEnum::RESOLVED) {
                     $stats['active']++;
                 }
@@ -46,7 +49,11 @@ final class CommunityController extends AbstractController
                 }
             }
 
-            $reportIds = array_map(fn(Report $r) => $r->getId(), $reports);
+            $reports = $status === 'all'
+                ? $allReports
+                : array_filter($allReports, fn(Report $r) => $r->getStatus()->value === $status);
+
+            $reportIds = array_map(fn(Report $r) => $r->getId(), $allReports);
 
             if ($reportIds) {
                 $comments = $em->getRepository(Comment::class)->createQueryBuilder('c')
@@ -63,7 +70,8 @@ final class CommunityController extends AbstractController
             'reports' => $reports,
             'comments' => $comments,
             'stats' => $stats,
-            'city' => $city
+            'city' => $city,
+            'status' => $status,
         ]);
     }
 }

@@ -20,10 +20,10 @@
     </div>
 
     <nav>
-        <button type="button" class="status-filter active" data-status="all"> Tous</button>
-        <button type="button" class="status-filter" data-status="reported"> Signalés</button>
-        <button type="button" class="status-filter" data-status="in-progress"> En cours</button>
-        <button type="button" class="status-filter" data-status="resolved"> Résolus</button>
+        <a href="{{ path('app_community', {status: 'all'}) }}" class="{{ status == 'all' ? 'active' : '' }}">Tous</a>
+        <a href="{{ path('app_community', {status: 'reported'}) }}" class="{{ status == 'reported' ? 'active' : '' }}">Signalés</a>
+        <a href="{{ path('app_community', {status: 'in_progress'}) }}" class="{{ status == 'in_progress' ? 'active' : '' }}">En cours</a>
+        <a href="{{ path('app_community', {status: 'resolved'}) }}" class="{{ status == 'resolved' ? 'active' : '' }}">Résolus</a>
     </nav>
 
     <h2>Fil des signalements</h2>
@@ -33,7 +33,7 @@
     {% else %}
         <ul>
             {% for report in reports %}
-                <li data-status="{{ report.status.value}}">
+                <li>{{ report.status.value}}
                     {{ report.category.name }}
                     <span> {{ report.status.value }}</span>
                     {% if report.address %}
@@ -61,18 +61,4 @@
         </ul>
     {% endif %}
 </div>
-
-<script> 
-document.querySelectorAll('.status-filter').forEach(function(btn) {
-    btn.addEventListener('click', function() {
-        document.querySelectorAll('.status-filter').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-
-        const status = btn.dataset.status;
-        document.querySelectorAll('.report-item').forEach(function (item){
-            item.style.display = (status === 'all' || item.dataset.status === status) ? '' : 'none';
-        });
-    });
-});
-</script>
 {% endblock %}
