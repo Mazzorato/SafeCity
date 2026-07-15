@@ -1,0 +1,43 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Evénements{% endblock %}
+
+{% block body %}
+<div>
+    <h1>Evénements</h1>
+    <p> {{ city ? city.name ~ '& agglomération' : 'Aucune ville sélectionné'}} </p>
+
+    <nav>
+        <a href="{{ path('app_event', {category: 'all'}) }}" class="{{ category == 'all' ? 'active' : ''}}"> Tout</a>
+        <a href="{{ path('app_event', {category: 'musique'}) }}" class="{{ category == 'musique' ? 'active' : ''}}"> Musique</a>
+        <a href="{{ path('app_event', {category: 'sport'}) }}" class="{{ category == 'sport' ? 'active' : ''}}"> Sport</a>
+        <a href="{{ path('app_event', {category: 'culture'}) }}" class="{{ category == 'culture' ? 'active' : ''}}"> Culture</a>
+    </nav>
+
+    {% if events is empty %}
+        <p>Aucun événement dans votre ville pour le moment.</p>
+    {% else %}
+        <ul>
+            {% for event in events %}
+                <li>
+                    {% if event.imageUrl %}
+                        <img src="{{ event.imageUrl }}" alt="{{ event.title }}">
+                    {% endif %}
+                    <span>{{ event.category.value }} </span>
+                    <h3>{{ event.title }}</h3>
+                    <p>{{ event.location }}</p>
+                    <p>{{ event.startedAt|date('d/m/Y') }}</p>
+                    <p>{{ event.isFree ? 'Gratuit' : 'Payant' }} </p>
+
+                    <form method="post" action="{{ path('app_event_favorite', {id: event.id}) }}">
+                        <input type="hidden" name="_token" value="{{ csrf_token('favorite' ~ event.id) }}">
+                        <button type="submit">Rechercher</button>
+                            {{ event.id in favoriteIds ? '*Favori' : 'Ajouter aux favoris'}}
+                        </button>
+                    </form>
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+</div>
+{% endblock %}

@@ -82,6 +82,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: Notification::class, mappedBy: 'recipient')]
     private Collection $notifications;
 
+    /**
+     * @var Collection<int, Event>
+     */
+    #[ORM\ManyToMany(targetEntity: Event::class, inversedBy: 'favoritedBy')]
+    private Collection $favoriteEvents;
+
     #[ORM\Column]
     private bool $isVerified = false;
 
@@ -91,6 +97,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->comments = new ArrayCollection();
         $this->photos = new ArrayCollection();
         $this->notifications = new ArrayCollection();
+        $this->favoriteEvents = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -248,6 +255,30 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getNotifications(): Collection
     {
         return $this->notifications;
+    }
+
+    /**
+     * @return Collection<int, Event>
+     */
+    public function getFavoriteEvents(): Collection
+    {
+        return $this->favoriteEvents;
+    }
+
+    public function addFavoriteEvent(Event $event): static
+    {
+        if (!$this->favoriteEvents->contains($event)) {
+            $this->favoriteEvents->add($event);
+        }
+
+        return $this;
+    }
+
+    public function removeFavoriteEvent(Event $event): static
+    {
+        $this->favoriteEvents->removeElement($event);
+
+        return $this;
     }
 
     public function getUserIdentifier(): string
