@@ -2,7 +2,10 @@
 
 namespace App\Entity;
 
+use App\Enum\EventCategoryEnum;
 use App\Repository\EventRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -41,9 +44,23 @@ class Event
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $imageUrl = null;
 
+    #[ORM\Column(enumType: EventCategoryEnum::class)]
+    private ?EventCategoryEnum $category = null;
+
     #[ORM\ManyToOne(inversedBy: 'events')]
     #[ORM\JoinColumn(nullable: false)]
     private ?City $city = null;
+
+    /**
+     * @var Collection<int, User>
+     */
+    #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'favoriteEvents')]
+    private Collection $favoritedBy;
+
+    public function __construct()
+    {
+        $this->favoritedBy = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -158,6 +175,18 @@ class Event
         return $this;
     }
 
+    public function getCategory(): ?EventCategoryEnum
+    {
+        return $this->category;
+    }
+
+    public function setCategory(EventCategoryEnum $category): static
+    {
+        $this->category = $category;
+
+        return $this;
+    }
+
     public function getCity(): ?City
     {
         return $this->city;
@@ -168,5 +197,13 @@ class Event
         $this->city = $city;
 
         return $this;
+    }
+
+    /**
+     * @return Collection<int, User>
+     */
+    public function getFavoritedBy(): Collection
+    {
+        return $this->favoritedBy;
     }
 }
