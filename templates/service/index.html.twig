@@ -6,7 +6,9 @@
 <div>
     <h1>Services de la ville </h1>
 
-    <input type="text" id="serviceSearch" placeholder="Mairie, bibliothèque, urbanisme">
+    <form method="get" action="{{ path('app_service') }}">
+        <input type="text" name="query" value="{{ search }}" placeholder="Mairie, bibliothèque, urbanisme...">
+        <button type="submit">Rechercher</button>
 
     {% if cityHall %}
         <div class="Highlight-service">
@@ -39,14 +41,4 @@
         <p> Aucun service pour votre ville pour le moment </p>
     {% endfor %}
 </div>
-
-<script> 
-document.getElementById('serviceSearch').addEventListener('input', function (e) {
-    const query = e.target.value.toLowerCase();
-    document.querySelectorAll('.service-item').forEach(function (item) {
-        item.style.display = item.dataset.name.includes(query) ? '' : 'none';
-    });
-});
-
-</script>
 {% endblock %}
