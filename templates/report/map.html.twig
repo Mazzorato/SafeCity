@@ -7,10 +7,10 @@
     <h1> Carte des incidents </h1>
 
     <nav>
-        <button type="button" class="category-filter active" data-category="all"> Tous</button>
-        <button type="button" class="category-filter" data-category="accidents"> Accident</button>
-        <button type="button" class="category-filter" data-category="travaux"> Travaux</button>
-        <button type="button" class="category-filter" data-category="urgences"> Urgences</button>
+        <a href="{{ path('app_report_map', {category: 'all'}) }}" class="{{ category == 'all' ? 'active' : '' }}">Tous</a>
+        <a href="{{ path('app_report_map', {category: 'accidents'}) }}" class="{{ category == 'accidents' ? 'active' : '' }}">Accident</a>
+        <a href="{{ path('app_report_map', {category: 'travaux'}) }}" class="{{ category == 'travaux' ? 'active' : '' }}">Travaux</a>
+        <a href="{{ path('app_report_map', {category: 'urgences'}) }}" class="{{ category == 'urgences' ? 'active' : '' }}">Urgences</a>
     </nav>
 
     <div> Carte à venir</div>
@@ -20,7 +20,7 @@
     {% else %}
         <ul>
             {% for report in reports %}
-                <li class="report-item" data-category="{{ report.category.icon }}">
+                <li>{{ report.category.icon }}
                     {{ report.category.name }}
                     <span>{{ report.status.value }}</span>
                     {% if report.address %}
@@ -33,28 +33,4 @@
         </ul>
     {% endif %}
 </div>
-
-<script> 
-const categoryGroups = {
-    accidents : ['accident', 'route'],
-    travaux : ['travaux'],
-    urgences : ['incendie', 'sante']
-};
-
-document.querySelectorAll('.category-filter').forEach(function(btn){
-    btn.addEventListener('click', function(){
-        document.querySelectorAll('.category-filter').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-
-        const filter = btn.dataset.category;
-
-        document.querySelectorAll('.report-item').forEach(function (item){
-            const itemCategory = item.dataset.category;
-            const visible = filter === 'all' || (categoryGroups[filter] && categoryGroups[filter].includes(itemCategory));
-            item.style.display = visible ? '' : 'none';
-        });
-    });
-});
-
-</script>
 {% endblock %}

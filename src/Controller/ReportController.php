@@ -140,7 +140,7 @@ public function myReports(): Response
     }
 
     #[Route('/map/view', name: 'app_report_map', methods: ['GET'])]
-    public function map(EntityManagerInterface $entityManager): Response
+    public function map(EntityManagerInterface $entityManager, Request $request): Response
     {
         $this->denyAccessUnlessGranted('ROLE_USER');
 
@@ -148,18 +148,30 @@ public function myReports(): Response
         $user = $this->getUser();
         $city =$user->getCity();
 
+        $category = $request->query->get('category', 'all');
+        $groups = [
+            'accidents' => ['accident', 'route'],
+            'travaux' => ['travaux'],
+            'urgences' => ['incendie', 'sante'],
+        ];
+
         $reports = [];
 
         if ($city) {
-            $reports = $entityManager->getRepository(Report::class)->findBy(
+            $allReports = $entityManager->getRepository(Report::class)->findBy(
                 ['city' => $city],
                 ['createdAt' => 'DESC']
             );
+
+            $reports = $category === 'all'
+                ? $allReports
+                : array_filter($allReports, fn(Report $r) => in_array($r->getCategory()->getIcon(), $groups[$category] ?? []));
         }
 
         return $this->render('report/map.html.twig', [
             'reports' => $reports,
             'city' => $city,
+            'category' => $category,
         ]);
     }
 }
