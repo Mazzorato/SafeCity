@@ -13,17 +13,26 @@ use Symfony\Component\Routing\Attribute\Route;
 final class CityController extends AbstractController
 {
      #[Route('', name: 'app_city_select', methods: ['GET'])]
-     public function index(EntityManagerInterface $em) : Response 
+     public function index(EntityManagerInterface $em, Request $request) : Response 
      {
         $this->denyAccessUnlessGranted('ROLE_USER');
 
-        $cities = $em->getRepository(City::class)->findBy(
-            ['available' => true],
-            ['name' => 'ASC']
-        );
+        $search = $request->query->get('query', '');
+
+        $queryBuilder = $em->getRepository(City::class)->createQueryBuilder('c')
+            ->where('c.available = true')
+            ->orderBy('c.name', 'ASC');
+
+        if ($search !== '') {
+            $queryBuilder->andWhere('Lower(c.name) LIKE :search')
+                ->setParameter('search','%'. strtolower($search) .'%');
+        }
+
+        $cities = $queryBuilder->getQuery()->getResult();
 
         return $this->render('city/index.html.twig', [
             'cities' => $cities,
+            'search' => $search,
         ]);
      }
      #[Route('/choose/{id}', name: 'app_city_choose', methods: ['POST'])]

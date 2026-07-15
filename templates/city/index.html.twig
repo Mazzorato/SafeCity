@@ -14,7 +14,9 @@
 
     <button type="button" disabled>Utiliser ma position GPS </button>
 
-    <input type="text" id="citySearch" placeholder="Rechercher une ville...">
+    <form method="get" action="{{ path('app_city_select') }}">
+        <input type="text" name="query" value="{{ search }}" placeholder="Rechercher une ville...">
+        <button type="submit">Rechercher</button>
 
     <ul id="cityList">
         {% for city in cities %}
@@ -31,15 +33,5 @@
             </li>
         {% endfor %}
     </ul>
-    </div>
-
-    <script>
-        document.getElementById('citySearch').addEventListener('input', function (e){
-            const query = e.target.value.toLowerCase();
-            document.querySelectorAll('.city-item').forEach(function (item) {
-                const name = item.dataset.cityName;
-                item.style.display = name.includes(query)? '' : 'none';
-            });
-        });
-    </script>
-    {% endblock %}
+</div>
+{% endblock %}
