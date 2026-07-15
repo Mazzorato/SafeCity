@@ -8,11 +8,11 @@
     <p>{{ city ? city.name ~ ' & Direct' : 'Aucune ville sélectionné' }}</p>
 
     <nav>
-        <button type="button" class="category-filter active" data-category="all"> Tous</button>
-        <button type="button" class="category-filter" data-category="securite"> Sécurité</button>
-        <button type="button" class="category-filter" data-category="sante"> Santé</button>
-        <button type="button" class="category-filter" data-category="mobilite"> Mobilité</button>
-        <button type="button" class="category-filter" data-category="Travaux"> Travaux</button>
+        <a href="{{ path('app_news', {category: 'all'}) }}" class="{{ category == 'all' ? 'active' : '' }}">Tout</a>
+        <a href="{{ path('app_news', {category: 'securite'}) }}" class="{{ category == 'securite' ? 'active' : '' }}">Sécurité</a>
+        <a href="{{ path('app_news', {category: 'sante'}) }}" class="{{ category == 'sante' ? 'active' : '' }}">Santé</a>
+        <a href="{{ path('app_news', {category: 'mobilite'}) }}" class="{{ category == 'mobilite' ? 'active' : '' }}">Mobilité</a>
+        <a href="{{ path('app_news', {category: 'travaux'}) }}" class="{{ category == 'travaux' ? 'active' : '' }}">Travaux</a>
     </nav>
 
     {% if featured %}
@@ -30,7 +30,7 @@
     {% else %}
         <ul>
             {% for item in news %}
-                <li class="news-item" data-category="{{ item.category.value }}">
+                <li>{{ item.category.value }}
                     {% if item.imageUrl %}
                         <img src="{{ item.imageUrl }}" alt="{{ item.title }}">
                     {% endif %}
@@ -42,18 +42,4 @@
         </ul>
     {% endif %}
 </div>
-
-<script>
-    document.querySelector('.category.filter').forEach(function(btn) {
-        btn.addEventListener('click', function(){
-            document.querySelectorAll('.category.filter').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-
-            const category = btn.dataset.category;
-            document.querySelectorAll('.news-item').forEach(function(item) {
-                item.style.display = (category === 'all' || item.dataset.category === category) ? '' : 'none';
-            });
-        });
-    }); 
-</script>
 {% endblock %}
