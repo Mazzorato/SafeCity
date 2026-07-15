@@ -1,0 +1,40 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Parking à proximité{% endblock %}
+
+{% block body %}
+<div>
+    <h1>Parking à proximité</h1>
+
+    <form method="get" action="{{ path('app_parking') }}">
+        <input type="text" name="query" value="{{ search }}" placeholder="Nom, addresse, quartier...">
+        <input type="hidden" name="type" value="{{ type }}">
+        <button type="submit"> Rechercher</button>
+    </form>
+
+    <nav>
+        <a href="{{ path('app_parking', {query: search, type: 'all'}) }}" class="{{ type == 'all' ? 'active' : '' }}">Tous</a>
+        <a href="{{ path('app_parking', {query: search, type: 'free'}) }}" class="{{ type == 'free' ? 'active' : '' }}">Gratuit</a>
+        <a href="{{ path('app_parking', {query: search, type: 'paid'}) }}" class="{{ type == 'paid' ? 'active' : '' }}">Payant</a>
+    </nav>
+
+    <div>Carte à venir</div>
+
+    {% if parkings is empty %}
+        <p>Aucun parking référencé dans votre ville pour le moment.</p>
+    {% else %}
+        <p>{{ parkings|length }} parkings trouvés</p>
+        <ul>
+            {% for parking in parkings %}
+                <li>
+                    {{ parking.name }}
+                    <span> {{ parking.free ? 'Gratuit' : 'Payant' }}</span>
+                    <p>{{ parking.address }}</p>
+                    <p>{{ parking.availableSpots }} / {{ parking.totalSpots }} places disponibles </p>
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+</div>
+
+{% endblock %}
