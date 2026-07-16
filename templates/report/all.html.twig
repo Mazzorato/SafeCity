@@ -1,0 +1,46 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mes signalements{% endblock %}
+
+{% block body %}
+<div>
+    <h1>Mes signalements</h1>
+
+    <div> 
+        <span>{{ stats.total }} Total </span>
+        <span>{{ stats.reported }} Signalés </span>
+        <span>{{ stats.inProgress }} En cours </span>
+        <span>{{ stats.resolved }} Résolus </span>
+    </div>
+
+    <form method="get" action="{{ path('app_report_all') }}">
+        <input type="hidden" name="status" value="{{ status }}">
+        <input type="text" name="query" value="{{ search }}" placeholder="Lieu, mots-clés...">
+        <button type="submit"> Rechercher</button>
+    </form>
+
+    <nav>
+        <a href="{{ path('app_report_all', {query: search, status: 'all'}) }}" class="{{ status == 'all' ? 'active' : '' }}">Tous </a>
+        <a href="{{ path('app_report_all', {query: search, status: 'in_progress'}) }}" class="{{ status == 'in_progress' ? 'active' : ''}}"> En cours </a>
+        <a href="{{ path('app_report_all', {query: search, status: 'resolved'}) }}" class="{{ status == 'resolved' ? 'active' : ''}}"> Résolus </a>
+        <a href="{{ path('app_report_all', {query: search, status: 'reported'}) }}" class="{{ status == 'reported' ? 'active' : ''}}"> Signalés </a>
+    </nav>
+
+    <p>{{ reports|length }} signalement(s) </p>
+
+    {% if reports is empty %}
+        <p>Vous n'avez aucun signalement pour le moment. </p>
+    {% else %}
+        <ul>
+            {% for report in reports %}
+                <li>
+                    <span>{{ report.status.value }}</span>
+                    {{ report.category.name }}
+                    <p>{{ report.address ?? 'Adresse non renseigné' }} - il y a {{ report.createdAt|date('d/m/Y H:i') }}</p>
+                    <a href="{{ path('app_report_show', {id: report.id}) }}"> Voir détail </a>
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+</div>
+{% endblock %}

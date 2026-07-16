@@ -102,6 +102,53 @@ public function myReports(): Response
         ]);
     }
 
+    #[Route('/all', name: 'app_report_all', methods: ['GET'])]
+    public function all(EntityManagerInterface $entityManager, Request $request): Response
+    {
+        $this->denyAccessUnlessGranted('ROLE_USER');
+
+        /** @var \App\Entity\User $user */
+        $user = $this->getUser();
+
+        $status = $request->query->get('status', 'all');
+        $search = $request->query->get('query','');
+
+        $reports = [];
+        $stats = ['total' => 0, 'reported' => 0, 'inProgress' => 0, 'resolved' => 0];
+
+        $queryBuilder = $entityManager->getRepository(Report::class)->createQueryBuilder('r')
+            ->where('r.reporter = :user')
+            ->setParameter('user', $user)
+            ->orderBy('r.createdAt', 'DESC');
+
+        if ($search !== ''){
+            $queryBuilder->andWhere('Lower(r.address) LIKE :search OR LOWER (r.description) LIKE :search')
+            ->setParameter('search', '%' . strtolower($search) . '%');
+        }
+
+        $allUserReports = $queryBuilder->getQuery()->getResult();
+
+        foreach ($allUserReports as $report) {
+            $stats['total']++;
+            match ($report->getStatus()){
+                \App\Enum\ReportStatusEnum::REPORTED => $stats['reported']++,
+                \App\Enum\ReportStatusEnum::IN_PROGRESS => $stats['inProgress']++,
+                \App\Enum\ReportStatusEnum::RESOLVED => $stats['resolved']++,
+            };
+    }
+
+    $reports = $status === 'all'
+        ? $allUserReports
+        : array_filter($allUserReports, fn(Report $r) => $r->getStatus()->value === $status);
+
+        return $this->render('report/all.html.twig', [
+            'reports' => $reports,
+            'stats' => $stats,
+            'status' => $status,
+            'search' => $search
+        ]);
+    }
+
     #[Route('/{id}', name: 'app_report_show', methods: ['GET'])]
     public function show(Report $report): Response
     {
