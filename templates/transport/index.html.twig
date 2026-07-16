@@ -1,0 +1,35 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Transport{% endblock %}
+
+{% block body %}
+<div>
+    <h1>Transport</h1>
+    <p>{{ city ? city.name  ~ ' - Réseau Tisséo' : 'Aucune ville sélectionnée' }}</p>
+
+    {% for transport in disrupted %}
+        <div> 
+            {{ transport.name }} {{ transport.line }} : {{ transport.disruption }}
+        </div>
+    {% endfor %}
+
+    <h2>Etat du réseau </h2>
+
+    {% if transport is empty %}
+        <p> Aucune information de transport disponible pour le moment </p>
+    {% else %}
+        <ul> 
+            {% for transport in transports %}
+                <li>
+                    {{ transport.name }} {{ transport.line }}
+                    <span>{{ transport.status }} </span>
+                    <p>Mis à jour : {{ transport.updatedAt|date('H:i') }}</p>
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    <a href="{{ path('app_parking') }}"> Voir les parkings autour de moi</a>
+    <a href="{{ path('app_report_new') }}"> Signalier un incident</a>
+</div>
+{% endblock %}
