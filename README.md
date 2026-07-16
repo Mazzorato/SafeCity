@@ -17,7 +17,6 @@ Sommaire :
 - Stack utilisée
 - Installation
 
-
 # Présentation du projet
 
 SafeCity est une application mobile citoyenne pour la région toulousaine. Elle permet de signaler des incidents (accidents, incivilités, incendies, urgences médicales…), de consulter une carte interactive en temps réel, et d'accéder aux informations pratiques de la ville : transports, parkings, météo, services locaux et événements.
