@@ -1,3 +1,4 @@
+// Contrôleur Stimulus minimal conservé comme exemple de branchement d’un composant.
 import { Controller } from '@hotwired/stimulus';
 
 /*
