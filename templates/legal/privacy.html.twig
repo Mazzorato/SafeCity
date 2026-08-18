@@ -1,0 +1,54 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Politique de confidentialité{% endblock %}
+
+{% block body %}
+<main class="mx-auto min-h-screen max-w-md bg-slate-50 px-5 py-8 text-slate-950 lg:max-w-5xl lg:px-8 lg:py-10">
+    <header class="rounded-3xl bg-red-700 p-6 text-white shadow-xl">
+        <a href="{{ path('app_register') }}" class="inline-flex items-center gap-2 text-sm font-semibold text-red-100">← Retour à l’inscription</a>
+        <h1 class="mt-5 text-3xl font-bold">Politique de confidentialité</h1>
+        <p class="mt-2 text-sm text-red-100">Traitements effectués par la copie locale SafeCity</p>
+    </header>
+
+    <aside class="mt-5 rounded-2xl border border-blue-200 bg-blue-50 p-4 text-sm leading-6 text-blue-950">
+        Cette page décrit les données réellement manipulées par l’application locale. Elle devra être complétée avec l’identité juridique de l’éditeur et de l’hébergeur avant toute mise en production publique.
+    </aside>
+
+    <div class="mt-6 space-y-4 lg:grid lg:grid-cols-2 lg:gap-4 lg:space-y-0">
+        <section class="rounded-3xl bg-white p-5 shadow-sm ring-1 ring-slate-100">
+            <h2 class="text-lg font-bold">Données enregistrées</h2>
+            <ul class="mt-3 list-disc space-y-2 pl-5 text-sm leading-6 text-slate-600">
+                <li>identité du compte, adresse e-mail, ville, langue et préférences ;</li>
+                <li>signalements, descriptions, positions, commentaires et photos transmis ;</li>
+                <li>favoris, notifications et dossiers de modération associés au compte ;</li>
+                <li>jetons temporaires nécessaires à la vérification de l’e-mail et à la réinitialisation du mot de passe.</li>
+            </ul>
+        </section>
+
+        <section class="rounded-3xl bg-white p-5 shadow-sm ring-1 ring-slate-100">
+            <h2 class="text-lg font-bold">Utilisation des données</h2>
+            <p class="mt-2 text-sm leading-6 text-slate-600">Ces données servent à authentifier l’utilisateur, présenter les informations de sa ville, localiser ses signalements, afficher ses contenus, gérer les alertes et appliquer les décisions de modération.</p>
+        </section>
+
+        <section class="rounded-3xl bg-white p-5 shadow-sm ring-1 ring-slate-100">
+            <h2 class="text-lg font-bold">Géolocalisation et photos</h2>
+            <p class="mt-2 text-sm leading-6 text-slate-600">Les préférences du profil contrôlent les demandes de position et de caméra. Une position utilisée pour trier les services ou parkings n’est pas enregistrée dans le profil. La position et les photos volontairement jointes à un signalement sont, elles, conservées avec ce signalement dans l’environnement local.</p>
+        </section>
+
+        <section class="rounded-3xl bg-white p-5 shadow-sm ring-1 ring-slate-100">
+            <h2 class="text-lg font-bold">Accès et transmissions</h2>
+            <p class="mt-2 text-sm leading-6 text-slate-600">Les données restent dans les services locaux configurés pour ce projet. Les notifications passent par Mercure et les e-mails par le transport Symfony local. Un clic volontaire sur un itinéraire Google Maps ouvre toutefois ce service externe avec les coordonnées de destination.</p>
+        </section>
+
+        <section class="rounded-3xl bg-white p-5 shadow-sm ring-1 ring-slate-100">
+            <h2 class="text-lg font-bold">Conservation et suppression</h2>
+            <p class="mt-2 text-sm leading-6 text-slate-600">Le profil permet de corriger les informations et de désactiver le compte. Celui-ci est immédiatement anonymisé, puis la commande locale de nettoyage supprime le compte et ses données personnelles associées après trente jours.</p>
+        </section>
+    </div>
+
+    <nav class="mt-6 grid gap-3 pb-6">
+        <a href="{{ path('app_legal_terms') }}" class="flex min-h-12 items-center justify-center rounded-2xl bg-slate-950 px-4 py-3 text-center font-bold text-white">Conditions Générales</a>
+        <a href="{{ path('app_register') }}" class="flex min-h-12 items-center justify-center rounded-2xl border border-slate-200 bg-white px-4 py-3 text-center font-semibold">Retour à l’inscription</a>
+    </nav>
+</main>
+{% endblock %}
