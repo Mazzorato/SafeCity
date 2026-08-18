@@ -1,12 +1,46 @@
+{# Choix d’un nouveau mot de passe. #}
 {% extends 'base.html.twig' %}
 
-{% block title %}Reset your password{% endblock %}
+{% block title %}{{ 'reset.choose_new_title'|trans }}{% endblock %}
 
 {% block body %}
-    <h1>Reset your password</h1>
+    <div class="min-h-screen bg-stone-200 font-sans text-slate-950">
+        <div class="mx-auto min-h-screen w-full max-w-md bg-[#f8f8ff] shadow-xl lg:my-10 lg:min-h-0 lg:max-w-2xl lg:rounded-3xl">
+            <header class="flex h-20 items-center border-b border-slate-200 bg-white px-5">
+                <h1 class="text-xl font-semibold">{{ 'reset.new_password'|trans }}</h1>
+            </header>
 
-    {{ form_start(resetForm) }}
-        {{ form_row(resetForm.plainPassword) }}
-        <button class="btn btn-primary">Reset password</button>
-    {{ form_end(resetForm) }}
+            <main class="px-5 py-10">
+                <div class="rounded-3xl border border-slate-200 bg-white px-6 py-8 shadow-sm lg:px-10">
+                    <div class="mx-auto flex size-20 items-center justify-center rounded-full bg-red-100 text-red-700" aria-hidden="true">{{ include('components/_icon.html.twig', {name: 'key', class: 'size-10'}) }}</div>
+                    <h2 class="mt-7 text-center text-2xl font-bold">{{ 'reset.secure_account'|trans }}</h2>
+
+                    {{ form_start(resetForm, { attr: { class: 'mt-8 space-y-5', novalidate: 'novalidate' } }) }}
+                        {% for passwordField in [resetForm.plainPassword.first, resetForm.plainPassword.second] %}
+                            <div>
+                                {{ form_label(passwordField, null, { label_attr: { class: 'mb-2 block text-sm font-semibold' } }) }}
+                                <div class="flex h-14 items-center gap-3 rounded-[1.15rem] border border-red-200 bg-white px-4 focus-within:border-red-500 focus-within:ring-2 focus-within:ring-red-100" data-controller="password-visibility">
+                                    {{ include('components/_icon.html.twig', {name: 'lock', class: 'size-5 shrink-0 text-stone-500'}) }}
+                                    {{ form_widget(passwordField, {
+                                        attr: {
+                                            class: 'min-w-0 flex-1 border-0 bg-transparent text-sm outline-none',
+                                            'data-password-visibility-target': 'input'
+                                        }
+                                    }) }}
+                                    <button type="button" class="flex size-9 items-center justify-center text-lg text-stone-500" data-action="password-visibility#toggle" aria-label="{{ 'auth.toggle_password'|trans }}" aria-pressed="false">
+                                        <span data-password-visibility-target="icon" aria-hidden="true">{{ include('components/_icon.html.twig', {name: 'eye', class: 'size-5'}) }}</span>
+                                    </button>
+                                </div>
+                            </div>
+                        {% endfor %}
+                        <div class="text-xs text-red-600">{{ form_errors(resetForm.plainPassword) }}</div>
+
+                        <button class="flex h-14 w-full items-center justify-center rounded-[1.15rem] bg-red-600 font-semibold text-white transition hover:bg-red-700">
+                            {{ 'reset.save_new_password'|trans }}
+                        </button>
+                    {{ form_end(resetForm) }}
+                </div>
+            </main>
+        </div>
+    </div>
 {% endblock %}

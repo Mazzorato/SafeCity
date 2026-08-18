@@ -12,6 +12,9 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\NotCompromisedPassword;
 use Symfony\Component\Validator\Constraints\PasswordStrength;
 
+/**
+ * Construit et valide le formulaire Symfony ChangePasswordFormType.
+ */
 class ChangePasswordFormType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
@@ -27,23 +30,23 @@ class ChangePasswordFormType extends AbstractType
                 'first_options' => [
                     'constraints' => [
                         new NotBlank(
-                            message: 'Please enter a password',
+                            message: 'validation.password_required',
                         ),
                         new Length(
                             min: 12,
-                            minMessage: 'Your password should be at least {{ limit }} characters',
+                            minMessage: 'validation.password_too_short',
                             // max length allowed by Symfony for security reasons
                             max: 4096,
                         ),
                         new PasswordStrength(),
                         new NotCompromisedPassword(),
                     ],
-                    'label' => 'New password',
+                    'label' => 'form.new_password',
                 ],
                 'second_options' => [
-                    'label' => 'Repeat Password',
+                    'label' => 'form.password_repeat',
                 ],
-                'invalid_message' => 'The password fields must match.',
+                'invalid_message' => 'validation.passwords_must_match',
                 // Instead of being set onto the object directly,
                 // this is read and encoded in the controller
                 'mapped' => false,

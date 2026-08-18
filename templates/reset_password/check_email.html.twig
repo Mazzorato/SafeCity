@@ -1,11 +1,49 @@
+{# Confirmation d’envoi du lien de réinitialisation. #}
 {% extends 'base.html.twig' %}
 
-{% block title %}Password Reset Email Sent{% endblock %}
+{% block title %}{{ 'reset.email_sent_title'|trans }}{% endblock %}
 
 {% block body %}
-    <p>
-        If an account matching your email exists, then an email was just sent that contains a link that you can use to reset your password.
-        This link will expire in {{ resetToken.expirationMessageKey|trans(resetToken.expirationMessageData, 'ResetPasswordBundle') }}.
-    </p>
-    <p>If you don't receive an email please check your spam folder or <a href="{{ path('app_forgot_password_request') }}">try again</a>.</p>
+    <div class="min-h-screen bg-stone-200 font-sans text-slate-950">
+        <div class="mx-auto min-h-screen w-full max-w-md bg-[#f8f8ff] shadow-xl lg:my-10 lg:min-h-0 lg:max-w-2xl lg:rounded-3xl">
+            <header class="flex h-20 items-center border-b border-slate-200 bg-white px-5">
+                <a href="{{ path('app_login') }}" class="mr-3 flex size-10 items-center justify-center" aria-label="{{ 'reset.back_to_login'|trans }}">{{ include('components/_icon.html.twig', {name: 'back', class: 'size-7'}) }}</a>
+                <h1 class="text-xl font-semibold">{{ 'reset.forgot_title'|trans }}</h1>
+            </header>
+
+            <main class="px-5 py-10">
+                <div class="min-h-[40rem] rounded-3xl border border-slate-200 bg-white px-6 py-8 shadow-sm lg:min-h-0 lg:px-10">
+                    <div class="mx-auto flex size-20 items-center justify-center rounded-full bg-red-100 text-red-700" aria-hidden="true">{{ include('components/_icon.html.twig', {name: 'mail', class: 'size-10'}) }}</div>
+                    <h2 class="mt-7 text-center text-2xl font-bold">{{ 'reset.check_inbox'|trans }}</h2>
+                    <p class="mt-5 text-center leading-relaxed text-stone-500">
+                        {{ 'reset.email_sent_security'|trans }}
+                    </p>
+
+                    <div class="mt-10 rounded-xl border-l-4 border-lime-500 bg-slate-100 px-5 py-5" role="status">
+                        <p class="flex items-center gap-3 text-lg font-medium">
+                            <span class="flex size-8 items-center justify-center rounded-full border-2 border-lime-500 text-lime-600" aria-hidden="true">{{ include('components/_icon.html.twig', {name: 'check', class: 'size-5'}) }}</span>
+                            {{ 'reset.email_sent'|trans }}
+                        </p>
+                        <p class="mt-3 text-sm leading-relaxed text-red-700">
+                            {{ 'reset.email_if_account'|trans }}
+                        </p>
+                    </div>
+
+                    <p class="mt-8 text-center text-xs leading-relaxed text-stone-400">
+                        {{ 'reset.email_expiry'|trans({
+                            '%expiration%': resetToken.expirationMessageKey|trans(resetToken.expirationMessageData, 'ResetPasswordBundle')
+                        }) }}
+                    </p>
+
+                    <a href="{{ path('app_login') }}" class="mt-16 flex items-center justify-center gap-3 border-t border-slate-200 pt-6 text-stone-600">
+                        {{ include('components/_icon.html.twig', {name: 'back', class: 'size-6'}) }}
+                        {{ 'reset.back_to_login'|trans }}
+                    </a>
+                    <a href="{{ path('app_forgot_password_request') }}" class="mt-4 block text-center text-sm font-medium text-red-600 underline">
+                        {{ 'reset.resend_link'|trans }}
+                    </a>
+                </div>
+            </main>
+        </div>
+    </div>
 {% endblock %}

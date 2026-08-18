@@ -11,6 +11,8 @@ use SymfonyCasts\Bundle\ResetPassword\Persistence\Repository\ResetPasswordReques
 use SymfonyCasts\Bundle\ResetPassword\Persistence\ResetPasswordRequestRepositoryInterface;
 
 /**
+ * Centralise les requêtes Doctrine liées à ResetPasswordRequest.
+ *
  * @extends ServiceEntityRepository<ResetPasswordRequest>
  */
 class ResetPasswordRequestRepository extends ServiceEntityRepository implements ResetPasswordRequestRepositoryInterface
