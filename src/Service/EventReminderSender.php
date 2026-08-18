@@ -17,6 +17,7 @@ final class EventReminderSender
     public function __construct(
         private EventFavoriteRepository $favoriteRepository,
         private EntityManagerInterface $entityManager,
+        private UserNotificationPublisher $notificationPublisher,
         private TranslatorInterface $translator,
     ) {
     }
@@ -72,6 +73,12 @@ final class EventReminderSender
         }
 
         $this->entityManager->flush();
+
+        // Mercure intervient après le flush, lorsque chaque notification possède
+        // son identifiant ; son indisponibilité n’annule pas la notification.
+        foreach ($notifications as $notification) {
+            $this->notificationPublisher->publish($notification);
+        }
 
         return count($notifications);
     }
