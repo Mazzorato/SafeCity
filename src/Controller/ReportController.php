@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use App\Service\ModerationVisibility;
+
 use App\Form\CommentType;
 
 use App\Entity\Comment;
@@ -243,12 +245,13 @@ final class ReportController extends AbstractController
         ]);
     }
 
-#[Route('/{id}', name: 'app_report_show', methods: ['GET', 'POST'])]
+#[Route('/{id}', name: 'app_report_show', methods: ['GET', 'POST'], requirements: ['id' => '\d+'])]
     public function show(
         Report $report,
         Request $request,
         EntityManagerInterface $entityManager,
         FileUploader $fileUploader,
+        ModerationVisibility $moderationVisibility,
         LoggerInterface $logger,
     ): Response {
         $this->denyReportVisible($report);
@@ -261,33 +264,37 @@ final class ReportController extends AbstractController
 
         if ($commentForm->isSubmitted() && $commentForm->isValid()) {
             $uploadedPhotoFilename = null;
+
             try {
+                // Le même service local que celui des signalements garantit
+                // les formats réels et un nom de fichier non prévisible.
                 $photoFile = $commentForm->get('photo')->getData();
                 if ($photoFile !== null) {
                     $uploadedPhotoFilename = $fileUploader->upload($photoFile);
                 }
             } catch (\Throwable $exception) {
-                $logger->error('Échec du téléversement de la photo du commentaire.', [
+                $logger->error('Échec du téléversement de la photo d’un commentaire.', [
                     'report_id' => $report->getId(),
+                    'user_id' => $user->getId(),
                     'exception' => $exception,
                 ]);
                 $commentForm->addError(new FormError(
                     $this->translator->trans('flash.media_upload_failed')
                 ));
-                $response = $this->render('report/show.html.twig', [
-                    'report' => $report,
-                    'comments' => $report->getComments(),
-                    'commentForm' => $commentForm,
-                ]);
-                $response->setStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY);
 
-                return $response;
+                return $this->renderReportDetails(
+                    $report,
+                    $commentForm,
+                    $moderationVisibility,
+                    Response::HTTP_UNPROCESSABLE_ENTITY,
+                );
             }
 
             $comment
                 ->setAuthor($user)
                 ->setReport($report)
                 ->setCreatedAt(new \DateTime());
+
             $report->addComment($comment);
             $entityManager->persist($comment);
 
@@ -296,6 +303,9 @@ final class ReportController extends AbstractController
                     ->setUrl('/uploads/photos/' . $uploadedPhotoFilename)
                     ->setUploadedAt(new \DateTime())
                     ->setUploader($user);
+
+                // Une photo de commentaire appartient aussi au signalement afin
+                // de conserver les règles de visibilité et de modération.
                 $report->addPhoto($photo);
                 $comment->addPhoto($photo);
                 $entityManager->persist($photo);
@@ -305,19 +315,31 @@ final class ReportController extends AbstractController
                 $entityManager->flush();
             } catch (\Throwable $exception) {
                 if ($uploadedPhotoFilename !== null) {
-                    $this->cleanupFailedPhotoUploads([$uploadedPhotoFilename], $fileUploader, $logger);
+                    $this->cleanupFailedPhotoUploads(
+                        [$uploadedPhotoFilename],
+                        $fileUploader,
+                        $logger,
+                    );
                 }
-                throw $exception;
+                $logger->error('Échec de l’enregistrement en base d’un commentaire.', [
+                    'report_id' => $report->getId(),
+                    'user_id' => $user->getId(),
+                    'exception' => $exception,
+                ]);
+                $this->addFlash(
+                    'error',
+                    $this->translator->trans('flash.comment_save_failed')
+                );
+
+                return $this->redirectToRoute('app_report_show', ['id' => $report->getId()]);
             }
+
+            $this->addFlash('success', $this->translator->trans('flash.comment_added'));
 
             return $this->redirectToRoute('app_report_show', ['id' => $report->getId()]);
         }
 
-        return $this->render('report/show.html.twig', [
-            'report' => $report,
-            'comments' => $report->getComments(),
-            'commentForm' => $commentForm,
-        ]);
+        return $this->renderReportDetails($report, $commentForm, $moderationVisibility);
     }
 
     #[Route('/{id}/edit', name: 'app_report_edit', methods: ['GET', 'POST'])]
@@ -511,5 +533,48 @@ private function denyReportVisible(Report $report): void
         if ($user->getCity() === null || $report->getCity()?->getId() !== $user->getCity()?->getId()) {
             throw $this->createAccessDeniedException($this->translator->trans('security.report_wrong_city'));
         }
+    }
+
+private function renderReportDetails(
+        Report $report,
+        FormInterface $commentForm,
+        ModerationVisibility $moderationVisibility,
+        int $statusCode = Response::HTTP_OK,
+    ): Response {
+        $comments = $moderationVisibility->visibleComments($report);
+        usort(
+            $comments,
+            static fn (Comment $first, Comment $second): int => $second->getCreatedAt() <=> $first->getCreatedAt()
+        );
+
+        $visibleCommentIds = [];
+        foreach ($comments as $comment) {
+            if ($comment->getId() !== null) {
+                $visibleCommentIds[$comment->getId()] = true;
+            }
+        }
+
+        $reportPhotos = [];
+        $commentPhotos = [];
+        foreach ($moderationVisibility->visiblePhotos($report) as $photo) {
+            $commentId = $photo->getComment()?->getId();
+            if ($commentId === null) {
+                $reportPhotos[] = $photo;
+            } elseif (isset($visibleCommentIds[$commentId])) {
+                // Une photo ne doit jamais révéler un commentaire masqué.
+                $commentPhotos[$commentId][] = $photo;
+            }
+        }
+
+        $response = $this->render('report/show.html.twig', [
+            'report' => $report,
+            'comments' => $comments,
+            'photos' => $reportPhotos,
+            'commentPhotos' => $commentPhotos,
+            'commentForm' => $commentForm,
+        ]);
+        $response->setStatusCode($statusCode);
+
+        return $response;
     }
 }

@@ -1,48 +1,224 @@
+{# Détail d’un signalement et de ses échanges. #}
 {% extends 'base.html.twig' %}
 
-{% block title %}Détail du signalement{% endblock %}
+{% block title %}{{ 'report.number'|trans({'%id%': report.id}) }}{% endblock %}
 
 {% block body %}
-<main>
-    <h1>Détail du signalement</h1>
-    <p>{{ report.category ? report.category.name : 'Autre' }}</p>
-    <p>{{ report.address ?: 'Adresse non renseignée' }}</p>
-    <p>{{ report.description }}</p>
-    <p>Créé le {{ report.createdAt|date('d/m/Y H:i') }}</p>
+{% set statusMeta = {
+    reported: {label: 'report.status.reported'|trans, panel: 'bg-orange-500', badge: 'bg-orange-100 text-orange-700'},
+    in_progress: {label: 'report.status.in_progress'|trans, panel: 'bg-slate-950', badge: 'bg-blue-100 text-blue-700'},
+    resolved: {label: 'report.status.resolved'|trans, panel: 'bg-emerald-700', badge: 'bg-emerald-100 text-emerald-700'}
+} %}
+{% set gravityLabels = {low: 'gravity.low'|trans, medium: 'gravity.medium'|trans, high: 'gravity.high'|trans} %}
+{% set meta = statusMeta[report.status.value] %}
+{# Utilise la dernière transition persistée au lieu d’une date générique. #}
+{% set currentStatusAt = report.latestStatusHistory ? report.latestStatusHistory.changedAt : (report.updatedAt ?: report.createdAt) %}
 
-    {% include 'report/_status_steps.html.twig' with {report: report} %}
+<main class="mx-auto min-h-screen max-w-md bg-white pb-28 text-slate-950 shadow-xl lg:max-w-5xl lg:pb-12 lg:pt-20 lg:shadow-none">
+    <header class="flex h-24 items-center border-b border-slate-100 px-5">
+        <a href="{{ path('app_report_map') }}" class="flex size-10 items-center justify-center" aria-label="{{ 'report.back_map'|trans }}">{{ include('components/_icon.html.twig', {name: 'back', class: 'size-7'}) }}</a>
+        <h1 class="flex-1 text-center text-xl font-bold">{{ 'report.detail'|trans }}</h1>
+        <a href="mailto:?subject={{ ('report.number'|trans({'%id%': report.id}))|url_encode }}&amp;body={{ absolute_url(path('app_report_show', {id: report.id}))|url_encode }}" class="flex size-10 items-center justify-center" aria-label="{{ 'common.share_email'|trans }}">{{ include('components/_icon.html.twig', {name: 'share', class: 'size-6'}) }}</a>
+    </header>
 
-    {% if report.photos is not empty %}
-        <section>
-            <h2>Photos</h2>
-            {% for photo in report.photos %}
-                <img src="{{ asset(photo.url) }}" alt="Photo du signalement">
-            {% endfor %}
+    <div class="space-y-6 px-5 pt-6 lg:px-8 lg:py-8">
+        {% for message in app.flashes('success') %}
+            <div class="rounded-2xl bg-emerald-50 px-4 py-3 text-sm font-semibold text-emerald-800 ring-1 ring-emerald-100">{{ message }}</div>
+        {% endfor %}
+        {% for message in app.flashes('warning') %}
+            <div class="rounded-2xl bg-orange-50 px-4 py-3 text-sm font-semibold text-orange-800 ring-1 ring-orange-100">{{ message }}</div>
+        {% endfor %}
+        {% for message in app.flashes('error') %}
+            {# Rend visible un échec d’enregistrement après la redirection de sécurité. #}
+            <div class="rounded-2xl bg-red-50 px-4 py-3 text-sm font-semibold text-red-800 ring-1 ring-red-100">{{ message }}</div>
+        {% endfor %}
+
+        <section class="{{ meta.panel }} flex items-center justify-between gap-3 rounded-2xl px-4 py-4 text-white" aria-label="{{ 'report.current_status'|trans }}">
+            <p class="flex items-center gap-2 font-semibold"><span class="size-3 rounded-full bg-white"></span>{{ meta.label }}</p>
+            <p class="text-xs text-white/70">{{ 'report.updated'|trans({'%date%': currentStatusAt|date('d/m H:i')}) }}</p>
         </section>
-    {% endif %}
+
+        <article class="rounded-2xl border border-slate-200 p-5 shadow-sm">
+            <div class="flex items-start gap-4">
+                <span class="flex size-16 shrink-0 items-center justify-center rounded-xl bg-red-600 text-white" aria-hidden="true">{{ include('components/_icon.html.twig', {name: 'car', class: 'size-8'}) }}</span>
+                <div class="min-w-0 flex-1">
+                    <div class="flex items-start justify-between gap-2">
+                        <h2 class="text-xl font-bold">{{ report.category.name }}</h2>
+                        <span class="shrink-0 rounded-lg bg-slate-100 px-3 py-1 text-xs font-semibold">{{ gravityLabels[report.gravityLevel.value] }}</span>
+                    </div>
+                    <p class="mt-2 flex items-center gap-1 text-sm font-semibold">{{ include('components/_icon.html.twig', {name: 'pin', class: 'size-4'}) }} {{ report.address ?: 'report.address_missing'|trans }}</p>
+                    <p class="mt-2 flex items-center gap-1 text-xs text-slate-500">{{ include('components/_icon.html.twig', {name: 'clock', class: 'size-4'}) }} {{ 'report.reported_on'|trans({'%date%': report.createdAt|date('d/m/Y H:i')}) }}</p>
+                </div>
+            </div>
+            <p class="mt-5 whitespace-pre-line text-sm font-medium leading-7">{{ report.description ?: 'report.description_missing'|trans }}</p>
+        </article>
+
+        {% if photos is not empty %}
+            <section aria-labelledby="report-photos">
+                <h2 id="report-photos" class="mb-3 text-lg font-bold text-slate-500">{{ 'report.photo_count'|trans({'%count%': photos|length}) }}</h2>
+                <div class="grid grid-cols-2 gap-3 lg:grid-cols-3">
+                    {% for photo in photos %}
+                        <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white">
+                            <a href="{{ asset(photo.url) }}" class="block aspect-[4/3] overflow-hidden bg-slate-200" target="_blank" rel="noreferrer">
+                                <img src="{{ asset(photo.url) }}" alt="{{ 'report.report_photo'|trans }}" class="size-full object-cover">
+                            </a>
+                            {% if not photo.uploader or photo.uploader.id != app.user.id %}
+                                <details class="group">
+                                    <summary class="cursor-pointer list-none px-3 py-2 text-center text-xs font-semibold text-slate-500">{{ 'moderation.flag_photo'|trans }}</summary>
+                                    <form method="post" action="{{ path('app_moderation_flag_photo', {id: photo.id}) }}" class="space-y-2 border-t border-slate-100 p-3">
+                                        <input type="hidden" name="_token" value="{{ csrf_token('flag_photo_' ~ photo.id) }}">
+                                        <select name="reason" class="h-9 w-full rounded-lg border border-slate-200 bg-white px-2 text-xs">
+                                            <option value="inappropriate">{{ 'moderation.reason.inappropriate'|trans }}</option>
+                                            <option value="personal_data">{{ 'moderation.reason.personal_data'|trans }}</option>
+                                            <option value="dangerous">{{ 'moderation.reason.dangerous'|trans }}</option>
+                                            <option value="spam">{{ 'moderation.reason.spam'|trans }}</option>
+                                        </select>
+                                        <button type="submit" class="h-9 w-full rounded-lg bg-red-50 text-xs font-bold text-red-700">{{ 'common.submit'|trans }}</button>
+                                    </form>
+                                </details>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
+            </section>
+        {% endif %}
+
+        <section aria-labelledby="report-location">
+            <h2 id="report-location" class="sr-only">{{ 'report.location'|trans }}</h2>
+            <div class="relative h-40 overflow-hidden rounded-2xl bg-slate-200">
+                <div class="absolute inset-0 bg-[linear-gradient(90deg,transparent_47%,white_48%,white_52%,transparent_53%),linear-gradient(0deg,transparent_47%,white_48%,white_52%,transparent_53%)] bg-[size:130px_100px]"></div>
+                <span class="absolute left-4 top-4 rounded-full bg-white px-3 py-2 text-xs font-semibold shadow">{{ report.address ?: report.city.name }}</span>
+                <span class="absolute left-1/2 top-1/2 flex size-11 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-2xl border-2 border-white bg-slate-950 text-white shadow">{{ include('components/_icon.html.twig', {name: 'car', class: 'size-5'}) }}</span>
+                {% if report.latitude and report.longitude %}
+                    <a href="https://www.google.com/maps/search/?api=1&amp;query={{ report.latitude }},{{ report.longitude }}" class="absolute bottom-3 right-3 rounded-xl bg-white px-3 py-2 text-xs font-semibold shadow" rel="noreferrer">{{ 'common.directions'|trans }}</a>
+                {% endif %}
+            </div>
+        </section>
+
+        <section aria-labelledby="report-progress">
+            <div class="mb-4 flex items-center justify-between">
+                <h2 id="report-progress" class="text-xl font-bold">{{ 'report.tracking'|trans }}</h2>
+                {% if report.reporter and app.user and report.reporter.id == app.user.id %}
+                    <a href="{{ path('app_report_follow_up', {id: report.id}) }}" class="text-sm font-semibold text-red-600">{{ 'report.view_tracking'|trans }}</a>
+                {% endif %}
+            </div>
+            {% include 'report/_status_steps.html.twig' with {report: report} %}
+        </section>
+
+        <section id="comments" aria-labelledby="report-comments">
+            <h2 id="report-comments" class="mb-4 text-xl font-bold">{{ 'report.comments_count'|trans({'%count%': comments|length}) }}</h2>
+            <div class="space-y-3">
+                {% for comment in comments %}
+                    <article class="rounded-2xl border border-slate-200 p-4">
+                        <div class="flex items-center justify-between gap-3">
+                            <h3 class="font-bold">{{ comment.author ? comment.author.firstName ~ ' ' ~ comment.author.lastName|slice(0, 1) ~ '.' : 'report.safecity_user'|trans }}</h3>
+                            <time class="text-xs text-slate-500" datetime="{{ comment.createdAt|date('c') }}">{{ comment.createdAt|date('d/m à H:i') }}</time>
+                        </div>
+                        <p class="mt-2 whitespace-pre-line text-sm leading-6 text-slate-700">{{ comment.content }}</p>
+                        {% set attachedPhotos = commentPhotos[comment.id] ?? [] %}
+                        {% if attachedPhotos is not empty %}
+                            <p class="mt-3 text-xs font-semibold text-slate-500">
+                                {{ (attachedPhotos|length == 1 ? 'report.added_photo_one' : 'report.added_photo_count')|trans({'%count%': attachedPhotos|length}) }}
+                            </p>
+                            <div class="mt-2 grid grid-cols-2 gap-2">
+                                {% for photo in attachedPhotos %}
+                                    <div class="overflow-hidden rounded-xl border border-slate-200 bg-slate-50">
+                                        <a href="{{ asset(photo.url) }}" class="block aspect-[4/3] overflow-hidden" target="_blank" rel="noreferrer">
+                                            <img src="{{ asset(photo.url) }}" alt="{{ 'report.comment_photo'|trans }}" class="size-full object-cover">
+                                        </a>
+                                        {% if not photo.uploader or photo.uploader.id != app.user.id %}
+                                            <details class="group">
+                                                <summary class="cursor-pointer list-none px-2 py-2 text-center text-xs font-semibold text-slate-500">{{ 'moderation.flag_photo'|trans }}</summary>
+                                                <form method="post" action="{{ path('app_moderation_flag_photo', {id: photo.id}) }}" class="space-y-2 border-t border-slate-100 p-2">
+                                                    <input type="hidden" name="_token" value="{{ csrf_token('flag_photo_' ~ photo.id) }}">
+                                                    <select name="reason" class="h-9 w-full rounded-lg border border-slate-200 bg-white px-2 text-xs">
+                                                        <option value="inappropriate">{{ 'moderation.reason.inappropriate'|trans }}</option>
+                                                        <option value="personal_data">{{ 'moderation.reason.personal_data'|trans }}</option>
+                                                        <option value="dangerous">{{ 'moderation.reason.dangerous'|trans }}</option>
+                                                        <option value="spam">{{ 'moderation.reason.spam'|trans }}</option>
+                                                    </select>
+                                                    <button type="submit" class="h-9 w-full rounded-lg bg-red-50 text-xs font-bold text-red-700">{{ 'common.submit'|trans }}</button>
+                                                </form>
+                                            </details>
+                                        {% endif %}
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                        {% if not comment.author or comment.author.id != app.user.id %}
+                            <details class="group mt-3 border-t border-slate-100 pt-2">
+                                <summary class="cursor-pointer list-none text-right text-xs font-semibold text-slate-400">{{ 'moderation.flag'|trans }}</summary>
+                                <form method="post" action="{{ path('app_moderation_flag_comment', {id: comment.id}) }}" class="mt-2 flex gap-2">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('flag_comment_' ~ comment.id) }}">
+                                    <select name="reason" class="h-9 min-w-0 flex-1 rounded-lg border border-slate-200 bg-white px-2 text-xs">
+                                        <option value="inappropriate">{{ 'moderation.reason.inappropriate'|trans }}</option>
+                                        <option value="personal_data">{{ 'moderation.reason.personal_data'|trans }}</option>
+                                        <option value="dangerous">{{ 'moderation.reason.dangerous'|trans }}</option>
+                                        <option value="spam">{{ 'moderation.reason.spam'|trans }}</option>
+                                    </select>
+                                    <button type="submit" class="h-9 rounded-lg bg-red-50 px-3 text-xs font-bold text-red-700">{{ 'common.submit'|trans }}</button>
+                                </form>
+                            </details>
+                        {% endif %}
+                    </article>
+                {% else %}
+                    <p class="rounded-2xl bg-slate-50 p-4 text-sm text-slate-500">{{ 'report.no_comment'|trans }}</p>
+                {% endfor %}
+            </div>
+
+            {{ form_start(commentForm, {attr: {
+                class: 'mt-5 rounded-2xl border border-slate-200 bg-white p-3',
+                'data-controller': 'photo-preview',
+                'data-camera-access': app.user.profile and app.user.profile.cameraAccess ? 'true' : 'false'
+            }}) }}
+                {{ form_label(commentForm.content, null, {label_attr: {class: 'sr-only'}}) }}
+                <div class="flex items-end gap-2">
+                    {{ form_widget(commentForm.content, {attr: {class: 'min-h-12 flex-1 resize-none border-0 bg-transparent px-2 py-3 text-sm outline-none placeholder:text-slate-500 focus:ring-0'}}) }}
+                    <button type="submit" class="flex size-12 shrink-0 items-center justify-center rounded-xl bg-slate-950 text-white" aria-label="{{ 'report.send_comment'|trans }}">{{ include('components/_icon.html.twig', {name: 'send', class: 'size-5'}) }}</button>
+                </div>
+                <div class="px-2 text-xs font-medium text-red-600">{{ form_errors(commentForm.content) }}</div>
+                <div
+                    class="slot relative mt-2 flex min-h-20 cursor-pointer items-center gap-3 overflow-hidden rounded-xl border border-dashed border-slate-300 bg-slate-50 px-3 py-3"
+                    data-photo-preview-target="slot"
+                    data-action="click->photo-preview#select"
+                >
+                    <span class="placeholder flex items-center gap-2 text-sm font-semibold text-slate-600">
+                        <span class="flex size-9 items-center justify-center rounded-lg bg-white shadow-sm" aria-hidden="true">{{ include('components/_icon.html.twig', {name: 'image', class: 'size-5'}) }}</span>
+                        {{ 'form.add_photo'|trans }}
+                    </span>
+                    <img src="" alt="{{ 'report.photo_preview'|trans }}" class="preview-image hidden h-20 w-28 rounded-lg object-cover">
+                    <button
+                        type="button"
+                        class="remove hidden rounded-lg bg-white px-3 py-2 text-xs font-bold text-red-700 shadow-sm"
+                        data-action="photo-preview#remove"
+                    >
+                        {{ 'common.remove'|trans }}
+                    </button>
+                    {{ form_widget(commentForm.photo, {attr: {
+                        class: 'sr-only',
+                        accept: 'image/jpeg,image/png,image/webp',
+                        'data-photo-preview-target': 'input',
+                        'data-action': 'change->photo-preview#preview'
+                    }}) }}
+                </div>
+                <div class="px-2 pt-1 text-xs font-medium text-red-600">{{ form_errors(commentForm.photo) }}</div>
+                {% if app.user.profile and app.user.profile.cameraAccess %}
+                    <button
+                        type="button"
+                        class="mt-2 flex h-10 w-full items-center justify-center gap-2 rounded-xl bg-slate-950 px-3 text-xs font-semibold text-white"
+                        data-action="photo-preview#capture"
+                    >
+                        {{ include('components/_icon.html.twig', {name: 'camera', class: 'size-4'}) }}
+                        {{ 'report.take_photo'|trans }}
+                    </button>
+                {% else %}
+                    <p class="px-2 pt-2 text-xs text-slate-500">{{ 'report.gallery_camera_disabled'|trans }}</p>
+                {% endif %}
+                <div class="px-2 text-xs font-medium text-red-600">{{ form_errors(commentForm) }}</div>
+            {{ form_end(commentForm) }}
+        </section>
+    </div>
 </main>
 
-<section id="comments">
-    <h2>Commentaires : {{ comments|length }}</h2>
-
-    {% for comment in comments %}
-        <article>
-            <strong>{{ comment.author ? comment.author.firstName : 'Utilisateur SafeCity' }}</strong>
-            <p>{{ comment.content }}</p>
-            {% if comment.photos is not empty %}
-                <p>{{ comment.photos|length }} photo ajoutée</p>
-                {% for photo in comment.photos %}
-                    <img src="{{ asset(photo.url) }}" alt="Photo ajoutée au commentaire">
-                {% endfor %}
-            {% endif %}
-        </article>
-    {% else %}
-        <p>Aucun commentaire pour le moment.</p>
-    {% endfor %}
-
-    {{ form_start(commentForm, {attr: {'data-controller': 'photo-preview'}}) }}
-        {{ form_row(commentForm.content) }}
-        <button type="submit">Envoyer</button>
-    {{ form_end(commentForm) }}
-</section>
+{% include 'components/_bottom_nav.html.twig' with {active: 'map'} %}
 {% endblock %}

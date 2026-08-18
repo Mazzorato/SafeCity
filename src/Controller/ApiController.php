@@ -10,6 +10,7 @@ use App\Entity\Parking;
 use App\Entity\Report;
 use App\Entity\User;
 use App\Enum\ReportStatusEnum;
+use App\Service\ModerationVisibility;
 use App\Service\TisseoOpenDataClient;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -46,6 +47,7 @@ final class ApiController extends AbstractController
     public function reports(
         EntityManagerInterface $entityManager,
         Request $request,
+        ModerationVisibility $moderationVisibility,
     ): JsonResponse
     {
         $this->denyAccessUnlessGranted('ROLE_USER');
@@ -111,8 +113,8 @@ final class ApiController extends AbstractController
                 ],
                 'createdAt' => $report->getCreatedAt()?->format(\DateTimeInterface::ATOM),
                 'updatedAt' => $report->getUpdatedAt()?->format(\DateTimeInterface::ATOM),
-                'commentsCount' => $report->getComments()->count(),
-                'photosCount' => $report->getPhotos()->count(),
+                'commentsCount' => count($moderationVisibility->visibleComments($report)),
+                'photosCount' => count($moderationVisibility->visiblePhotos($report)),
             ],
             $reports
         ));
@@ -289,5 +291,3 @@ final class ApiController extends AbstractController
         ];
     }
 }
-
-
