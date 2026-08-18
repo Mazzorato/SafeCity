@@ -1,36 +1,90 @@
+{# Carte des signalements géolocalisés. #}
 {% extends 'base.html.twig' %}
 
-{% block title %}Carte des incidents{% endblock %}
+{% block title %}{{ 'report.map'|trans }}{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('vendor/leaflet/dist/leaflet.min.css') }}">
+{% endblock %}
 
 {% block body %}
-<div> 
-    <h1> Carte des incidents </h1>
+<main class="mx-auto min-h-screen max-w-md bg-white pb-28 text-slate-950 shadow-xl lg:max-w-7xl lg:pb-12 lg:pt-20 lg:shadow-none">
+    <header class="px-5 pb-4 pt-6">
+        <div class="flex items-center gap-4">
+            <a href="{{ path('app_home') }}" class="flex size-10 items-center justify-center" aria-label="{{ 'common.back_home'|trans }}">{{ include('components/_icon.html.twig', {name: 'back', class: 'size-8'}) }}</a>
+            <h1 class="flex-1 text-2xl font-bold">{{ 'report.map'|trans }}</h1>
+            <span class="flex size-11 items-center justify-center rounded-xl border border-red-300 bg-red-100 text-red-600" aria-hidden="true">{{ include('components/_icon.html.twig', {name: 'filter', class: 'size-6'}) }}</span>
+            <span class="flex size-11 items-center justify-center rounded-xl border border-red-300 bg-red-100 text-red-600" aria-hidden="true">{{ include('components/_icon.html.twig', {name: 'layers', class: 'size-6'}) }}</span>
+        </div>
+    </header>
 
-    <nav>
-        <a href="{{ path('app_report_map', {category: 'all'}) }}" class="{{ category == 'all' ? 'active' : '' }}">Tous</a>
-        <a href="{{ path('app_report_map', {category: 'accidents'}) }}" class="{{ category == 'accidents' ? 'active' : '' }}">Accident</a>
-        <a href="{{ path('app_report_map', {category: 'travaux'}) }}" class="{{ category == 'travaux' ? 'active' : '' }}">Travaux</a>
-        <a href="{{ path('app_report_map', {category: 'urgences'}) }}" class="{{ category == 'urgences' ? 'active' : '' }}">Urgences</a>
+    <nav class="flex gap-2 overflow-x-auto border-b border-red-100 px-5 pb-5 pt-2" aria-label="{{ 'report.filter_incidents'|trans }}">
+        {% set filters = {
+            'all': 'common.all'|trans,
+            'accidents': 'report.category.accident_plural'|trans,
+            'travaux': 'report.category.travaux'|trans,
+            'urgences': 'report.category.emergency_plural'|trans
+        } %}
+        {% for value, label in filters %}
+            <a href="{{ path('app_report_map', {category: value}) }}" class="shrink-0 rounded-2xl px-5 py-3 text-sm font-semibold {{ category == value ? 'bg-red-600 text-white' : 'border border-slate-200 bg-white text-slate-700' }}" {% if category == value %}aria-current="page"{% endif %}>{{ label }}</a>
+        {% endfor %}
     </nav>
 
-    <div> Carte à venir</div>
+    <div class="px-5 pt-6 lg:px-8">
+        <section
+            class="relative h-[30rem] overflow-hidden rounded-3xl border-4 border-slate-900 bg-slate-200 lg:h-[38rem]"
+            aria-label="{{ 'report.interactive_map'|trans }}"
+            data-controller="incident-map"
+            {# Un dossier résolu reste consultable, mais son alerte disparaît de la carte. #}
+            data-incident-map-reports-url-value="{{ path('app_api_reports', {category: category, excludeResolved: 1}) }}"
+            data-incident-map-mercure-url-value=""
+            data-incident-map-detail-base-url-value="{{ path('app_report_show', {id: 0})|replace({'/0': ''}) }}"
+            data-incident-map-center-latitude-value="{{ city and city.latitude ? city.latitude : 43.6045 }}"
+            data-incident-map-center-longitude-value="{{ city and city.longitude ? city.longitude : 1.444 }}"
+            data-incident-map-loading-message-value="{{ 'report.map_loading'|trans }}"
+            data-incident-map-load-error-message-value="{{ 'report.map_load_error'|trans }}"
+            data-incident-map-count-message-value="{{ 'report.map_count'|trans }}"
+            data-incident-map-incident-message-value="{{ 'report.incident'|trans }}"
+            data-incident-map-location-unavailable-message-value="{{ 'location.unavailable_short'|trans }}"
+            data-incident-map-location-searching-message-value="{{ 'location.searching'|trans }}"
+            data-incident-map-location-centered-message-value="{{ 'location.map_centered'|trans }}"
+            data-incident-map-location-error-message-value="{{ 'location.position_error'|trans }}"
+            data-incident-map-realtime-error-message-value="{{ 'report.realtime_unavailable'|trans }}"
+        >
+            <div class="size-full" data-incident-map-target="canvas"></div>
+            <span class="pointer-events-none absolute left-4 top-4 z-[1000] rounded-2xl bg-red-600 px-5 py-3 text-sm font-bold text-white shadow">{{ city ? 'city.center'|trans({'%city%': city.name}) : 'city.your_city'|trans }}</span>
+            <button type="button" class="absolute right-4 top-4 z-[1000] flex size-12 items-center justify-center rounded-2xl border-2 border-red-600 bg-white text-red-600 shadow" aria-label="{{ 'location.center_map'|trans }}" data-action="incident-map#recenter">{{ include('components/_icon.html.twig', {name: 'target', class: 'size-6'}) }}</button>
+            <span class="absolute bottom-3 left-3 z-[1000] max-w-[65%] rounded-full bg-white/95 px-3 py-2 text-xs font-medium text-slate-500 shadow" data-incident-map-target="status">{{ 'report.map_loading'|trans }}</span>
+        </section>
 
-    {% if reports is empty %}
-        <p>Aucun signalement dans votre ville pour le moment.</p>
-    {% else %}
-        <ul>
-            {% for report in reports %}
-                <li>{{ report.category.icon }}
-                    {{ report.category.name }}
-                    <span>{{ report.status.value }}</span>
-                    {% if report.address %}
-                        <p>{{ report.address }}</p>
-                    {% endif %}
-                    <p> {{ report.createdAt|date('d/m/Y h:i') }} - {{ report.comments|length }} commentaire(s), {{ report.photos|length }} photo(s) </p>
-                    <a href="{{ path('app_report_show', {id: report.id}) }}"> Voir détail</a>
-                </li>
-            {% endfor %}
-        </ul>
-    {% endif %}
-</div>
+        <section class="mt-5" aria-labelledby="map-reports">
+            <h2 id="map-reports" class="sr-only">{{ 'report.visible_incidents'|trans }}</h2>
+            {% set selectedReport = reports|first %}
+            {% if selectedReport %}
+                <article class="rounded-3xl border-2 border-red-600 bg-red-100 p-5 text-red-950">
+                    <div class="flex items-start gap-4">
+                        <span class="flex size-16 shrink-0 items-center justify-center rounded-2xl border-2 border-white bg-red-600 text-white">{{ include('components/_icon.html.twig', {name: 'car', class: 'size-8'}) }}</span>
+                        <div class="min-w-0 flex-1">
+                            <div class="flex items-start justify-between gap-2">
+                                <h3 class="text-2xl font-bold leading-tight">{{ selectedReport.category.name }}</h3>
+                                <span class="shrink-0 rounded-full border border-red-500 bg-white px-3 py-1 text-[10px] font-bold text-red-600">{{ ('report.status.' ~ selectedReport.status.value)|trans }}</span>
+                            </div>
+                            <p class="mt-2 text-sm font-semibold">{{ selectedReport.address ?: selectedReport.city.name }} · {{ selectedReport.createdAt|date('d/m H:i') }}</p>
+                        </div>
+                    </div>
+                    <p class="mt-4 line-clamp-2 font-semibold leading-6">{{ selectedReport.description }}</p>
+                    <div class="mt-5 flex items-center gap-5 border-t-2 border-red-300 pt-3 text-sm font-semibold">
+                        <span class="flex items-center gap-1">{{ include('components/_icon.html.twig', {name: 'comment', class: 'size-5'}) }} {{ selectedReport.comments|length }}</span>
+                        <span class="flex items-center gap-1">{{ include('components/_icon.html.twig', {name: 'image', class: 'size-5'}) }} {{ selectedReport.photos|length }}</span>
+                        <a href="{{ path('app_report_show', {id: selectedReport.id}) }}" class="ml-auto text-red-700 underline underline-offset-4">{{ 'common.view_detail'|trans }}</a>
+                    </div>
+                </article>
+            {% else %}
+                <div class="rounded-2xl bg-slate-50 p-7 text-center text-sm text-slate-500">{{ 'report.none_city'|trans }}</div>
+            {% endif %}
+        </section>
+    </div>
+</main>
+
+{% include 'components/_bottom_nav.html.twig' with {active: 'map'} %}
 {% endblock %}

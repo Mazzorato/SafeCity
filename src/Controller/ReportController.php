@@ -15,9 +15,9 @@ use Psr\Log\LoggerInterface;
 use App\Enum\ReportStatusEnum;
 
 use App\Entity\Photo;
+use App\Entity\User;
 use App\Service\FileUploader;
 use App\Entity\Report;
-use App\Entity\ReportCategory;
 use App\Form\ReportType;
 use App\Repository\ReportRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -59,16 +59,6 @@ final class ReportController extends AbstractController
 
         $report = new Report();
         $report->setCity($user->getCity());
-
-        $categoryIcon = $request->query->getString('category');
-        if ($categoryIcon !== '') {
-            $category = $entityManager->getRepository(ReportCategory::class)->findOneBy([
-                'icon' => $categoryIcon,
-            ]);
-            if ($category !== null) {
-                $report->setCategory($category);
-            }
-        }
 
         $form = $this->createForm(ReportType::class, $report, [
             'report_creation' => true,
@@ -156,6 +146,8 @@ final class ReportController extends AbstractController
 
                 return $this->redirectToRoute('app_report_new');
             }
+
+            $realtimePublisher->publish($report, 'report.created');
 
             $this->addFlash('success', $this->translator->trans('flash.report_sent'));
 
@@ -318,25 +310,26 @@ final class ReportController extends AbstractController
         return $this->redirectToRoute('app_report_index', [], Response::HTTP_SEE_OTHER);
     }
 
-    #[Route('/map/view', name: 'app_report_map', methods: ['GET'])]
+#[Route('/map/view', name: 'app_report_map', methods: ['GET'])]
     public function map(EntityManagerInterface $entityManager, Request $request): Response
     {
         $this->denyAccessUnlessGranted('ROLE_USER');
 
-        /** @var \App\Entity\User $user */
+        /** @var User $user */
         $user = $this->getUser();
-        $city =$user->getCity();
-
-        $category = $request->query->get('category', 'all');
+        $city = $user->getCity();
+        $category = $request->query->getString('category', 'all');
         $groups = [
-            'accidents' => ['accident', 'route'],
-            'travaux' => ['travaux'],
-            'urgences' => ['incendie', 'sante'],
+            'accidents' => ['accident', 'route', 'voiture'],
+            'travaux' => ['travaux', 'chantier'],
+            'urgences' => ['incendie', 'sante', 'santé', 'urgence'],
         ];
+        if ($category !== 'all' && !array_key_exists($category, $groups)) {
+            $category = 'all';
+        }
 
         $reports = [];
-
-        if ($city) {
+        if ($city !== null) {
             $allReports = $entityManager->getRepository(Report::class)->findBy(
                 ['city' => $city],
                 ['createdAt' => 'DESC']
@@ -344,13 +337,21 @@ final class ReportController extends AbstractController
 
             $reports = $category === 'all'
                 ? $allReports
-                : array_filter($allReports, fn(Report $r) => in_array($r->getCategory()->getIcon(), $groups[$category] ?? []));
+                : array_values(array_filter(
+                    $allReports,
+                    static fn (Report $report): bool => in_array(
+                        mb_strtolower((string) $report->getCategory()?->getIcon()),
+                        $groups[$category],
+                        true
+                    )
+                ));
         }
 
         return $this->render('report/map.html.twig', [
             'reports' => $reports,
             'city' => $city,
             'category' => $category,
+            'reportTopic' => null,
         ]);
     }
 
@@ -358,7 +359,7 @@ public function __construct(private TranslatorInterface $translator)
     {
     }
 
-private function cleanupFailedPhotoUploads(
+    private function cleanupFailedPhotoUploads(
         array $photoFilenames,
         FileUploader $fileUploader,
         LoggerInterface $logger,
@@ -413,7 +414,7 @@ private function reportStats(array $reports): array
         return $stats;
     }
 
-private function denyReportOwnerOrAdmin(Report $report): void
+    private function denyReportOwnerOrAdmin(Report $report): void
     {
         $this->denyAccessUnlessGranted('ROLE_USER');
         if ($this->isGranted('ROLE_ADMIN')) {

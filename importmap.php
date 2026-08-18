@@ -1,5 +1,7 @@
 <?php
 
+// Associe les imports JavaScript aux ressources gérées localement par AssetMapper.
+
 /**
  * Returns the importmap for this application.
  *
@@ -27,4 +29,6 @@ return [
     '@hotwired/stimulus' => ['version' => '3.2.2'],
     '@symfony/stimulus-bundle' => ['path' => './vendor/symfony/stimulus-bundle/assets/dist/loader.js'],
     '@hotwired/turbo' => ['version' => '8.0.23'],
+    'leaflet' => ['version' => '1.9.4'],
+    'leaflet/dist/leaflet.min.css' => ['version' => '1.9.4', 'type' => 'css'],
 ];
