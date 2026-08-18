@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use App\Entity\Profile;
+
 use App\Entity\User;
 use App\Form\RegistrationFormType;
 use App\Repository\UserRepository;
@@ -42,10 +44,20 @@ class RegistrationController extends AbstractController
             $user->setAccountActive(true);
             $user->setCguAccepted($form->get('agreeTerms')->getData());
 
+            $user->setProfile(
+                (new Profile())
+                    ->setEmergencyNotifications(true)
+                    ->setWeatherNotifications(true)
+                    ->setTransportNotifications(true)
+                    ->setEventNotifications(true)
+                    ->setMicrophoneAccess(false)
+                    ->setCameraAccess(false)
+                    ->setLocationAccess(false)
+                    ->setLanguage('fr')
+            );
             $entityManager->persist($user);
             $entityManager->flush();
 
-            // generate a signed url and email it to the user
             $this->emailVerifier->sendEmailConfirmation('app_verify_email', $user,
                 (new TemplatedEmail())
                     ->from(new Address('admin@safecity.fr', 'SafeCity'))
@@ -54,7 +66,6 @@ class RegistrationController extends AbstractController
                     ->htmlTemplate('registration/confirmation_email.html.twig')
             );
 
-            // do anything else you need here, like send an email
 
             return $this->redirectToRoute('app_login');
         }
@@ -88,7 +99,6 @@ class RegistrationController extends AbstractController
             return $this->redirectToRoute('app_register');
         }
 
-        // @TODO Change the redirect on success and handle or remove the flash message in your templates
         $this->addFlash('success', 'Your email address has been verified.');
 
         return $this->redirectToRoute('app_login');
