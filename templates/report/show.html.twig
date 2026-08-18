@@ -21,6 +21,22 @@
         </section>
     {% endif %}
 </main>
+
+<section id="comments">
+    <h2>Commentaires : {{ comments|length }}</h2>
+
+    {% for comment in comments %}
+        <article>
+            <strong>{{ comment.author ? comment.author.firstName : 'Utilisateur SafeCity' }}</strong>
+            <p>{{ comment.content }}</p>
+        </article>
+    {% else %}
+        <p>Aucun commentaire pour le moment.</p>
+    {% endfor %}
+
+    {{ form_start(commentForm) }}
+        {{ form_row(commentForm.content) }}
+        <button type="submit">Envoyer</button>
+    {{ form_end(commentForm) }}
+</section>
 {% endblock %}
-
-

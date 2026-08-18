@@ -2,6 +2,10 @@
 
 namespace App\Controller;
 
+use App\Form\CommentType;
+
+use App\Entity\Comment;
+
 use App\Service\ReportRouter;
 
 use App\Entity\ReportStatusHistory;
@@ -147,8 +151,6 @@ final class ReportController extends AbstractController
                 return $this->redirectToRoute('app_report_new');
             }
 
-            $realtimePublisher->publish($report, 'report.created');
-
             $this->addFlash('success', $this->translator->trans('flash.report_sent'));
 
             return $this->redirectToRoute('app_report_show', [
@@ -241,13 +243,37 @@ final class ReportController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'app_report_show', methods: ['GET'])]
-    public function show(Report $report): Response
-    {
-        return $this->render('report/show.html.twig', [
-            'report' => $report,
-        ]);
+#[Route('/{id}', name: 'app_report_show', methods: ['GET', 'POST'])]
+public function show(
+    Report $report,
+    Request $request,
+    EntityManagerInterface $entityManager,
+): Response {
+    $this->denyReportVisible($report);
+
+    /** @var User $user */
+    $user = $this->getUser();
+    $comment = new Comment();
+    $commentForm = $this->createForm(CommentType::class, $comment);
+    $commentForm->handleRequest($request);
+
+    if ($commentForm->isSubmitted() && $commentForm->isValid()) {
+        $comment
+            ->setAuthor($user)
+            ->setReport($report)
+            ->setCreatedAt(new \DateTime());
+        $entityManager->persist($comment);
+        $entityManager->flush();
+
+        return $this->redirectToRoute('app_report_show', ['id' => $report->getId()]);
     }
+
+    return $this->render('report/show.html.twig', [
+        'report' => $report,
+        'comments' => $report->getComments(),
+        'commentForm' => $commentForm,
+    ]);
+}
 
     #[Route('/{id}/edit', name: 'app_report_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Report $report, EntityManagerInterface $entityManager): Response
@@ -414,7 +440,7 @@ private function reportStats(array $reports): array
         return $stats;
     }
 
-    private function denyReportOwnerOrAdmin(Report $report): void
+private function denyReportOwnerOrAdmin(Report $report): void
     {
         $this->denyAccessUnlessGranted('ROLE_USER');
         if ($this->isGranted('ROLE_ADMIN')) {
@@ -425,6 +451,20 @@ private function reportStats(array $reports): array
         $user = $this->getUser();
         if ($report->getReporter()?->getId() !== $user->getId()) {
             throw $this->createAccessDeniedException($this->translator->trans('security.report_not_owned'));
+        }
+    }
+
+    private function denyReportVisible(Report $report): void
+    {
+        $this->denyAccessUnlessGranted('ROLE_USER');
+        if ($this->isGranted('ROLE_ADMIN')) {
+            return;
+        }
+
+        /** @var User $user */
+        $user = $this->getUser();
+        if ($user->getCity() === null || $report->getCity()?->getId() !== $user->getCity()?->getId()) {
+            throw $this->createAccessDeniedException($this->translator->trans('security.report_wrong_city'));
         }
     }
 }
