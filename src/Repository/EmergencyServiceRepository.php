@@ -7,6 +7,8 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
+ * Centralise les requêtes Doctrine liées à EmergencyService.
+ *
  * @extends ServiceEntityRepository<EmergencyService>
  */
 class EmergencyServiceRepository extends ServiceEntityRepository
@@ -41,3 +43,5 @@ class EmergencyServiceRepository extends ServiceEntityRepository
     //        ;
     //    }
 }
+
+

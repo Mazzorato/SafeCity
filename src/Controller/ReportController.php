@@ -17,6 +17,7 @@ use App\Enum\ReportStatusEnum;
 use App\Entity\Photo;
 use App\Service\FileUploader;
 use App\Entity\Report;
+use App\Entity\ReportCategory;
 use App\Form\ReportType;
 use App\Repository\ReportRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -58,6 +59,16 @@ final class ReportController extends AbstractController
 
         $report = new Report();
         $report->setCity($user->getCity());
+
+        $categoryIcon = $request->query->getString('category');
+        if ($categoryIcon !== '') {
+            $category = $entityManager->getRepository(ReportCategory::class)->findOneBy([
+                'icon' => $categoryIcon,
+            ]);
+            if ($category !== null) {
+                $report->setCategory($category);
+            }
+        }
 
         $form = $this->createForm(ReportType::class, $report, [
             'report_creation' => true,

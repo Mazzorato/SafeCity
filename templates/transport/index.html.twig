@@ -7,7 +7,7 @@
 <main class="mx-auto min-h-screen max-w-md bg-white pb-28 text-slate-950 shadow-xl lg:max-w-7xl lg:pb-12 lg:pt-20 lg:shadow-none">
     <header class="bg-white px-5 pb-5 pt-6 shadow-sm">
         <div class="flex items-center gap-4">
-            <a href="{{ path('app_transport') }}" class="flex size-10 items-center justify-center" aria-label="{{ 'mobility.back'|trans }}">{{ include('components/_icon.html.twig', {name: 'back', class: 'size-7'}) }}</a>
+            <a href="{{ path('app_mobility') }}" class="flex size-10 items-center justify-center" aria-label="{{ 'mobility.back'|trans }}">{{ include('components/_icon.html.twig', {name: 'back', class: 'size-7'}) }}</a>
             <div>
                 <h1 class="text-xl font-bold">{{ 'transport.network_title'|trans }}</h1>
                 <p class="text-sm text-slate-500">{{ city ? 'transport.local_network'|trans({'%city%': city.name}) : 'city.none_selected'|trans }}</p>
