@@ -155,73 +155,82 @@ final class ReportController extends AbstractController
         ]);
     }
 
-    #[Route('/my-reports', name: 'app_report_my_reports', methods: ['GET'])]
-public function myReports(): Response
-{
-    $this->denyAccessUnlessGranted('ROLE_USER');
-
-    /** @var \App\Entity\User $user */
-    $user = $this->getUser();
-
-    return $this->render('report/my_reports.html.twig', [
-        'reports' => $user->getReports(),
-    ]);
-}
-
-    #[Route('/{id}/follow-up', name: 'app_report_follow_up', methods: ['GET', 'POST'])]
-    public function followUp(Report $report): Response
+#[Route('/my-reports', name: 'app_report_my_reports', methods: ['GET'])]
+    public function myReports(EntityManagerInterface $entityManager, Request $request): Response
     {
         $this->denyAccessUnlessGranted('ROLE_USER');
+
+        /** @var User $user */
+        $user = $this->getUser();
+        $status = $this->validatedStatus($request->query->getString('status', 'all'));
+        $sort = $request->query->getString('sort', 'recent');
+        if (!in_array($sort, ['recent', 'oldest'], true)) {
+            $sort = 'recent';
+        }
+
+        $allReports = $entityManager->getRepository(Report::class)->createQueryBuilder('report')
+            ->where('report.reporter = :user')
+            ->setParameter('user', $user)
+            ->orderBy('report.createdAt', $sort === 'oldest' ? 'ASC' : 'DESC')
+            ->getQuery()
+            ->getResult();
+
+        return $this->render('report/my_reports.html.twig', [
+            'reports' => $this->filterReportsByStatus($allReports, $status),
+            'stats' => $this->reportStats($allReports),
+            'status' => $status,
+            'sort' => $sort,
+        ]);
+    }
+
+#[Route('/{id}/follow-up', name: 'app_report_follow_up', methods: ['GET'], requirements: ['id' => '\d+'])]
+    public function followUp(Report $report): Response
+    {
+        $this->denyReportOwnerOrAdmin($report);
 
         return $this->render('report/follow_up.html.twig', [
             'report' => $report,
         ]);
     }
 
-    #[Route('/all', name: 'app_report_all', methods: ['GET'])]
+#[Route('/all', name: 'app_report_all', methods: ['GET'])]
     public function all(EntityManagerInterface $entityManager, Request $request): Response
     {
         $this->denyAccessUnlessGranted('ROLE_USER');
 
-        /** @var \App\Entity\User $user */
+        /** @var User $user */
         $user = $this->getUser();
-
-        $status = $request->query->get('status', 'all');
-        $search = $request->query->get('query','');
-
-        $reports = [];
-        $stats = ['total' => 0, 'reported' => 0, 'inProgress' => 0, 'resolved' => 0];
-
-        $queryBuilder = $entityManager->getRepository(Report::class)->createQueryBuilder('r')
-            ->where('r.reporter = :user')
-            ->setParameter('user', $user)
-            ->orderBy('r.createdAt', 'DESC');
-
-        if ($search !== ''){
-            $queryBuilder->andWhere('Lower(r.address) LIKE :search OR LOWER (r.description) LIKE :search')
-            ->setParameter('search', '%' . strtolower($search) . '%');
+        $city = $user->getCity();
+        $status = $this->validatedStatus($request->query->getString('status', 'all'));
+        $search = trim($request->query->getString('query'));
+        $sort = $request->query->getString('sort', 'recent');
+        if (!in_array($sort, ['recent', 'oldest'], true)) {
+            $sort = 'recent';
         }
 
-        $allUserReports = $queryBuilder->getQuery()->getResult();
+        $allReports = [];
+        if ($city !== null) {
+            $queryBuilder = $entityManager->getRepository(Report::class)->createQueryBuilder('report')
+                ->where('report.city = :city')
+                ->setParameter('city', $city)
+                ->orderBy('report.createdAt', $sort === 'oldest' ? 'ASC' : 'DESC');
 
-        foreach ($allUserReports as $report) {
-            $stats['total']++;
-            match ($report->getStatus()){
-                \App\Enum\ReportStatusEnum::REPORTED => $stats['reported']++,
-                \App\Enum\ReportStatusEnum::IN_PROGRESS => $stats['inProgress']++,
-                \App\Enum\ReportStatusEnum::RESOLVED => $stats['resolved']++,
-            };
-    }
+            if ($search !== '') {
+                $queryBuilder
+                    ->andWhere('(LOWER(report.address) LIKE :search OR LOWER(report.description) LIKE :search)')
+                    ->setParameter('search', '%' . mb_strtolower($search) . '%');
+            }
 
-    $reports = $status === 'all'
-        ? $allUserReports
-        : array_filter($allUserReports, fn(Report $r) => $r->getStatus()->value === $status);
+            $allReports = $queryBuilder->getQuery()->getResult();
+        }
 
         return $this->render('report/all.html.twig', [
-            'reports' => $reports,
-            'stats' => $stats,
+            'reports' => $this->filterReportsByStatus($allReports, $status),
+            'stats' => $this->reportStats($allReports),
             'status' => $status,
-            'search' => $search
+            'search' => $search,
+            'sort' => $sort,
+            'city' => $city,
         ]);
     }
 
@@ -316,6 +325,58 @@ private function cleanupFailedPhotoUploads(
                     'exception' => $exception,
                 ]);
             }
+        }
+    }
+
+private function validatedStatus(string $status): string
+    {
+        $allowedStatuses = ['all', ...array_map(
+            static fn (ReportStatusEnum $reportStatus): string => $reportStatus->value,
+            ReportStatusEnum::cases()
+        )];
+
+        return in_array($status, $allowedStatuses, true) ? $status : 'all';
+    }
+
+private function filterReportsByStatus(array $reports, string $status): array
+    {
+        if ($status === 'all') {
+            return $reports;
+        }
+
+        return array_values(array_filter(
+            $reports,
+            static fn (Report $report): bool => $report->getStatus()?->value === $status
+        ));
+    }
+
+private function reportStats(array $reports): array
+    {
+        $stats = ['total' => count($reports), 'reported' => 0, 'inProgress' => 0, 'resolved' => 0];
+
+        foreach ($reports as $report) {
+            match ($report->getStatus()) {
+                ReportStatusEnum::REPORTED => ++$stats['reported'],
+                ReportStatusEnum::IN_PROGRESS => ++$stats['inProgress'],
+                ReportStatusEnum::RESOLVED => ++$stats['resolved'],
+                default => null,
+            };
+        }
+
+        return $stats;
+    }
+
+private function denyReportOwnerOrAdmin(Report $report): void
+    {
+        $this->denyAccessUnlessGranted('ROLE_USER');
+        if ($this->isGranted('ROLE_ADMIN')) {
+            return;
+        }
+
+        /** @var User $user */
+        $user = $this->getUser();
+        if ($report->getReporter()?->getId() !== $user->getId()) {
+            throw $this->createAccessDeniedException($this->translator->trans('security.report_not_owned'));
         }
     }
 }
