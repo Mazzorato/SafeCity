@@ -1,40 +1,203 @@
+{# Vue principale des stationnements disponibles. #}
 {% extends 'base.html.twig' %}
 
-{% block title %}Parking à proximité{% endblock %}
+{% block title %}{{ 'parking.nearby'|trans }}{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('vendor/leaflet/dist/leaflet.min.css') }}">
+{% endblock %}
 
 {% block body %}
-<div>
-    <h1>Parking à proximité</h1>
+<main
+    class="mx-auto min-h-screen max-w-md bg-[#f8f8ff] pb-28 text-slate-950 shadow-xl lg:max-w-7xl lg:pb-12 lg:pt-20 lg:shadow-none"
+    data-controller="parking-location"
+    data-parking-location-allowed-value="{{ locationAllowed ? 'true' : 'false' }}"
+    data-parking-location-origin-value="{{ originSource ? 'true' : 'false' }}"
+    data-parking-location-geocoding-url-value="https://nominatim.openstreetmap.org/search"
+    data-parking-location-disabled-message-value="{{ 'parking.location_disabled'|trans }}"
+    data-parking-location-enable-message-value="{{ 'parking.location_enable'|trans }}"
+    data-parking-location-unavailable-message-value="{{ 'parking.location_unavailable'|trans }}"
+    data-parking-location-searching-message-value="{{ 'parking.location_searching'|trans }}"
+    data-parking-location-location-error-message-value="{{ 'parking.location_error'|trans }}"
+    data-parking-location-geocoding-message-value="{{ 'parking.geocoding_searching'|trans }}"
+    data-parking-location-geocoding-error-message-value="{{ 'parking.geocoding_error'|trans }}"
+    data-parking-location-address-not-found-message-value="{{ 'parking.address_not_found'|trans }}"
+>
+    <header class="bg-white px-5 pb-4 pt-6">
+        <div class="flex items-center gap-4">
+            <a href="{{ path('app_mobility') }}" class="flex size-10 items-center justify-center" aria-label="{{ 'mobility.back'|trans }}">{{ include('components/_icon.html.twig', {name: 'back', class: 'size-7'}) }}</a>
+            <div>
+                <h1 class="text-xl font-bold">{{ 'parking.nearby'|trans }}</h1>
+                <p class="text-sm text-slate-500">{{ city ? city.name : 'city.none_selected'|trans }}</p>
+            </div>
+        </div>
 
-    <form method="get" action="{{ path('app_parking') }}">
-        <input type="text" name="query" value="{{ search }}" placeholder="Nom, addresse, quartier...">
-        <input type="hidden" name="type" value="{{ type }}">
-        <button type="submit"> Rechercher</button>
-    </form>
+        <form
+            method="get"
+            action="{{ path('app_parking') }}"
+            class="mt-5 flex gap-2"
+            data-parking-location-target="form"
+            data-action="submit->parking-location#searchAddress"
+        >
+            <label class="relative flex-1">
+                <span class="sr-only">{{ 'parking.search'|trans }}</span>
+                <span class="pointer-events-none absolute inset-y-0 left-4 flex items-center text-red-600" aria-hidden="true">{{ include('components/_icon.html.twig', {name: 'search', class: 'size-5'}) }}</span>
+                <input
+                    type="search"
+                    name="address"
+                    value="{{ address }}"
+                    placeholder="{{ 'parking.search_placeholder'|trans }}"
+                    class="h-12 w-full rounded-2xl border border-slate-200 bg-white pl-11 pr-4 text-sm outline-none ring-red-600 placeholder:text-slate-400 focus:ring-2"
+                    required
+                    maxlength="255"
+                    data-parking-location-target="address"
+                >
+            </label>
+            <input type="hidden" name="type" value="{{ type }}">
+            <input type="hidden" name="source" value="{{ originSource }}" data-parking-location-target="source">
+            <input type="hidden" name="latitude" value="{{ originLatitude }}" data-parking-location-target="latitude">
+            <input type="hidden" name="longitude" value="{{ originLongitude }}" data-parking-location-target="longitude">
+            <button type="submit" class="flex size-12 items-center justify-center rounded-2xl bg-slate-950 text-white disabled:bg-slate-300" aria-label="{{ 'common.start_search'|trans }}" data-parking-location-target="submit">{{ include('components/_icon.html.twig', {name: 'search', class: 'size-5'}) }}</button>
+        </form>
+    </header>
 
-    <nav>
-        <a href="{{ path('app_parking', {query: search, type: 'all'}) }}" class="{{ type == 'all' ? 'active' : '' }}">Tous</a>
-        <a href="{{ path('app_parking', {query: search, type: 'free'}) }}" class="{{ type == 'free' ? 'active' : '' }}">Gratuit</a>
-        <a href="{{ path('app_parking', {query: search, type: 'paid'}) }}" class="{{ type == 'paid' ? 'active' : '' }}">Payant</a>
+    <nav class="flex gap-2 overflow-x-auto bg-white px-5 pb-4" aria-label="{{ 'parking.filter'|trans }}">
+        {% set filters = {
+            'all': 'common.all'|trans,
+            'available': 'parking.available_plural'|trans,
+            'free': 'parking.free_plural'|trans,
+            'paid': 'parking.paid_plural'|trans
+        } %}
+        {% for value, label in filters %}
+            <a href="{{ path('app_parking', {
+                address: address,
+                type: value,
+                source: originSource,
+                latitude: originLatitude,
+                longitude: originLongitude
+            }) }}" class="shrink-0 rounded-xl px-4 py-2 text-sm font-semibold {{ type == value ? 'bg-red-600 text-white' : 'border border-slate-200 bg-white text-slate-600' }}" {% if type == value %}aria-current="page"{% endif %}>{{ label }}</a>
+        {% endfor %}
     </nav>
 
-    <div>Carte à venir</div>
+    <section class="px-5 pt-4 lg:px-8" aria-labelledby="parking-location-title">
+        <div class="rounded-3xl bg-white p-4 shadow-sm ring-1 ring-slate-100">
+            <div class="flex items-center gap-3">
+                <span class="flex size-11 shrink-0 items-center justify-center rounded-2xl bg-red-100 text-red-700" aria-hidden="true">{{ include('components/_icon.html.twig', {name: 'pin', class: 'size-6'}) }}</span>
+                <div class="min-w-0 flex-1">
+                    <h2 id="parking-location-title" class="font-bold">{{ 'parking.near_me'|trans }}</h2>
+                    <p class="mt-1 text-xs leading-5 text-slate-500" data-parking-location-target="status" role="status">
+                        {% if originSource == 'device' %}
+                            {{ 'parking.sorted_by_device'|trans }}
+                        {% elseif originSource == 'address' %}
+                            {{ 'parking.sorted_by_address'|trans({'%address%': address}) }}
+                        {% elseif not locationAllowed %}
+                            {{ 'parking.location_disabled'|trans }}
+                        {% else %}
+                            {{ 'parking.location_help'|trans }}
+                        {% endif %}
+                    </p>
+                </div>
+                <button
+                    type="button"
+                    class="shrink-0 rounded-xl bg-red-600 px-3 py-2 text-xs font-bold text-white disabled:cursor-not-allowed disabled:bg-slate-300"
+                    data-parking-location-target="button"
+                    data-action="parking-location#locate"
+                    {% if not locationAllowed %}disabled aria-disabled="true"{% endif %}
+                >
+                    {{ 'parking.locate'|trans }}
+                </button>
+            </div>
+            {% if not locationAllowed %}
+                <a href="{{ path('app_profile') }}" class="mt-3 inline-flex text-xs font-semibold text-red-700">
+                    {{ 'parking.change_location_preference'|trans }}
+                </a>
+            {% endif %}
+        </div>
+    </section>
 
-    {% if parkings is empty %}
-        <p>Aucun parking référencé dans votre ville pour le moment.</p>
-    {% else %}
-        <p>{{ parkings|length }} parkings trouvés</p>
-        <ul>
-            {% for parking in parkings %}
-                <li>
-                    {{ parking.name }}
-                    <span> {{ parking.free ? 'Gratuit' : 'Payant' }}</span>
-                    <p>{{ parking.address }}</p>
-                    <p>{{ parking.availableSpots }} / {{ parking.totalSpots }} places disponibles </p>
-                </li>
-            {% endfor %}
-        </ul>
-    {% endif %}
-</div>
+    <section class="px-5 pt-5 lg:px-8" aria-labelledby="parking-results">
+        <div class="mb-3 flex items-center justify-between">
+            <h2 id="parking-results" class="font-bold">{{ 'common.near_you'|trans }}</h2>
+            <span class="text-sm text-slate-500">{{ 'common.result_count'|trans({'%count%': parkings|length}) }}</span>
+        </div>
 
+        {% if parkings is empty %}
+            <div class="rounded-3xl border border-dashed border-slate-300 bg-white px-6 py-10 text-center">
+                <span class="text-3xl font-bold text-blue-700" aria-hidden="true">P</span>
+                <p class="mt-3 font-semibold">{{ 'parking.none_found'|trans }}</p>
+                <p class="mt-1 text-sm text-slate-500">{{ 'common.change_search_filter'|trans }}</p>
+            </div>
+        {% else %}
+            <section
+                class="mb-5 overflow-hidden rounded-3xl border-4 border-slate-900 bg-white shadow-sm"
+                aria-labelledby="parking-map-title"
+                data-controller="parking-map"
+                data-parking-map-parkings-value="{{ mapParkings|json_encode|e('html_attr') }}"
+                data-parking-map-free-label-value="{{ 'parking.free'|trans }}"
+                data-parking-map-paid-label-value="{{ 'parking.paid'|trans }}"
+                data-parking-map-spaces-message-value="{{ 'parking.space_count'|trans }}"
+                data-parking-map-distance-message-value="{{ 'parking.distance_km'|trans }}"
+                data-parking-map-origin-label-value="{{ originSource == 'device' ? 'parking.your_position'|trans : 'parking.search_origin'|trans }}"
+                {% if originLatitude is not null and originLongitude is not null %}
+                    data-parking-map-origin-latitude-value="{{ originLatitude }}"
+                    data-parking-map-origin-longitude-value="{{ originLongitude }}"
+                {% endif %}
+            >
+                <div class="flex items-center justify-between px-4 py-3">
+                    <div>
+                        <h3 id="parking-map-title" class="font-bold">{{ 'parking.map_title'|trans }}</h3>
+                        <p class="mt-0.5 text-xs text-slate-500">{{ 'parking.map_help'|trans }}</p>
+                    </div>
+                    <span class="rounded-full bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-600">{{ parkings|length }}</span>
+                </div>
+                <div class="h-64 w-full bg-slate-200" data-parking-map-target="canvas"></div>
+            </section>
+
+            <div class="space-y-3 lg:grid lg:grid-cols-2 lg:gap-4 lg:space-y-0">
+                {% for parking in parkings %}
+                    {% set occupancy = parking.totalSpots > 0 ? (parking.availableSpots / parking.totalSpots * 100)|round : 0 %}
+                    <article class="rounded-2xl border {{ parking.availableSpots > 0 ? 'border-emerald-200 bg-white' : 'border-red-200 bg-slate-100 text-slate-400' }} p-4 shadow-sm">
+                        <div class="flex items-start gap-3">
+                            <span class="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-blue-100 font-bold text-blue-700">P</span>
+                            <div class="min-w-0 flex-1">
+                                <div class="flex items-start justify-between gap-3">
+                                    <h3 class="font-bold">{{ parking.name }}</h3>
+                                    <span class="shrink-0 rounded-full px-2.5 py-1 text-xs font-semibold {{ parking.free ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-600' }}">{{ parking.free ? 'parking.free'|trans : 'parking.paid'|trans }}</span>
+                                </div>
+                                <p class="mt-1 flex items-center gap-1 text-sm text-slate-500">{{ include('components/_icon.html.twig', {name: 'pin', class: 'size-4 shrink-0'}) }} {{ parking.address }}</p>
+                                {# La devise et les séparateurs suivent la langue active de Symfony. #}
+                                {% if not parking.free %}
+                                    <p class="mt-2 inline-flex rounded-full bg-slate-100 px-2.5 py-1 text-xs font-bold text-slate-700" data-parking-hourly-rate="{{ parking.hourlyRate }}">
+                                        {{ 'parking.hourly_rate'|trans({'%price%': parkingHourlyRates[parking.id]}) }}
+                                    </p>
+                                {% endif %}
+                                {% if parkingDistances[parking.id] is defined %}
+                                    <p class="mt-2 text-xs font-bold text-slate-700" data-parking-distance="{{ parkingDistances[parking.id] }}">
+                                        {{ 'parking.distance_km'|trans({'%distance%': parkingDistances[parking.id]|round(1)}) }}
+                                    </p>
+                                {% endif %}
+                                <div class="mt-3 flex items-center justify-between gap-4">
+                                    <div class="flex-1">
+                                        <div class="mb-1 flex justify-between text-xs">
+                                            <span class="font-semibold {{ parking.availableSpots > 0 ? 'text-emerald-700' : 'text-red-700' }}">{{ 'parking.space_count'|trans({'%count%': parking.availableSpots}) }}</span>
+                                            <span class="text-slate-400">{{ 'parking.out_of'|trans({'%total%': parking.totalSpots}) }}</span>
+                                        </div>
+                                        <div class="h-1.5 overflow-hidden rounded-full bg-slate-100">
+                                            <div class="h-full rounded-full {{ occupancy > 20 ? 'bg-emerald-500' : 'bg-red-500' }} {{ occupancy >= 75 ? 'w-3/4' : occupancy >= 50 ? 'w-1/2' : occupancy >= 25 ? 'w-1/4' : occupancy > 0 ? 'w-1/12' : 'w-0' }}"></div>
+                                        </div>
+                                    </div>
+                                    <a href="https://www.google.com/maps/search/?api=1&amp;query={{ parking.latitude }},{{ parking.longitude }}" class="flex items-center gap-1 rounded-xl bg-red-600 px-3 py-2 text-xs font-semibold text-white" rel="noreferrer">{{ include('components/_icon.html.twig', {name: 'directions', class: 'size-4'}) }} {{ 'common.directions'|trans }}</a>
+                                </div>
+                            </div>
+                        </div>
+                    </article>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </section>
+</main>
+
+{% include 'components/_bottom_nav.html.twig' with {active: ''} %}
 {% endblock %}
+
+

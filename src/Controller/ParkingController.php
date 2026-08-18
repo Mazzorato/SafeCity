@@ -2,18 +2,20 @@
 
 namespace App\Controller;
 
-use App\Entity\User;
-
 use App\Entity\Parking;
+use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
+/**
+ * Présente les informations de stationnement de la ville.
+ */
 final class ParkingController extends AbstractController
 {
-#[Route('/parking', name: 'app_parking')]
+    #[Route('/parking', name: 'app_parking')]
     public function index(EntityManagerInterface $em, Request $request): Response
     {
         $this->denyAccessUnlessGranted('ROLE_USER');
@@ -113,9 +115,22 @@ final class ParkingController extends AbstractController
             $parkings,
         );
 
+        // Le séparateur décimal suit la langue active sans dépendance PHP/Twig
+        // supplémentaire ni service externe.
+        $language = mb_substr(str_replace('-', '_', $request->getLocale()), 0, 2);
+        $decimalSeparator = in_array($language, ['en', 'ja'], true) ? '.' : ',';
+        $parkingHourlyRates = [];
+        foreach ($parkings as $parking) {
+            $formattedRate = number_format((float) $parking->getHourlyRate(), 2, $decimalSeparator, '');
+            $parkingHourlyRates[$parking->getId()] = in_array($language, ['en', 'ja'], true)
+                ? '€' . $formattedRate
+                : $formattedRate . ' €';
+        }
+
         return $this->render('parking/index.html.twig', [
             'parkings' => $parkings,
             'parkingDistances' => $parkingDistances,
+            'parkingHourlyRates' => $parkingHourlyRates,
             'mapParkings' => $mapParkings,
             'city' => $city,
             'address' => $address,
@@ -127,8 +142,11 @@ final class ParkingController extends AbstractController
         ]);
     }
 
-
-private function parseCoordinate(mixed $value, float $minimum, float $maximum): ?float
+    /**
+     * Normalise une coordonnée d'URL sans accepter les tableaux ni les valeurs
+     * situées hors des limites géographiques.
+     */
+    private function parseCoordinate(mixed $value, float $minimum, float $maximum): ?float
     {
         if (!is_string($value) && !is_int($value) && !is_float($value)) {
             return null;
@@ -146,7 +164,11 @@ private function parseCoordinate(mixed $value, float $minimum, float $maximum): 
             : null;
     }
 
-private function distanceInKilometers(
+    /**
+     * Calcule localement la distance à vol d'oiseau entre l'origine et un
+     * parking, sans API payante ni extension géographique de PostgreSQL.
+     */
+    private function distanceInKilometers(
         float $latitudeA,
         float $longitudeA,
         float $latitudeB,
