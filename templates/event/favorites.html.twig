@@ -86,7 +86,16 @@
                                     </form>
                                 </div>
                                 <div class="mt-4 grid grid-cols-[1fr_1.5fr_auto] gap-3">
-                                    <span class="flex h-10 items-center justify-center rounded-lg bg-slate-100 text-xs">Rappel disponible à l'étape suivante</span>
+                                    <form method="post" action="{{ path('app_event_favorite_reminder', {id: favorite.id}) }}">
+                                        <input type="hidden" name="_token" value="{{ csrf_token('favorite_reminder_' ~ favorite.id) }}">
+                                        <button
+                                            type="submit"
+                                            class="h-10 w-full rounded-lg text-xs font-semibold {{ favorite.reminderActive ? 'bg-indigo-600 text-white' : 'bg-slate-200 text-slate-600' }}"
+                                            aria-pressed="{{ favorite.reminderActive ? 'true' : 'false' }}"
+                                        >
+                                            <span class="inline-flex items-center justify-center gap-1">{{ include('components/_icon.html.twig', {name: 'bell', class: 'size-4'}) }} {{ favorite.reminderActive ? 'event.reminder_on'|trans : 'event.reminder_off'|trans }}</span>
+                                        </button>
+                                    </form>
                                     <a href="{{ path('app_event') }}#event-{{ event.id }}" class="flex h-10 items-center justify-center gap-1 rounded-lg bg-slate-950 text-xs font-medium text-white">{{ include('components/_icon.html.twig', {name: 'eye', class: 'size-4'}) }} {{ 'common.view_detail'|trans }}</a>
                                     <a href="mailto:?subject={{ event.title|url_encode }}&body={{ event.location|url_encode }}" class="flex size-10 items-center justify-center rounded-lg bg-slate-200" aria-label="{{ 'common.share_email'|trans }}">{{ include('components/_icon.html.twig', {name: 'share', class: 'size-4'}) }}</a>
                                 </div>
@@ -113,5 +122,3 @@
         </div>
     </div>
 {% endblock %}
-
-

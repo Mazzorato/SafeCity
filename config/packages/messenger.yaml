@@ -1,3 +1,4 @@
+# Configure les transports et files de messages Symfony.
 framework:
     messenger:
         failure_transport: failed

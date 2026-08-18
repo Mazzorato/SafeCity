@@ -8,6 +8,9 @@ use Symfony\Component\Scheduler\ScheduleProviderInterface;
 use Symfony\Contracts\Cache\CacheInterface;
 
 #[AsSchedule]
+/**
+ * Déclare les tâches récurrentes exécutées par le planificateur Symfony.
+ */
 class Schedule implements ScheduleProviderInterface
 {
     public function __construct(
