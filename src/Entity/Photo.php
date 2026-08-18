@@ -29,6 +29,10 @@ class Photo
     #[ORM\JoinColumn(nullable: false)]
     private ?Report $report = null;
 
+    #[ORM\ManyToOne(inversedBy: 'photos')]
+    #[ORM\JoinColumn(onDelete: 'SET NULL')]
+    private ?Comment $comment = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -82,5 +86,16 @@ class Photo
         return $this;
     }
 
-}
+    public function getComment(): ?Comment
+    {
+        return $this->comment;
+    }
 
+    public function setComment(?Comment $comment): static
+    {
+        $this->comment = $comment;
+
+        return $this;
+    }
+
+}

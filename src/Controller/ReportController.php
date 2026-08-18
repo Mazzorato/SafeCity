@@ -244,36 +244,81 @@ final class ReportController extends AbstractController
     }
 
 #[Route('/{id}', name: 'app_report_show', methods: ['GET', 'POST'])]
-public function show(
-    Report $report,
-    Request $request,
-    EntityManagerInterface $entityManager,
-): Response {
-    $this->denyReportVisible($report);
+    public function show(
+        Report $report,
+        Request $request,
+        EntityManagerInterface $entityManager,
+        FileUploader $fileUploader,
+        LoggerInterface $logger,
+    ): Response {
+        $this->denyReportVisible($report);
 
-    /** @var User $user */
-    $user = $this->getUser();
-    $comment = new Comment();
-    $commentForm = $this->createForm(CommentType::class, $comment);
-    $commentForm->handleRequest($request);
+        /** @var User $user */
+        $user = $this->getUser();
+        $comment = new Comment();
+        $commentForm = $this->createForm(CommentType::class, $comment);
+        $commentForm->handleRequest($request);
 
-    if ($commentForm->isSubmitted() && $commentForm->isValid()) {
-        $comment
-            ->setAuthor($user)
-            ->setReport($report)
-            ->setCreatedAt(new \DateTime());
-        $entityManager->persist($comment);
-        $entityManager->flush();
+        if ($commentForm->isSubmitted() && $commentForm->isValid()) {
+            $uploadedPhotoFilename = null;
+            try {
+                $photoFile = $commentForm->get('photo')->getData();
+                if ($photoFile !== null) {
+                    $uploadedPhotoFilename = $fileUploader->upload($photoFile);
+                }
+            } catch (\Throwable $exception) {
+                $logger->error('Échec du téléversement de la photo du commentaire.', [
+                    'report_id' => $report->getId(),
+                    'exception' => $exception,
+                ]);
+                $commentForm->addError(new FormError(
+                    $this->translator->trans('flash.media_upload_failed')
+                ));
+                $response = $this->render('report/show.html.twig', [
+                    'report' => $report,
+                    'comments' => $report->getComments(),
+                    'commentForm' => $commentForm,
+                ]);
+                $response->setStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY);
 
-        return $this->redirectToRoute('app_report_show', ['id' => $report->getId()]);
+                return $response;
+            }
+
+            $comment
+                ->setAuthor($user)
+                ->setReport($report)
+                ->setCreatedAt(new \DateTime());
+            $report->addComment($comment);
+            $entityManager->persist($comment);
+
+            if ($uploadedPhotoFilename !== null) {
+                $photo = (new Photo())
+                    ->setUrl('/uploads/photos/' . $uploadedPhotoFilename)
+                    ->setUploadedAt(new \DateTime())
+                    ->setUploader($user);
+                $report->addPhoto($photo);
+                $comment->addPhoto($photo);
+                $entityManager->persist($photo);
+            }
+
+            try {
+                $entityManager->flush();
+            } catch (\Throwable $exception) {
+                if ($uploadedPhotoFilename !== null) {
+                    $this->cleanupFailedPhotoUploads([$uploadedPhotoFilename], $fileUploader, $logger);
+                }
+                throw $exception;
+            }
+
+            return $this->redirectToRoute('app_report_show', ['id' => $report->getId()]);
+        }
+
+        return $this->render('report/show.html.twig', [
+            'report' => $report,
+            'comments' => $report->getComments(),
+            'commentForm' => $commentForm,
+        ]);
     }
-
-    return $this->render('report/show.html.twig', [
-        'report' => $report,
-        'comments' => $report->getComments(),
-        'commentForm' => $commentForm,
-    ]);
-}
 
     #[Route('/{id}/edit', name: 'app_report_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Report $report, EntityManagerInterface $entityManager): Response
@@ -454,7 +499,7 @@ private function denyReportOwnerOrAdmin(Report $report): void
         }
     }
 
-    private function denyReportVisible(Report $report): void
+private function denyReportVisible(Report $report): void
     {
         $this->denyAccessUnlessGranted('ROLE_USER');
         if ($this->isGranted('ROLE_ADMIN')) {
