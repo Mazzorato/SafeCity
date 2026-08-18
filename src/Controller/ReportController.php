@@ -2,53 +2,56 @@
 
 namespace App\Controller;
 
-use App\Service\ModerationVisibility;
-
-use App\Form\CommentType;
-
 use App\Entity\Comment;
-
-use App\Service\ReportRouter;
-
-use App\Entity\ReportStatusHistory;
-
-use Symfony\Contracts\Translation\TranslatorInterface;
-
-use Symfony\Component\Form\FormError;
-
-use Psr\Log\LoggerInterface;
-
-use App\Enum\ReportStatusEnum;
-
 use App\Entity\Photo;
-use App\Entity\User;
-use App\Service\FileUploader;
 use App\Entity\Report;
+use App\Entity\ReportCategory;
+use App\Entity\ReportStatusHistory;
+use App\Entity\User;
+use App\Enum\ReportStatusEnum;
+use App\Form\CommentType;
 use App\Form\ReportType;
 use App\Repository\ReportRepository;
+use App\Service\FileUploader;
+use App\Service\ModerationVisibility;
+use App\Service\ReportRealtimePublisher;
+use App\Service\ReportRouter;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\FormError;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[Route('/report')]
+/**
+ * Gère la création, le suivi et l’administration des signalements.
+ */
 final class ReportController extends AbstractController
 {
+    public function __construct(private TranslatorInterface $translator)
+    {
+    }
+
     #[Route(name: 'app_report_index', methods: ['GET'])]
     public function index(ReportRepository $reportRepository): Response
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
         return $this->render('report/index.html.twig', [
-            'reports' => $reportRepository->findAll(),
+            'reports' => $reportRepository->findBy([], ['createdAt' => 'DESC']),
         ]);
     }
 
-#[Route('/new', name: 'app_report_new', methods: ['GET', 'POST'])]
+    #[Route('/new', name: 'app_report_new', methods: ['GET', 'POST'])]
     public function new(
         Request $request,
         EntityManagerInterface $entityManager,
         FileUploader $fileUploader,
+        ReportRealtimePublisher $realtimePublisher,
         ReportRouter $reportRouter,
         LoggerInterface $logger,
     ): Response {
@@ -65,6 +68,15 @@ final class ReportController extends AbstractController
 
         $report = new Report();
         $report->setCity($user->getCity());
+
+        // Le raccourci Mobilité peut demander la catégorie routière, sans
+        // empêcher l’utilisateur de choisir ensuite un autre type d’incident.
+        if ($request->isMethod('GET') && $request->query->getString('category') === 'route') {
+            $roadCategory = $entityManager->getRepository(ReportCategory::class)->findOneBy([
+                'icon' => 'route',
+            ]);
+            $report->setCategory($roadCategory);
+        }
 
         $form = $this->createForm(ReportType::class, $report, [
             'report_creation' => true,
@@ -153,6 +165,8 @@ final class ReportController extends AbstractController
                 return $this->redirectToRoute('app_report_new');
             }
 
+            $realtimePublisher->publish($report, 'report.created');
+
             $this->addFlash('success', $this->translator->trans('flash.report_sent'));
 
             return $this->redirectToRoute('app_report_show', [
@@ -166,7 +180,7 @@ final class ReportController extends AbstractController
         ]);
     }
 
-#[Route('/my-reports', name: 'app_report_my_reports', methods: ['GET'])]
+    #[Route('/my-reports', name: 'app_report_my_reports', methods: ['GET'])]
     public function myReports(EntityManagerInterface $entityManager, Request $request): Response
     {
         $this->denyAccessUnlessGranted('ROLE_USER');
@@ -194,17 +208,7 @@ final class ReportController extends AbstractController
         ]);
     }
 
-#[Route('/{id}/follow-up', name: 'app_report_follow_up', methods: ['GET'], requirements: ['id' => '\d+'])]
-    public function followUp(Report $report): Response
-    {
-        $this->denyReportOwnerOrAdmin($report);
-
-        return $this->render('report/follow_up.html.twig', [
-            'report' => $report,
-        ]);
-    }
-
-#[Route('/all', name: 'app_report_all', methods: ['GET'])]
+    #[Route('/all', name: 'app_report_all', methods: ['GET'])]
     public function all(EntityManagerInterface $entityManager, Request $request): Response
     {
         $this->denyAccessUnlessGranted('ROLE_USER');
@@ -245,13 +249,69 @@ final class ReportController extends AbstractController
         ]);
     }
 
-#[Route('/{id}', name: 'app_report_show', methods: ['GET', 'POST'], requirements: ['id' => '\d+'])]
+    #[Route('/map/view', name: 'app_report_map', methods: ['GET'])]
+    public function map(EntityManagerInterface $entityManager, Request $request): Response
+    {
+        $this->denyAccessUnlessGranted('ROLE_USER');
+
+        /** @var User $user */
+        $user = $this->getUser();
+        $city = $user->getCity();
+        $category = $request->query->getString('category', 'all');
+        $groups = [
+            'accidents' => ['accident', 'route', 'voiture'],
+            'travaux' => ['travaux', 'chantier'],
+            'urgences' => ['incendie', 'sante', 'santé', 'urgence'],
+        ];
+        if ($category !== 'all' && !array_key_exists($category, $groups)) {
+            $category = 'all';
+        }
+
+        $reports = [];
+        if ($city !== null) {
+            $allReports = $entityManager->getRepository(Report::class)->findBy(
+                ['city' => $city],
+                ['createdAt' => 'DESC']
+            );
+
+            $reports = $category === 'all'
+                ? $allReports
+                : array_values(array_filter(
+                    $allReports,
+                    static fn (Report $report): bool => in_array(
+                        mb_strtolower((string) $report->getCategory()?->getIcon()),
+                        $groups[$category],
+                        true
+                    )
+                ));
+        }
+
+        return $this->render('report/map.html.twig', [
+            'reports' => $reports,
+            'city' => $city,
+            'category' => $category,
+            'reportTopic' => $city === null ? null : ReportRealtimePublisher::topicForCityId((int) $city->getId()),
+        ]);
+    }
+
+    #[Route('/{id}/follow-up', name: 'app_report_follow_up', methods: ['GET'], requirements: ['id' => '\d+'])]
+    public function followUp(Report $report): Response
+    {
+        $this->denyReportOwnerOrAdmin($report);
+
+        return $this->render('report/follow_up.html.twig', [
+            'report' => $report,
+        ]);
+    }
+
+    #[Route('/{id}', name: 'app_report_show', methods: ['GET', 'POST'], requirements: ['id' => '\d+'])]
     public function show(
         Report $report,
         Request $request,
         EntityManagerInterface $entityManager,
         FileUploader $fileUploader,
         ModerationVisibility $moderationVisibility,
+        ReportRealtimePublisher $realtimePublisher,
         LoggerInterface $logger,
     ): Response {
         $this->denyReportVisible($report);
@@ -334,6 +394,8 @@ final class ReportController extends AbstractController
                 return $this->redirectToRoute('app_report_show', ['id' => $report->getId()]);
             }
 
+            $realtimePublisher->publish($report, 'comment.created');
+
             $this->addFlash('success', $this->translator->trans('flash.comment_added'));
 
             return $this->redirectToRoute('app_report_show', ['id' => $report->getId()]);
@@ -342,14 +404,22 @@ final class ReportController extends AbstractController
         return $this->renderReportDetails($report, $commentForm, $moderationVisibility);
     }
 
-    #[Route('/{id}/edit', name: 'app_report_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Report $report, EntityManagerInterface $entityManager): Response
-    {
+    #[Route('/{id}/edit', name: 'app_report_edit', methods: ['GET', 'POST'], requirements: ['id' => '\d+'])]
+    public function edit(
+        Request $request,
+        Report $report,
+        EntityManagerInterface $entityManager,
+        ReportRealtimePublisher $realtimePublisher,
+    ): Response {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
         $form = $this->createForm(ReportType::class, $report);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $report->setUpdatedAt(new \DateTime());
             $entityManager->flush();
+            $realtimePublisher->publish($report, 'report.updated');
 
             return $this->redirectToRoute('app_report_index', [], Response::HTTP_SEE_OTHER);
         }
@@ -360,13 +430,12 @@ final class ReportController extends AbstractController
         ]);
     }
 
-#[Route('/{id}/delete', name: 'app_report_delete', methods: ['POST'], requirements: ['id' => '\d+'])]
+    #[Route('/{id}/delete', name: 'app_report_delete', methods: ['POST'], requirements: ['id' => '\d+'])]
     public function delete(
         Request $request,
         Report $report,
         EntityManagerInterface $entityManager,
         FileUploader $fileUploader,
-        ReportRouter $reportRouter,
         LoggerInterface $logger,
     ): Response {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
@@ -403,55 +472,87 @@ final class ReportController extends AbstractController
         return $this->redirectToRoute('app_report_index', [], Response::HTTP_SEE_OTHER);
     }
 
-#[Route('/map/view', name: 'app_report_map', methods: ['GET'])]
-    public function map(EntityManagerInterface $entityManager, Request $request): Response
+    private function validatedStatus(string $status): string
+    {
+        $allowedStatuses = ['all', ...array_map(
+            static fn (ReportStatusEnum $reportStatus): string => $reportStatus->value,
+            ReportStatusEnum::cases()
+        )];
+
+        return in_array($status, $allowedStatuses, true) ? $status : 'all';
+    }
+
+    /**
+     * @param Report[] $reports
+     *
+     * @return Report[]
+     */
+    private function filterReportsByStatus(array $reports, string $status): array
+    {
+        if ($status === 'all') {
+            return $reports;
+        }
+
+        return array_values(array_filter(
+            $reports,
+            static fn (Report $report): bool => $report->getStatus()?->value === $status
+        ));
+    }
+
+    /**
+     * @param Report[] $reports
+     *
+     * @return array{total: int, reported: int, inProgress: int, resolved: int}
+     */
+    private function reportStats(array $reports): array
+    {
+        $stats = ['total' => count($reports), 'reported' => 0, 'inProgress' => 0, 'resolved' => 0];
+
+        foreach ($reports as $report) {
+            match ($report->getStatus()) {
+                ReportStatusEnum::REPORTED => ++$stats['reported'],
+                ReportStatusEnum::IN_PROGRESS => ++$stats['inProgress'],
+                ReportStatusEnum::RESOLVED => ++$stats['resolved'],
+                default => null,
+            };
+        }
+
+        return $stats;
+    }
+
+    private function denyReportVisible(Report $report): void
     {
         $this->denyAccessUnlessGranted('ROLE_USER');
+        if ($this->isGranted('ROLE_ADMIN')) {
+            return;
+        }
 
         /** @var User $user */
         $user = $this->getUser();
-        $city = $user->getCity();
-        $category = $request->query->getString('category', 'all');
-        $groups = [
-            'accidents' => ['accident', 'route', 'voiture'],
-            'travaux' => ['travaux', 'chantier'],
-            'urgences' => ['incendie', 'sante', 'santé', 'urgence'],
-        ];
-        if ($category !== 'all' && !array_key_exists($category, $groups)) {
-            $category = 'all';
+        if ($user->getCity() === null || $report->getCity()?->getId() !== $user->getCity()?->getId()) {
+            throw $this->createAccessDeniedException($this->translator->trans('security.report_wrong_city'));
         }
-
-        $reports = [];
-        if ($city !== null) {
-            $allReports = $entityManager->getRepository(Report::class)->findBy(
-                ['city' => $city],
-                ['createdAt' => 'DESC']
-            );
-
-            $reports = $category === 'all'
-                ? $allReports
-                : array_values(array_filter(
-                    $allReports,
-                    static fn (Report $report): bool => in_array(
-                        mb_strtolower((string) $report->getCategory()?->getIcon()),
-                        $groups[$category],
-                        true
-                    )
-                ));
-        }
-
-        return $this->render('report/map.html.twig', [
-            'reports' => $reports,
-            'city' => $city,
-            'category' => $category,
-            'reportTopic' => null,
-        ]);
     }
 
-public function __construct(private TranslatorInterface $translator)
+    private function denyReportOwnerOrAdmin(Report $report): void
     {
+        $this->denyAccessUnlessGranted('ROLE_USER');
+        if ($this->isGranted('ROLE_ADMIN')) {
+            return;
+        }
+
+        /** @var User $user */
+        $user = $this->getUser();
+        if ($report->getReporter()?->getId() !== $user->getId()) {
+            throw $this->createAccessDeniedException($this->translator->trans('security.report_not_owned'));
+        }
     }
 
+    /**
+     * Supprime uniquement les fichiers créés pendant une soumission qui n’a pas abouti.
+     *
+     * @param string[] $photoFilenames
+     */
     private function cleanupFailedPhotoUploads(
         array $photoFilenames,
         FileUploader $fileUploader,
@@ -469,73 +570,11 @@ public function __construct(private TranslatorInterface $translator)
         }
     }
 
-private function validatedStatus(string $status): string
-    {
-        $allowedStatuses = ['all', ...array_map(
-            static fn (ReportStatusEnum $reportStatus): string => $reportStatus->value,
-            ReportStatusEnum::cases()
-        )];
-
-        return in_array($status, $allowedStatuses, true) ? $status : 'all';
-    }
-
-private function filterReportsByStatus(array $reports, string $status): array
-    {
-        if ($status === 'all') {
-            return $reports;
-        }
-
-        return array_values(array_filter(
-            $reports,
-            static fn (Report $report): bool => $report->getStatus()?->value === $status
-        ));
-    }
-
-private function reportStats(array $reports): array
-    {
-        $stats = ['total' => count($reports), 'reported' => 0, 'inProgress' => 0, 'resolved' => 0];
-
-        foreach ($reports as $report) {
-            match ($report->getStatus()) {
-                ReportStatusEnum::REPORTED => ++$stats['reported'],
-                ReportStatusEnum::IN_PROGRESS => ++$stats['inProgress'],
-                ReportStatusEnum::RESOLVED => ++$stats['resolved'],
-                default => null,
-            };
-        }
-
-        return $stats;
-    }
-
-private function denyReportOwnerOrAdmin(Report $report): void
-    {
-        $this->denyAccessUnlessGranted('ROLE_USER');
-        if ($this->isGranted('ROLE_ADMIN')) {
-            return;
-        }
-
-        /** @var User $user */
-        $user = $this->getUser();
-        if ($report->getReporter()?->getId() !== $user->getId()) {
-            throw $this->createAccessDeniedException($this->translator->trans('security.report_not_owned'));
-        }
-    }
-
-private function denyReportVisible(Report $report): void
-    {
-        $this->denyAccessUnlessGranted('ROLE_USER');
-        if ($this->isGranted('ROLE_ADMIN')) {
-            return;
-        }
-
-        /** @var User $user */
-        $user = $this->getUser();
-        if ($user->getCity() === null || $report->getCity()?->getId() !== $user->getCity()?->getId()) {
-            throw $this->createAccessDeniedException($this->translator->trans('security.report_wrong_city'));
-        }
-    }
-
-private function renderReportDetails(
+    /**
+     * Prépare une vue cohérente : les photos initiales restent dans la galerie
+     * et celles des commentaires sont regroupées sous leur message.
+     */
+    private function renderReportDetails(
         Report $report,
         FormInterface $commentForm,
         ModerationVisibility $moderationVisibility,

@@ -1,0 +1,11 @@
+# Configure le hub Mercure utilisé pour les mises à jour en temps réel.
+mercure:
+    hubs:
+        default:
+            url: '%env(MERCURE_URL)%'
+            public_url: '%env(MERCURE_PUBLIC_URL)%'
+            jwt:
+                secret: '%env(MERCURE_JWT_SECRET)%'
+                publish:
+                    - 'https://safecity.local/cities/{cityId}/reports'
+                    - 'https://safecity.local/users/{userId}/{token}/notifications'
