@@ -16,6 +16,7 @@ security:
         main:
             lazy: true
             provider: app_user_provider
+            user_checker: App\Security\UserChecker
             form_login:
                 login_path: app_login
                 check_path: app_login
@@ -32,6 +33,7 @@ security:
     - { path: ^/profile, roles: ROLE_USER }
     - { path: ^/login, roles: PUBLIC_ACCESS }
     - { path: ^/register, roles: PUBLIC_ACCESS }
+    - { path: ^/verify/email, roles: PUBLIC_ACCESS }
     - { path: ^/reset-password, roles: PUBLIC_ACCESS }
     - { path: ^/legal, roles: PUBLIC_ACCESS }
     - { path: ^/report/my-reports, roles: ROLE_USER }
