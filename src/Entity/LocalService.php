@@ -8,6 +8,9 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: LocalServiceRepository::class)]
+/**
+ * Modèle Doctrine représentant les données persistées de LocalService.
+ */
 class LocalService
 {
     #[ORM\Id]
@@ -156,3 +159,5 @@ class LocalService
         return $this;
     }
 }
+
+

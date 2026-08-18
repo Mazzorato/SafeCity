@@ -122,7 +122,9 @@ final class ServiceController extends AbstractController
             $latitude = null;
             $longitude = null;
         }
-        $filter = 'all';
+        if (!in_array($filter, ['all', 'open', 'always'], true)) {
+            $filter = 'all';
+        }
         $services = [];
         if ($city !== null) {
             $queryBuilder = $entityManager->getRepository(LocalService::class)->createQueryBuilder('service')
@@ -142,7 +144,13 @@ final class ServiceController extends AbstractController
                     ->andWhere('LOWER(service.name) LIKE :search OR LOWER(service.address) LIKE :search')
                     ->setParameter('search', '%' . mb_strtolower($search) . '%');
             }
-
+            if ($filter === 'open') {
+                $queryBuilder->andWhere('service.onDuty = true');
+            } elseif ($filter === 'always') {
+                $queryBuilder
+                    ->andWhere('LOWER(service.openingHours) LIKE :always')
+                    ->setParameter('always', '%24%');
+            }
             $services = $queryBuilder->getQuery()->getResult();
         }
 
@@ -191,7 +199,6 @@ final class ServiceController extends AbstractController
             'userLongitude' => $longitude,
         ]);
     }
-
 
 private function parseCoordinate(mixed $value, float $minimum, float $maximum): ?float
     {
