@@ -1,6 +1,14 @@
 <?php
 namespace App\Form;
 
+use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
+
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+
+use App\Repository\CityRepository;
+
+use App\Entity\City;
+
 use App\Entity\User;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
@@ -34,17 +42,42 @@ class RegistrationFormType extends AbstractType
                     new IsTrue(message: 'You should agree to our terms.'),
                 ],
             ])
-            ->add('plainPassword', PasswordType::class, [
+            ->add('plainPassword', RepeatedType::class, [
+                'type' => PasswordType::class,
                 'mapped' => false,
-                'attr' => ['autocomplete' => 'new-password'],
+                'invalid_message' => 'validation.passwords_must_match',
+                'first_options' => [
+                    'label' => 'form.password',
+                    'attr' => [
+                        'autocomplete' => 'new-password',
+                        'placeholder' => 'form.password_minimum',
+                    ],
+                ],
+                'second_options' => [
+                    'label' => 'form.password_confirm',
+                    'attr' => [
+                        'autocomplete' => 'new-password',
+                        'placeholder' => 'form.password_confirm',
+                    ],
+                ],
                 'constraints' => [
-                    new NotBlank(message: 'Please enter a password'),
+                    new NotBlank(message: 'validation.password_required'),
                     new Length(
-                        min: 6,
-                        minMessage: 'Your password should be at least {{ limit }} characters',
+                        min: 8,
+                        minMessage: 'validation.password_too_short',
                         max: 4096,
                     ),
                 ],
+            ])
+            ->add('city', EntityType::class, [
+                'class' => City::class,
+                'choice_label' => static fn (City $city): string => sprintf('%s (%s)', $city->getName(), $city->getPostalCode()),
+                'query_builder' => static fn (CityRepository $repository) => $repository
+                    ->createQueryBuilder('city')
+                    ->where('city.available = true')
+                    ->orderBy('city.name', 'ASC'),
+                'label' => 'form.city',
+                'placeholder' => 'form.city_placeholder',
             ])
         ;
     }
