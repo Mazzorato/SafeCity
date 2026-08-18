@@ -99,6 +99,72 @@ final class ServiceController extends AbstractController
             'search' => $search,
         ]);
     }
+
+#[Route('/service/health/{kind}', name: 'app_service_health', methods: ['GET'], requirements: ['kind' => 'doctor|pharmacy'])]
+    public function health(EntityManagerInterface $entityManager, Request $request, string $kind): Response
+    {
+        $this->denyAccessUnlessGranted('ROLE_USER');
+
+        /** @var User $user */
+        $user = $this->getUser();
+        $city = $user->getCity();
+        $search = trim($request->query->getString('query'));
+        $filter = $request->query->getString('filter', 'all');
+        $locationAllowed = false;
+        $latitude = null;
+        $longitude = null;
+        $filter = 'all';
+        $services = [];
+        if ($city !== null) {
+            $queryBuilder = $entityManager->getRepository(LocalService::class)->createQueryBuilder('service')
+                ->where('service.city = :city')
+                ->andWhere('service.type = :health')
+                ->setParameter('city', $city)
+                ->setParameter('health', ServiceTypeEnum::HEALTH)
+                ->orderBy('service.onDuty', 'DESC')
+                ->addOrderBy('service.name', 'ASC');
+
+            $kind === 'pharmacy'
+                ? $queryBuilder->andWhere('LOWER(service.name) LIKE :pharmacy')->setParameter('pharmacy', '%pharmacie%')
+                : $queryBuilder->andWhere('LOWER(service.name) NOT LIKE :pharmacy')->setParameter('pharmacy', '%pharmacie%');
+
+            if ($search !== '') {
+                $queryBuilder
+                    ->andWhere('LOWER(service.name) LIKE :search OR LOWER(service.address) LIKE :search')
+                    ->setParameter('search', '%' . mb_strtolower($search) . '%');
+            }
+
+            $services = $queryBuilder->getQuery()->getResult();
+        }
+
+        $serviceDistances = [];
+        $mapServices = array_map(
+            static fn (LocalService $service): array => [
+                'id' => $service->getId(),
+                'name' => $service->getName(),
+                'address' => $service->getAddress(),
+                'latitude' => (float) $service->getLatitude(),
+                'longitude' => (float) $service->getLongitude(),
+                'onDuty' => $service->isOnDuty(),
+                'distance' => $serviceDistances[$service->getId()] ?? null,
+            ],
+            $services,
+        );
+
+        return $this->render('service/health.html.twig', [
+            'services' => $services,
+            'serviceDistances' => $serviceDistances,
+            'nearbyAlternatives' => [],
+            'mapServices' => $mapServices,
+            'kind' => $kind,
+            'filter' => $filter,
+            'search' => $search,
+            'city' => $city,
+            'locationAllowed' => $locationAllowed,
+            'userLatitude' => $latitude,
+            'userLongitude' => $longitude,
+        ]);
+    }
 }
 
 
