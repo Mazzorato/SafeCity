@@ -7,6 +7,8 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
+ * Centralise les requêtes Doctrine liées à Report.
+ *
  * @extends ServiceEntityRepository<Report>
  */
 class ReportRepository extends ServiceEntityRepository
