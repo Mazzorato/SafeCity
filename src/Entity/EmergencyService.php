@@ -8,6 +8,9 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: EmergencyServiceRepository::class)]
+/**
+ * Modèle Doctrine représentant les données persistées de EmergencyService.
+ */
 class EmergencyService
 {
     #[ORM\Id]
@@ -121,3 +124,5 @@ class EmergencyService
         return $this;
     }
 }
+
+

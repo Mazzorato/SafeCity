@@ -1,0 +1,108 @@
+{# Vue mobile regroupant les options de mobilité. #}
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ 'mobility.title'|trans }}{% endblock %}
+
+{% block body %}
+<main class="mx-auto min-h-screen max-w-md bg-white pb-28 text-slate-950 shadow-xl lg:max-w-7xl lg:pb-12 lg:pt-20 lg:shadow-none">
+    <header class="bg-white px-5 pb-7 pt-7">
+        <div class="flex items-start justify-between gap-4">
+            <div>
+                <h1 class="text-3xl font-bold">{{ 'mobility.title'|trans }}</h1>
+                <p class="mt-1 flex items-center gap-1 text-sm text-slate-500">{{ include('components/_icon.html.twig', {name: 'pin', class: 'size-4'}) }} {{ city ? city.name : 'city.your_city'|trans }}</p>
+                <p class="mt-2 text-sm text-slate-500">{{ 'mobility.realtime_travel'|trans }}</p>
+            </div>
+            <a href="{{ path('app_report_new', {category: 'route'}) }}" class="flex size-12 items-center justify-center rounded-2xl bg-slate-100" aria-label="{{ 'report.report_incident'|trans }}">{{ include('components/_icon.html.twig', {name: 'send', class: 'size-6'}) }}</a>
+        </div>
+    </header>
+
+    <div class="space-y-6 px-5 lg:px-8">
+        {% if not transportDataAvailable %}
+            <div class="rounded-3xl border border-amber-200 bg-amber-50 p-4 text-sm leading-6 text-amber-900" role="status">
+                <strong class="block">{{ 'transport.data_unavailable'|trans }}</strong>
+                <span>{{ 'transport.data_unavailable_help'|trans }}</span>
+            </div>
+        {% elseif not transportRealtimeAvailable %}
+            <div class="rounded-3xl border border-blue-200 bg-blue-50 p-4 text-sm leading-6 text-blue-900" role="status">
+                <strong class="block">{{ 'transport.realtime_unavailable'|trans }}</strong>
+                <span>{{ 'transport.theoretical_still_available'|trans }}</span>
+            </div>
+        {% endif %}
+
+        {% if disrupted is not empty %}
+            <a href="{{ path('app_transport', {type: 'disrupted'}) }}" class="block rounded-2xl bg-slate-950 p-4 text-white shadow-sm">
+                <div class="flex items-center gap-3">
+                    <span class="flex size-11 items-center justify-center rounded-xl bg-red-600" aria-hidden="true">{{ include('components/_icon.html.twig', {name: 'alert', class: 'size-6'}) }}</span>
+                    <div class="flex-1">
+                        <p class="text-xs font-semibold uppercase tracking-wider text-slate-300">{{ 'transport.traffic_info'|trans }}</p>
+                        <p class="mt-1 font-bold">{{ 'transport.disruption_count'|trans({'%count%': disrupted|length}) }}</p>
+                    </div>
+                    {{ include('components/_icon.html.twig', {name: 'chevron-right', class: 'size-5'}) }}
+                </div>
+            </a>
+        {% elseif transportRealtimeAvailable %}
+            <div class="rounded-3xl bg-emerald-600 p-4 text-white shadow-lg shadow-emerald-100">
+                <div class="flex items-center gap-3">
+                    <span class="flex size-11 items-center justify-center rounded-2xl bg-white/20" aria-hidden="true">{{ include('components/_icon.html.twig', {name: 'check', class: 'size-6'}) }}</span>
+                    <div>
+                        <p class="text-xs font-semibold uppercase tracking-wider text-emerald-100">{{ 'transport.traffic_info'|trans }}</p>
+                        <p class="mt-1 font-bold">{{ 'transport.no_disruption'|trans }}</p>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+
+        <section class="grid grid-cols-2 overflow-hidden rounded-xl bg-white shadow-md lg:grid-cols-4" aria-label="{{ 'mobility.access'|trans }}">
+            <a href="{{ path('app_transport') }}" class="m-1 rounded-xl bg-slate-950 p-4 text-white">
+                <span class="flex size-10 items-center justify-center rounded-xl bg-white/15" aria-hidden="true">{{ include('components/_icon.html.twig', {name: 'train', class: 'size-6'}) }}</span>
+                <h2 class="mt-3 font-bold">{{ 'transport.title'|trans }}</h2>
+                <p class="mt-1 text-xs leading-5 text-slate-300">{{ 'transport.line_count'|trans({'%count%': transports|length}) }}</p>
+                <span class="mt-3 inline-flex items-center text-sm font-semibold text-white">{{ 'transport.view_network'|trans }} {{ include('components/_icon.html.twig', {name: 'chevron-right', class: 'size-4'}) }}</span>
+            </a>
+            <a href="{{ path('app_parking') }}" class="p-5">
+                <span class="flex size-12 items-center justify-center rounded-2xl bg-blue-100 text-xl font-bold text-blue-700" aria-hidden="true">P</span>
+                <h2 class="mt-5 font-bold">{{ 'parking.title'|trans }}</h2>
+                <p class="mt-1 text-xs leading-5 text-slate-500">{{ 'parking.nearby_count'|trans({'%count%': parkings|length}) }}</p>
+                <span class="mt-4 inline-flex items-center text-sm font-semibold text-blue-700">{{ 'parking.view_spaces'|trans }} {{ include('components/_icon.html.twig', {name: 'chevron-right', class: 'size-4'}) }}</span>
+            </a>
+        </section>
+
+        <section aria-labelledby="nearby-lines">
+            <div class="mb-3 flex items-center justify-between">
+                <h2 id="nearby-lines" class="font-bold">{{ 'transport.line_status'|trans }}</h2>
+                <a href="{{ path('app_transport') }}" class="text-sm font-semibold text-red-600">{{ 'common.view_all'|trans }}</a>
+            </div>
+            <div class="overflow-hidden border border-slate-200 bg-white">
+                {% for transport in transports|slice(0, 4) %}
+                    {% set isDisrupted = transport.status == 'disrupted' %}
+                    {% set isUnknown = transport.status == 'unknown' %}
+                    <div class="flex items-center gap-3 px-4 py-4 {{ not loop.last ? 'border-b border-slate-100' : '' }}">
+                        <span class="flex size-10 shrink-0 items-center justify-center rounded-xl {{ isDisrupted ? 'bg-orange-500' : (isUnknown ? 'bg-slate-400' : 'bg-slate-100 text-slate-950') }} text-xs font-bold {{ isDisrupted or isUnknown ? 'text-white' : '' }}">{{ transport.line }}</span>
+                        <div class="min-w-0 flex-1">
+                            <p class="truncate font-semibold">{{ transport.name }}</p>
+                            <p class="mt-0.5 text-xs text-slate-400">{{ ('transport.type.' ~ transport.type)|trans }}</p>
+                        </div>
+                        <span class="size-2.5 rounded-full {{ isDisrupted ? 'bg-orange-500' : (isUnknown ? 'bg-slate-400' : 'bg-emerald-500') }}" title="{{ isDisrupted ? 'transport.disrupted_feminine'|trans : (isUnknown ? 'transport.unknown'|trans : 'transport.normal_traffic'|trans) }}"></span>
+                    </div>
+                {% else %}
+                    <p class="px-6 py-8 text-center text-sm text-slate-500">{{ 'transport.no_line_city'|trans }}</p>
+                {% endfor %}
+            </div>
+        </section>
+
+        {# Ouvre le formulaire Symfony avec le type « Incident routier » présélectionné. #}
+        <a href="{{ path('app_report_new', {category: 'route'}) }}" class="flex items-center gap-3 rounded-2xl bg-slate-950 p-4 text-white">
+            <span class="flex size-11 items-center justify-center rounded-xl bg-white text-slate-950" aria-hidden="true">{{ include('components/_icon.html.twig', {name: 'alert', class: 'size-6'}) }}</span>
+            <span class="flex-1">
+                <strong class="block">{{ 'mobility.route_problem'|trans }}</strong>
+                <small class="mt-0.5 block text-slate-300">{{ 'mobility.report_community'|trans }}</small>
+            </span>
+            {{ include('components/_icon.html.twig', {name: 'chevron-right', class: 'size-5'}) }}
+        </a>
+    </div>
+</main>
+
+{% include 'components/_bottom_nav.html.twig' with {active: ''} %}
+{% endblock %}
+
+
