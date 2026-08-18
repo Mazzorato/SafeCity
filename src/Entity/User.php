@@ -14,7 +14,10 @@ use Symfony\Component\Security\Core\User\UserInterface;
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
-#[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
+#[UniqueEntity(fields: ['email'], message: 'validation.email_used')]
+/**
+ * Modèle Doctrine représentant les données persistées de User.
+ */
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
@@ -80,10 +83,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private Collection $notifications;
 
     /**
-     * @var Collection<int, Event>
+     * @var Collection<int, EventFavorite>
      */
-    #[ORM\ManyToMany(targetEntity: Event::class, inversedBy: 'favoritedBy')]
-    private Collection $favoriteEvents;
+    #[ORM\OneToMany(targetEntity: EventFavorite::class, mappedBy: 'eventUser')]
+    private Collection $eventFavorites;
 
     #[ORM\Column]
     private bool $isVerified = false;
@@ -94,7 +97,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->comments = new ArrayCollection();
         $this->photos = new ArrayCollection();
         $this->notifications = new ArrayCollection();
-        $this->favoriteEvents = new ArrayCollection();
+        $this->eventFavorites = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -244,25 +247,28 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
-     * @return Collection<int, Event>
+     * @return Collection<int, EventFavorite>
      */
-    public function getFavoriteEvents(): Collection
+    public function getEventFavorites(): Collection
     {
-        return $this->favoriteEvents;
+        return $this->eventFavorites;
     }
 
-    public function addFavoriteEvent(Event $event): static
+    public function addEventFavorite(EventFavorite $favorite): static
     {
-        if (!$this->favoriteEvents->contains($event)) {
-            $this->favoriteEvents->add($event);
+        if (!$this->eventFavorites->contains($favorite)) {
+            $this->eventFavorites->add($favorite);
+            $favorite->setEventUser($this);
         }
 
         return $this;
     }
 
-    public function removeFavoriteEvent(Event $event): static
+    public function removeEventFavorite(EventFavorite $favorite): static
     {
-        $this->favoriteEvents->removeElement($event);
+        if ($this->eventFavorites->removeElement($favorite) && $favorite->getEventUser() === $this) {
+            $favorite->setEventUser(null);
+        }
 
         return $this;
     }
@@ -293,3 +299,5 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 }
+
+

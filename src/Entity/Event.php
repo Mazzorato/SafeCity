@@ -52,14 +52,14 @@ class Event
     private ?City $city = null;
 
     /**
-     * @var Collection<int, User>
+     * @var Collection<int, EventFavorite>
      */
-    #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'favoriteEvents')]
-    private Collection $favoritedBy;
+    #[ORM\OneToMany(targetEntity: EventFavorite::class, mappedBy: 'event')]
+    private Collection $eventFavorites;
 
     public function __construct()
     {
-        $this->favoritedBy = new ArrayCollection();
+        $this->eventFavorites = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -200,10 +200,29 @@ class Event
     }
 
     /**
-     * @return Collection<int, User>
+     * @return Collection<int, EventFavorite>
      */
-    public function getFavoritedBy(): Collection
+    public function getEventFavorites(): Collection
     {
-        return $this->favoritedBy;
+        return $this->eventFavorites;
+    }
+
+    public function addEventFavorite(EventFavorite $favorite): static
+    {
+        if (!$this->eventFavorites->contains($favorite)) {
+            $this->eventFavorites->add($favorite);
+            $favorite->setEvent($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEventFavorite(EventFavorite $favorite): static
+    {
+        if ($this->eventFavorites->removeElement($favorite) && $favorite->getEvent() === $this) {
+            $favorite->setEvent(null);
+        }
+
+        return $this;
     }
 }

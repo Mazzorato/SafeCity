@@ -6,6 +6,13 @@ use App\Repository\EventFavoriteRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: EventFavoriteRepository::class)]
+#[ORM\UniqueConstraint(
+    name: 'UNIQ_EVENT_FAVORITE_USER_EVENT',
+    columns: ['event_user_id', 'event_id']
+)]
+/**
+ * Modèle Doctrine représentant les données persistées de EventFavorite.
+ */
 class EventFavorite
 {
     #[ORM\Id]
@@ -19,12 +26,15 @@ class EventFavorite
     #[ORM\Column]
     private ?\DateTime $addedAt = null;
 
-    #[ORM\ManyToOne]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $remindedAt = null;
+
+    #[ORM\ManyToOne(inversedBy: 'eventFavorites')]
+    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     private ?User $eventUser = null;
 
-    #[ORM\ManyToOne]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\ManyToOne(inversedBy: 'eventFavorites')]
+    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     private ?Event $event = null;
 
     public function getId(): ?int
@@ -56,6 +66,19 @@ class EventFavorite
         return $this;
     }
 
+    public function getRemindedAt(): ?\DateTimeImmutable
+    {
+        return $this->remindedAt;
+    }
+
+    public function setRemindedAt(?\DateTimeImmutable $remindedAt): static
+    {
+        // Cette date rend l’envoi idempotent : un favori ne reçoit qu’un rappel.
+        $this->remindedAt = $remindedAt;
+
+        return $this;
+    }
+
     public function getEventUser(): ?User
     {
         return $this->eventUser;
@@ -80,3 +103,5 @@ class EventFavorite
         return $this;
     }
 }
+
+
