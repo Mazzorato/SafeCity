@@ -42,12 +42,12 @@ class ProfileFormType extends AbstractType
                 'label' => 'Accès microphone',
                 'required' => false,
             ])
-            ->add('cameraAccess', CheckboxType::class,[
-                'label' => 'Accès caméra',
+            ->add('cameraAccess', CheckboxType::class, [
+                'label' => 'form.camera_access',
                 'required' => false,
             ])
-            ->add('locationAccess', CheckboxType::class,[
-                'label' => 'Accès géolocalisation',
+            ->add('locationAccess', CheckboxType::class, [
+                'label' => 'form.location_access',
                 'required' => false,
             ])
             ->add('language', ChoiceType::class,[
