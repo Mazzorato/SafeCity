@@ -1,22 +1,60 @@
+{# Demande d’un lien de réinitialisation du mot de passe. #}
 {% extends 'base.html.twig' %}
 
-{% block title %}Reset your password{% endblock %}
+{% block title %}{{ 'reset.forgot_title'|trans }}{% endblock %}
 
 {% block body %}
-    {% for flash_error in app.flashes('reset_password_error') %}
-        <div class="alert alert-danger" role="alert">{{ flash_error }}</div>
-    {% endfor %}
-    <h1>Reset your password</h1>
+    <div class="min-h-screen bg-stone-200 font-sans text-slate-950">
+        <div class="mx-auto min-h-screen w-full max-w-md bg-[#f8f8ff] shadow-xl lg:my-10 lg:min-h-0 lg:max-w-2xl lg:rounded-3xl">
+            <header class="flex h-20 items-center border-b border-slate-200 bg-white px-5">
+                <a href="{{ path('app_login') }}" class="mr-3 flex size-10 items-center justify-center" aria-label="{{ 'reset.back_to_login'|trans }}">{{ include('components/_icon.html.twig', {name: 'back', class: 'size-7'}) }}</a>
+                <h1 class="text-xl font-semibold">{{ 'reset.forgot_title'|trans }}</h1>
+            </header>
 
-    {{ form_start(requestForm) }}
-        {{ form_row(requestForm.email) }}
-        <div>
-            <small>
-                Enter your email address, and we will send you a
-                link to reset your password.
-            </small>
+            <main class="px-5 py-10">
+                <div class="min-h-[46rem] rounded-3xl border border-slate-200 bg-white px-6 py-8 shadow-sm lg:min-h-0 lg:px-10">
+                    <div class="mx-auto flex size-20 items-center justify-center rounded-full bg-red-100 text-red-700" aria-hidden="true">{{ include('components/_icon.html.twig', {name: 'key', class: 'size-10'}) }}</div>
+                    <h2 class="mt-7 text-center text-2xl font-bold">{{ 'reset.reset_password'|trans }}</h2>
+                    <p class="mt-5 text-center text-base leading-relaxed text-stone-500">
+                        {{ 'reset.request_help'|trans }}
+                    </p>
+
+                    {% for flash_error in app.flashes('reset_password_error') %}
+                        <div class="mt-5 rounded-xl border-l-4 border-red-600 bg-red-50 px-4 py-3 text-sm text-red-700" role="alert">
+                            {{ flash_error }}
+                        </div>
+                    {% endfor %}
+
+                    {{ form_start(requestForm, { attr: { class: 'mt-7', novalidate: 'novalidate' } }) }}
+                        {{ form_label(requestForm.email, null, { label_attr: { class: 'mb-2 block text-base font-semibold' } }) }}
+                        <div class="flex h-16 items-center gap-4 rounded-[1.15rem] border border-red-200 bg-white px-4 focus-within:border-red-500 focus-within:ring-2 focus-within:ring-red-100">
+                            {{ include('components/_icon.html.twig', {name: 'mail', class: 'size-6 shrink-0 text-stone-500'}) }}
+                            {{ form_widget(requestForm.email, {
+                                attr: {
+                                    class: 'min-w-0 flex-1 border-0 bg-transparent text-base outline-none placeholder:text-stone-400',
+                                    placeholder: 'exemple@email.com'
+                                }
+                            }) }}
+                        </div>
+                        <div class="mt-1 text-xs text-red-600">{{ form_errors(requestForm.email) }}</div>
+
+                        <button class="mt-5 flex h-14 w-full items-center justify-center gap-3 rounded-[1.15rem] bg-red-600 px-3 text-sm font-semibold text-white transition hover:bg-red-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600">
+                            {{ include('components/_icon.html.twig', {name: 'mail', class: 'size-5'}) }}
+                            {{ 'reset.send_link'|trans }}
+                        </button>
+                    {{ form_end(requestForm) }}
+
+                    <div class="mx-auto mt-8 max-w-xs rounded-2xl border border-red-200 px-4 py-3 text-center">
+                        <p class="flex items-center justify-center gap-2 font-medium">{{ include('components/_icon.html.twig', {name: 'clock', class: 'size-5 text-stone-500'}) }} {{ 'reset.limited_link'|trans }}</p>
+                        <p class="mt-1 text-[10px] text-stone-400">{{ 'reset.expiry_help'|trans }}</p>
+                    </div>
+
+                    <a href="{{ path('app_login') }}" class="mt-16 flex items-center justify-center gap-3 border-t border-slate-200 pt-6 text-stone-600">
+                        {{ include('components/_icon.html.twig', {name: 'back', class: 'size-6'}) }}
+                        {{ 'reset.back_to_login'|trans }}
+                    </a>
+                </div>
+            </main>
         </div>
-
-        <button class="btn btn-primary">Send password reset email</button>
-    {{ form_end(requestForm) }}
+    </div>
 {% endblock %}

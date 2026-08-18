@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\User;
 use App\Form\ChangePasswordFormType;
 use App\Form\ResetPasswordRequestFormType;
+use App\Localization\SupportedLocale;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -15,12 +16,16 @@ use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Address;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Translation\LocaleSwitcher;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use SymfonyCasts\Bundle\ResetPassword\Controller\ResetPasswordControllerTrait;
 use SymfonyCasts\Bundle\ResetPassword\Exception\ResetPasswordExceptionInterface;
 use SymfonyCasts\Bundle\ResetPassword\ResetPasswordHelperInterface;
 
 #[Route('/reset-password')]
+/**
+ * Pilote la procédure sécurisée de réinitialisation du mot de passe.
+ */
 class ResetPasswordController extends AbstractController
 {
     use ResetPasswordControllerTrait;
@@ -28,6 +33,7 @@ class ResetPasswordController extends AbstractController
     public function __construct(
         private ResetPasswordHelperInterface $resetPasswordHelper,
         private EntityManagerInterface $entityManager,
+        private LocaleSwitcher $localeSwitcher,
     ) {
     }
 
@@ -44,7 +50,7 @@ class ResetPasswordController extends AbstractController
             /** @var string $email */
             $email = $form->get('email')->getData();
 
-            return $this->processSendingPasswordResetEmail($email, $mailer, $translator
+            return $this->processSendingPasswordResetEmail($email, $mailer, $translator, $request
             );
         }
 
@@ -103,6 +109,13 @@ class ResetPasswordController extends AbstractController
             return $this->redirectToRoute('app_forgot_password_request');
         }
 
+        // Un lien ouvert dans un nouveau navigateur reprend la langue du compte
+        // avant d’afficher le formulaire de nouveau mot de passe.
+        $language = SupportedLocale::normalize($user->getProfile()?->getLanguage());
+        $request->setLocale($language);
+        $request->getSession()->set('_locale', $language);
+        $this->localeSwitcher->setLocale($language);
+
         // The token is valid; allow the user to change their password.
         $form = $this->createForm(ChangePasswordFormType::class);
         $form->handleRequest($request);
@@ -129,7 +142,12 @@ class ResetPasswordController extends AbstractController
         ]);
     }
 
-    private function processSendingPasswordResetEmail(string $emailFormData, MailerInterface $mailer, TranslatorInterface $translator): RedirectResponse
+    private function processSendingPasswordResetEmail(
+        string $emailFormData,
+        MailerInterface $mailer,
+        TranslatorInterface $translator,
+        Request $request,
+    ): RedirectResponse
     {
         $user = $this->entityManager->getRepository(User::class)->findOneBy([
             'email' => $emailFormData,
@@ -159,7 +177,11 @@ class ResetPasswordController extends AbstractController
         $email = (new TemplatedEmail())
             ->from(new Address('safecity@mail.fr', 'Safecity'))
             ->to((string) $user->getEmail())
-            ->subject('Your password reset request')
+            ->subject($translator->trans(
+                'email.reset.subject',
+                locale: SupportedLocale::normalize($user->getProfile()?->getLanguage())
+            ))
+            ->locale(SupportedLocale::normalize($user->getProfile()?->getLanguage()))
             ->htmlTemplate('reset_password/email.html.twig')
             ->context([
                 'resetToken' => $resetToken,
@@ -170,6 +192,10 @@ class ResetPasswordController extends AbstractController
 
         // Store the token object in session for retrieval in check-email route.
         $this->setTokenObjectInSession($resetToken);
+        $request->getSession()->set(
+            '_locale',
+            SupportedLocale::normalize($user->getProfile()?->getLanguage())
+        );
 
         return $this->redirectToRoute('app_check_email');
     }
