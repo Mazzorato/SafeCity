@@ -17,9 +17,6 @@ class Profile
     private ?bool $emergencyNotifications = null;
 
     #[ORM\Column]
-    private ?bool $weatherNotifications = null;
-
-    #[ORM\Column]
     private ?bool $transportNotifications = null;
 
     #[ORM\Column]
@@ -47,18 +44,6 @@ class Profile
     public function setEmergencyNotifications(bool $emergencyNotifications): static
     {
         $this->emergencyNotifications = $emergencyNotifications;
-
-        return $this;
-    }
-
-    public function isWeatherNotifications(): ?bool
-    {
-        return $this->weatherNotifications;
-    }
-
-    public function setWeatherNotifications(bool $weatherNotifications): static
-    {
-        $this->weatherNotifications = $weatherNotifications;
 
         return $this;
     }
@@ -123,3 +108,5 @@ class Profile
         return $this;
     }
 }
+
+

@@ -1,0 +1,92 @@
+{# Services municipaux disponibles dans la ville sélectionnée. #}
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ 'service.city_services'|trans }}{% endblock %}
+
+{% block body %}
+<main class="mx-auto min-h-screen max-w-md bg-white pb-28 text-slate-950 shadow-xl lg:max-w-7xl lg:pb-12 lg:pt-20 lg:shadow-none">
+    <header class="bg-white px-5 pb-5 pt-6">
+        <div class="flex items-center gap-4">
+            <a href="{{ path('app_service') }}" class="flex size-10 items-center justify-center" aria-label="{{ 'service.back'|trans }}">{{ include('components/_icon.html.twig', {name: 'back', class: 'size-7'}) }}</a>
+            <div>
+                <h1 class="text-xl font-bold">{{ 'service.city_services'|trans }}</h1>
+                <p class="text-sm text-slate-500">{{ city ? city.name : 'city.none_selected'|trans }}</p>
+            </div>
+        </div>
+
+        <form method="get" action="{{ path('app_service_city') }}" class="mt-5 flex gap-2">
+            <label class="relative flex-1">
+                <span class="sr-only">{{ 'service.search_city'|trans }}</span>
+                <span class="pointer-events-none absolute inset-y-0 left-4 flex items-center text-slate-400" aria-hidden="true">{{ include('components/_icon.html.twig', {name: 'search', class: 'size-5'}) }}</span>
+                <input type="search" name="query" value="{{ search }}" placeholder="{{ 'service.search_city_placeholder'|trans }}" class="h-14 w-full rounded-2xl border border-red-200 bg-white pl-11 pr-4 text-sm outline-none ring-red-600 placeholder:text-slate-400 focus:ring-2">
+            </label>
+            <button type="submit" class="flex size-14 items-center justify-center rounded-2xl bg-slate-950 text-white" aria-label="{{ 'common.start_search'|trans }}">{{ include('components/_icon.html.twig', {name: 'search', class: 'size-5'}) }}</button>
+        </form>
+    </header>
+
+    <div class="space-y-6 px-5 pt-5 lg:px-8">
+        {% set sectionLabels = {
+            'city_hall': 'service.section.administrative'|trans,
+            'library': 'service.section.culture_libraries'|trans,
+            'education': 'service.section.education'|trans,
+            'urban_planning': 'service.section.urban_environment'|trans
+        } %}
+        {% set sectionIcons = {
+            'city_hall': 'building',
+            'library': 'library',
+            'education': 'education',
+            'urban_planning': 'construction'
+        } %}
+        {% set sectionStyles = {
+            'city_hall': 'bg-blue-50 text-blue-800',
+            'library': 'bg-violet-50 text-violet-800',
+            'education': 'bg-fuchsia-50 text-fuchsia-700',
+            'urban_planning': 'bg-emerald-50 text-emerald-700'
+        } %}
+
+        {% for type, services in servicesByType %}
+            <section aria-labelledby="section-{{ type }}">
+                <div class="mb-3 inline-flex items-center gap-2 rounded-xl px-3 py-2 {{ sectionStyles[type]|default('bg-slate-100 text-slate-700') }}">
+                    <span class="flex size-7 items-center justify-center" aria-hidden="true">{{ include('components/_icon.html.twig', {name: sectionIcons[type]|default('building'), class: 'size-6'}) }}</span>
+                    <h2 id="section-{{ type }}" class="font-bold">{{ sectionLabels[type]|default(type|replace({'_': ' '})|title) }}</h2>
+                </div>
+                <div class="space-y-3 lg:grid lg:grid-cols-2 lg:gap-4 lg:space-y-0">
+                    {% for service in services %}
+                        <article class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+                            <div class="flex items-start gap-3">
+                                <span class="flex size-12 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-600">{{ include('components/_icon.html.twig', {name: 'building', class: 'size-6'}) }}</span>
+                                <div>
+                                    <h3 class="font-bold">{{ service.name }}</h3>
+                                    <p class="mt-1 text-sm leading-5 text-slate-500">{{ service.address }}</p>
+                                </div>
+                                {% if service.onDuty %}
+                                    <span class="ml-auto shrink-0 rounded-full bg-emerald-100 px-2.5 py-1 text-xs font-semibold text-emerald-700">{{ 'common.open'|trans }}</span>
+                                {% endif %}
+                            </div>
+                            {% if service.openingHours %}
+                                <p class="mt-3 rounded-xl bg-slate-50 px-3 py-2 text-xs font-medium text-slate-600">{{ service.openingHours }}</p>
+                            {% endif %}
+                            <div class="mt-3 flex gap-2">
+                                {% if service.phone %}
+                                    <a href="tel:{{ service.phone }}" class="flex items-center gap-1 rounded-xl bg-slate-950 px-3 py-2 text-xs font-semibold text-white">{{ include('components/_icon.html.twig', {name: 'phone', class: 'size-4'}) }} {{ 'common.call'|trans }}</a>
+                                {% endif %}
+                                <a href="https://www.google.com/maps/search/?api=1&amp;query={{ service.latitude }},{{ service.longitude }}" class="flex items-center gap-1 rounded-xl bg-slate-100 px-3 py-2 text-xs font-semibold text-slate-700" rel="noreferrer">{{ include('components/_icon.html.twig', {name: 'directions', class: 'size-4'}) }} {{ 'common.directions'|trans }}</a>
+                            </div>
+                        </article>
+                    {% endfor %}
+                </div>
+            </section>
+        {% else %}
+            <div class="rounded-3xl border border-dashed border-slate-300 bg-white px-6 py-10 text-center">
+                {{ include('components/_icon.html.twig', {name: 'building', class: 'mx-auto size-8'}) }}
+                <p class="mt-3 font-semibold">{{ 'service.none_found'|trans }}</p>
+                <p class="mt-1 text-sm text-slate-500">{{ 'common.change_search_retry'|trans }}</p>
+            </div>
+        {% endfor %}
+    </div>
+</main>
+
+{% include 'components/_bottom_nav.html.twig' with {active: 'services'} %}
+{% endblock %}
+
+

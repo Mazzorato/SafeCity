@@ -7,6 +7,8 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
+ * Centralise les requêtes Doctrine liées à LocalService.
+ *
  * @extends ServiceEntityRepository<LocalService>
  */
 class LocalServiceRepository extends ServiceEntityRepository
@@ -41,3 +43,5 @@ class LocalServiceRepository extends ServiceEntityRepository
     //        ;
     //    }
 }
+
+

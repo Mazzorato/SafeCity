@@ -1,44 +1,99 @@
+{# Point d’entrée des services locaux. #}
 {% extends 'base.html.twig' %}
 
-{% block title %}Service de la ville{% endblock %}
+{% block title %}{{ 'service.title'|trans }}{% endblock %}
 
 {% block body %}
-<div>
-    <h1>Services de la ville </h1>
-
-    <form method="get" action="{{ path('app_service') }}">
-        <input type="text" name="query" value="{{ search }}" placeholder="Mairie, bibliothèque, urbanisme...">
-        <button type="submit">Rechercher</button>
-
-    {% if cityHall %}
-        <div class="Highlight-service">
-        {{ cityHall.name }} ouverte - {{ cityHall.openingHours }}
+<main class="mx-auto min-h-screen max-w-md bg-[#f8f8ff] pb-28 text-slate-950 shadow-xl lg:max-w-7xl lg:pb-12 lg:pt-20 lg:shadow-none">
+    <header class="px-5 pb-5 pt-7">
+        <div class="flex items-center justify-between gap-4">
+            <h1 class="text-3xl font-bold">{{ 'service.title'|trans }}</h1>
+            <a href="{{ path('app_city_select') }}" class="flex items-center gap-1 rounded-xl bg-red-600 px-3 py-2 text-sm font-semibold text-white">
+                {{ include('components/_icon.html.twig', {name: 'pin', class: 'size-4'}) }}
+                {{ city ? city.name : 'city.your_city'|trans }}
+            </a>
         </div>
-    {% endif %}
 
-    
-    {% set sectionLabels =  {
-        'city_hall' : 'Services Administratifs',
-        'library' : 'Culture & Education',
-        'Heath' : 'Santé',
-        'urban_planning' : 'Urbanisme et Environnement'
-    } %}
+        <form method="get" action="{{ path('app_service') }}" class="mt-5 flex gap-2">
+            <label class="relative flex-1">
+                <span class="sr-only">{{ 'service.search'|trans }}</span>
+                <span class="pointer-events-none absolute inset-y-0 left-4 flex items-center text-slate-400" aria-hidden="true">{{ include('components/_icon.html.twig', {name: 'search', class: 'size-5'}) }}</span>
+                <input type="search" name="query" value="{{ search }}" placeholder="{{ 'service.search'|trans }}" class="h-12 w-full rounded-2xl border-0 bg-white pl-11 pr-4 text-sm outline-none ring-red-600 placeholder:text-slate-400 focus:ring-2">
+            </label>
+            <button type="submit" class="flex size-12 items-center justify-center rounded-2xl bg-slate-950 text-white" aria-label="{{ 'common.start_search'|trans }}">{{ include('components/_icon.html.twig', {name: 'search', class: 'size-5'}) }}</button>
+        </form>
+    </header>
 
-    {% for type, services in servicesByType %}
-        <section>
-            <h2>{{ sectionLabels[type]|default(type) }}</h2>
-            {% for service in services %}
-                <div class="service-item" data-name="{{ service.name|lower }}">
-                    <p> {{ service.name }} </p>
-                    <p> {{ service.address }} </p>
-                    {% if service.openingHours %}
-                        <p> {{ service.openingHours }} </p>
-                    {% endif %}
+    <div class="space-y-6 px-5 pt-5 lg:px-8">
+        {% if cityHall %}
+            <section class="overflow-hidden rounded-2xl border-b-4 border-red-600 bg-white p-5 shadow-sm" aria-label="{{ 'service.main_city_hall'|trans }}">
+                <div class="flex items-start justify-between gap-4">
+                    <div>
+                        <p class="text-xs font-semibold uppercase tracking-widest text-red-600">{{ 'service.your_city_hall'|trans }}</p>
+                        <h2 class="mt-2 text-xl font-bold">{{ cityHall.name }}</h2>
+                        <p class="mt-2 text-sm text-slate-500">{{ cityHall.address }}</p>
+                    </div>
+                    <span class="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-red-50 text-red-600" aria-hidden="true">{{ include('components/_icon.html.twig', {name: 'building', class: 'size-7'}) }}</span>
                 </div>
-            {% endfor %}
+                {% if cityHall.openingHours %}
+                    <p class="mt-4 rounded-2xl bg-slate-50 px-3 py-2 text-sm text-slate-600">{{ cityHall.openingHours }}</p>
+                {% endif %}
+            </section>
+        {% endif %}
+
+        <section aria-labelledby="service-categories">
+            <h2 id="service-categories" class="mb-3 font-bold">{{ 'service.what_need'|trans }}</h2>
+            <div class="grid grid-cols-2 gap-3 lg:grid-cols-4">
+                <a href="{{ path('app_service_city') }}" class="rounded-2xl border-b-4 border-blue-600 bg-white p-4 shadow-sm">
+                    <span class="flex size-11 items-center justify-center rounded-xl bg-blue-50 text-blue-700" aria-hidden="true">{{ include('components/_icon.html.twig', {name: 'building', class: 'size-6'}) }}</span>
+                    <h3 class="mt-4 font-bold">{{ 'service.city_services'|trans }}</h3>
+                    <p class="mt-1 text-xs leading-5 text-slate-500">{{ 'service.city_services_help'|trans }}</p>
+                </a>
+                <a href="{{ path('app_service') }}" class="rounded-2xl border-b-4 border-red-600 bg-white p-4 shadow-sm">
+                    <span class="flex size-11 items-center justify-center rounded-xl bg-red-50 text-red-600" aria-hidden="true">{{ include('components/_icon.html.twig', {name: 'pharmacy', class: 'size-6'}) }}</span>
+                    <h3 class="mt-4 font-bold">{{ 'service.pharmacies'|trans }}</h3>
+                    <p class="mt-1 text-xs leading-5 text-slate-500">{{ 'service.on_duty_hours'|trans }}</p>
+                </a>
+                <a href="{{ path('app_service') }}" class="rounded-2xl border-b-4 border-violet-600 bg-white p-4 shadow-sm">
+                    <span class="flex size-11 items-center justify-center rounded-xl bg-violet-50 text-violet-700" aria-hidden="true">{{ include('components/_icon.html.twig', {name: 'doctor', class: 'size-6'}) }}</span>
+                    <h3 class="mt-4 font-bold">{{ 'service.doctors'|trans }}</h3>
+                    <p class="mt-1 text-xs leading-5 text-slate-500">{{ 'service.on_duty_doctors'|trans }}</p>
+                </a>
+                <a href="{{ path('app_service') }}" class="rounded-2xl border-b-4 border-orange-500 bg-white p-4 shadow-sm">
+                    <span class="flex size-11 items-center justify-center rounded-xl bg-orange-50 text-orange-700" aria-hidden="true">{{ include('components/_icon.html.twig', {name: 'train', class: 'size-6'}) }}</span>
+                    <h3 class="mt-4 font-bold">{{ 'mobility.title'|trans }}</h3>
+                    <p class="mt-1 text-xs leading-5 text-slate-500">{{ 'mobility.transport_parking'|trans }}</p>
+                </a>
+            </div>
         </section>
-    {% else %}
-        <p> Aucun service pour votre ville pour le moment </p>
-    {% endfor %}
-</div>
+
+        {% if search %}
+            <section aria-labelledby="service-results">
+                <div class="mb-3 flex items-center justify-between">
+                    <h2 id="service-results" class="font-bold">{{ 'common.results'|trans }}</h2>
+                    <a href="{{ path('app_service') }}" class="text-sm font-semibold text-red-600">{{ 'common.clear'|trans }}</a>
+                </div>
+                <div class="space-y-3 lg:grid lg:grid-cols-2 lg:gap-4 lg:space-y-0">
+                    {% for type, services in servicesByType %}
+                        {% for service in services %}
+                            <article class="rounded-2xl bg-white p-4 shadow-sm ring-1 ring-slate-100">
+                                <h3 class="font-bold">{{ service.name }}</h3>
+                                <p class="mt-1 text-sm text-slate-500">{{ service.address }}</p>
+                                {% if service.openingHours %}
+                                    <p class="mt-2 text-xs font-medium text-slate-600">{{ service.openingHours }}</p>
+                                {% endif %}
+                            </article>
+                        {% endfor %}
+                    {% else %}
+                        <div class="rounded-2xl border border-dashed border-slate-300 bg-white p-7 text-center text-sm text-slate-500">{{ 'service.no_result'|trans }}</div>
+                    {% endfor %}
+                </div>
+            </section>
+        {% endif %}
+    </div>
+</main>
+
+{% include 'components/_bottom_nav.html.twig' with {active: 'services'} %}
 {% endblock %}
+
+

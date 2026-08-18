@@ -58,12 +58,6 @@ class City
     private Collection $parkings;
 
     /**
-     * @var Collection<int, WeatherAlert>
-     */
-    #[ORM\OneToMany(targetEntity: WeatherAlert::class, mappedBy: 'city', orphanRemoval: true)]
-    private Collection $weatherAlerts;
-
-    /**
      * @var Collection<int, Event>
      */
     #[ORM\OneToMany(targetEntity: Event::class, mappedBy: 'city')]
@@ -87,7 +81,6 @@ class City
         $this->localServices = new ArrayCollection();
         $this->transports = new ArrayCollection();
         $this->parkings = new ArrayCollection();
-        $this->weatherAlerts = new ArrayCollection();
         $this->events = new ArrayCollection();
         $this->news = new ArrayCollection();
         $this->reports = new ArrayCollection();
@@ -309,36 +302,6 @@ class City
             // set the owning side to null (unless already changed)
             if ($parking->getCity() === $this) {
                 $parking->setCity(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, WeatherAlert>
-     */
-    public function getWeatherAlerts(): Collection
-    {
-        return $this->weatherAlerts;
-    }
-
-    public function addWeatherAlert(WeatherAlert $weatherAlert): static
-    {
-        if (!$this->weatherAlerts->contains($weatherAlert)) {
-            $this->weatherAlerts->add($weatherAlert);
-            $weatherAlert->setCity($this);
-        }
-
-        return $this;
-    }
-
-    public function removeWeatherAlert(WeatherAlert $weatherAlert): static
-    {
-        if ($this->weatherAlerts->removeElement($weatherAlert)) {
-            // set the owning side to null (unless already changed)
-            if ($weatherAlert->getCity() === $this) {
-                $weatherAlert->setCity(null);
             }
         }
 
