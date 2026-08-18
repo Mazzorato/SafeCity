@@ -8,6 +8,9 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: TransportRepository::class)]
+/**
+ * Modèle Doctrine représentant les données persistées de Transport.
+ */
 class Transport
 {
     #[ORM\Id]
@@ -126,3 +129,5 @@ class Transport
         return $this;
     }
 }
+
+

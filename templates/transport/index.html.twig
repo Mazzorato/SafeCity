@@ -1,35 +1,201 @@
+{# Liste et état des transports de la ville. #}
 {% extends 'base.html.twig' %}
 
-{% block title %}Transport{% endblock %}
+{% block title %}{{ 'transport.network_title'|trans }}{% endblock %}
 
 {% block body %}
-<div>
-    <h1>Transport</h1>
-    <p>{{ city ? city.name  ~ ' - Réseau Tisséo' : 'Aucune ville sélectionnée' }}</p>
-
-    {% for transport in disrupted %}
-        <div> 
-            {{ transport.name }} {{ transport.line }} : {{ transport.disruption }}
+<main class="mx-auto min-h-screen max-w-md bg-white pb-28 text-slate-950 shadow-xl lg:max-w-7xl lg:pb-12 lg:pt-20 lg:shadow-none">
+    <header class="bg-white px-5 pb-5 pt-6 shadow-sm">
+        <div class="flex items-center gap-4">
+            <a href="{{ path('app_transport') }}" class="flex size-10 items-center justify-center" aria-label="{{ 'mobility.back'|trans }}">{{ include('components/_icon.html.twig', {name: 'back', class: 'size-7'}) }}</a>
+            <div>
+                <h1 class="text-xl font-bold">{{ 'transport.network_title'|trans }}</h1>
+                <p class="text-sm text-slate-500">{{ city ? 'transport.local_network'|trans({'%city%': city.name}) : 'city.none_selected'|trans }}</p>
+            </div>
         </div>
-    {% endfor %}
 
-    <h2>Etat du réseau </h2>
+        <form method="get" action="{{ path('app_transport') }}" class="mt-5 flex gap-2">
+            <label class="relative flex-1">
+                <span class="sr-only">{{ 'transport.search_line'|trans }}</span>
+                <span class="pointer-events-none absolute inset-y-0 left-4 flex items-center text-slate-400" aria-hidden="true">{{ include('components/_icon.html.twig', {name: 'search', class: 'size-5'}) }}</span>
+                <input type="search" name="query" value="{{ search }}" placeholder="{{ 'transport.search_line'|trans }}" class="h-12 w-full rounded-2xl border-0 bg-slate-100 pl-11 pr-4 text-sm outline-none ring-red-600 placeholder:text-slate-400 focus:ring-2">
+            </label>
+            <input type="hidden" name="type" value="{{ type }}">
+            <button type="submit" class="flex size-12 items-center justify-center rounded-2xl bg-slate-950 text-white" aria-label="{{ 'common.start_search'|trans }}">{{ include('components/_icon.html.twig', {name: 'search', class: 'size-5'}) }}</button>
+        </form>
+    </header>
 
-    {% if transport is empty %}
-        <p> Aucune information de transport disponible pour le moment </p>
-    {% else %}
-        <ul> 
-            {% for transport in transports %}
-                <li>
-                    {{ transport.name }} {{ transport.line }}
-                    <span>{{ transport.status }} </span>
-                    <p>Mis à jour : {{ transport.updatedAt|date('H:i') }}</p>
-                </li>
-            {% endfor %}
-        </ul>
-    {% endif %}
+    <div class="space-y-6 px-5 pt-5 lg:px-8">
+        {% if not transportDataAvailable %}
+            <div class="rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm leading-6 text-amber-900" role="status">
+                <strong class="block">{{ 'transport.data_unavailable'|trans }}</strong>
+                <span>{{ 'transport.data_unavailable_help'|trans }}</span>
+            </div>
+        {% elseif not transportRealtimeAvailable %}
+            <div class="rounded-2xl border border-blue-200 bg-blue-50 p-4 text-sm leading-6 text-blue-900" role="status">
+                <strong class="block">{{ 'transport.realtime_unavailable'|trans }}</strong>
+                <span>{{ 'transport.theoretical_still_available'|trans }}</span>
+            </div>
+        {% endif %}
 
-    <a href="{{ path('app_parking') }}"> Voir les parkings autour de moi</a>
-    <a href="{{ path('app_report_new') }}"> Signalier un incident</a>
-</div>
+        {% if disrupted is not empty %}
+            <section aria-labelledby="network-alerts">
+                <div class="mb-3 flex items-center justify-between">
+                    <h2 id="network-alerts" class="font-bold">{{ 'transport.network_alerts'|trans }}</h2>
+                    <span class="rounded-full bg-red-100 px-2.5 py-1 text-xs font-semibold text-red-700">{{ disrupted|length }}</span>
+                </div>
+                <div class="space-y-3">
+                    {% for transport in disrupted %}
+                        <article class="rounded-2xl bg-red-600 p-4 text-white">
+                            <div class="flex items-start gap-3">
+                                <span class="flex size-10 shrink-0 items-center justify-center rounded-xl bg-red-600 font-bold text-white">{{ transport.line }}</span>
+                                <div>
+                                    <p class="font-semibold">{{ transport.name }}</p>
+                                    <p class="mt-1 text-sm leading-5 text-red-100">{{ transport.disruption }}</p>
+                                </div>
+                            </div>
+                        </article>
+                    {% endfor %}
+                </div>
+            </section>
+        {% endif %}
+
+        <section aria-labelledby="network-state">
+            <h2 id="network-state" class="mb-3 font-bold">{{ 'transport.network_status'|trans }}</h2>
+            <nav class="-mx-5 flex gap-2 overflow-x-auto px-5 pb-2" aria-label="{{ 'transport.filter'|trans }}">
+                {% set filters = {
+                    'all': 'common.all'|trans,
+                    'metro': 'transport.type.metro'|trans,
+                    'tram': 'transport.type.tram'|trans,
+                    'bus': 'transport.type.bus'|trans,
+                    'disrupted': 'transport.disrupted_plural'|trans
+                } %}
+                {% for value, label in filters %}
+                    <a href="{{ path('app_transport', {type: value, query: search, schedule: selectedStop ? selectedStop.id : null}) }}" class="shrink-0 rounded-xl px-4 py-2 text-sm font-semibold {{ type == value ? 'bg-red-600 text-white' : 'bg-stone-200 text-slate-600' }}" {% if type == value %}aria-current="page"{% endif %}>{{ label }}</a>
+                {% endfor %}
+            </nav>
+
+            {% if transports is empty %}
+                <div class="mt-4 rounded-3xl border border-dashed border-slate-300 bg-white px-6 py-10 text-center">
+                    {{ include('components/_icon.html.twig', {name: 'train', class: 'mx-auto size-8 text-slate-400'}) }}
+                    <p class="mt-3 font-semibold">{{ 'transport.no_line'|trans }}</p>
+                    <p class="mt-1 text-sm text-slate-500">{{ 'common.change_search_filter'|trans }}</p>
+                </div>
+            {% else %}
+                {% set transportGroups = {
+                    metro: {label: 'transport.type.metro'|trans, icon: 'train', color: 'text-blue-700', normal: 'bg-emerald-500'},
+                    tram: {label: 'transport.type.tram'|trans, icon: 'tram', color: 'text-blue-700', normal: 'bg-blue-600'},
+                    bus: {label: 'transport.type.bus'|trans, icon: 'bus', color: 'text-fuchsia-700', normal: 'bg-fuchsia-500'}
+                } %}
+                <div class="mt-5 space-y-7 lg:grid lg:grid-cols-2 lg:gap-6 lg:space-y-0">
+                    {% for groupType, group in transportGroups %}
+                        {% set groupedTransports = transports|filter(transport => transport.type == groupType) %}
+                        {% if groupedTransports is not empty %}
+                            <section aria-labelledby="transport-group-{{ groupType }}">
+                                <h3 id="transport-group-{{ groupType }}" class="mb-3 flex items-center gap-2 text-2xl font-bold {{ group.color }}">
+                                    {{ include('components/_icon.html.twig', {name: group.icon, class: 'size-6'}) }}
+                                    {{ group.label }}
+                                </h3>
+                                <div class="space-y-3">
+                                    {% for transport in groupedTransports %}
+                                        {% set isDisrupted = transport.status == 'disrupted' %}
+                                        {% set isUnknown = transport.status == 'unknown' %}
+                                        <article data-transport-line="{{ transport.line }}" class="rounded-2xl border border-slate-200 bg-white p-4">
+                                            <div class="flex items-center gap-3">
+                                                <span class="flex size-12 shrink-0 items-center justify-center rounded-xl {{ isDisrupted ? 'bg-red-600' : (isUnknown ? 'bg-slate-400' : group.normal) }} text-white">{{ include('components/_icon.html.twig', {name: group.icon, class: 'size-6'}) }}</span>
+                                                <div class="min-w-0 flex-1">
+                                                    <div class="flex items-start justify-between gap-3">
+                                                        <div class="min-w-0">
+                                                            <h4 class="truncate font-bold">{{ transport.name }}</h4>
+                                                            <p class="mt-0.5 text-xs text-slate-400">{{ 'common.updated_at'|trans({'%time%': transport.updatedAt|date('H:i')}) }}</p>
+                                                        </div>
+                                                        <span class="shrink-0 rounded-full px-2.5 py-1 text-xs font-semibold {{ isDisrupted ? 'bg-red-100 text-red-700' : (isUnknown ? 'bg-slate-100 text-slate-600' : 'bg-emerald-100 text-emerald-700') }}">
+                                                            {{ isDisrupted ? 'transport.disrupted_feminine'|trans : (isUnknown ? 'transport.unknown'|trans : 'transport.ok'|trans) }}
+                                                        </span>
+                                                    </div>
+                                                    {% if isDisrupted %}<p class="mt-2 text-sm leading-5 text-red-700">{{ transport.disruption }}</p>{% endif %}
+                                                </div>
+                                            </div>
+                                        </article>
+                                    {% endfor %}
+                                </div>
+                            </section>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </section>
+
+        {% if transportDataAvailable and scheduleStops is not empty %}
+            <section aria-labelledby="transport-schedules" class="rounded-3xl bg-white p-5 shadow-sm ring-1 ring-slate-100">
+                <h2 id="transport-schedules" class="font-bold">{{ 'transport.schedules'|trans }}</h2>
+                <p class="mt-1 text-sm leading-5 text-slate-500">{{ 'transport.schedules_help'|trans }}</p>
+
+                {# Le choix est traité par Symfony en GET : aucun script tiers
+                   ni partage de la position de l'utilisateur n'est nécessaire. #}
+                <form method="get" action="{{ path('app_transport') }}" class="mt-4 space-y-3">
+                    <input type="hidden" name="type" value="{{ type }}">
+                    <input type="hidden" name="query" value="{{ search }}">
+                    <label class="block">
+                        <span class="mb-1.5 block text-sm font-semibold text-slate-700">{{ 'transport.choose_stop'|trans }}</span>
+                        <select name="schedule" class="h-12 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 text-sm outline-none ring-red-600 focus:ring-2">
+                            <option value="">{{ 'transport.choose_stop_placeholder'|trans }}</option>
+                            {% for stop in scheduleStops %}
+                                <option value="{{ stop.id }}" {{ selectedStop and selectedStop.id == stop.id ? 'selected' : '' }}>{{ stop.line }} — {{ stop.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </label>
+                    <button type="submit" class="h-11 w-full rounded-2xl bg-slate-950 px-4 text-sm font-bold text-white">{{ 'transport.show_departures'|trans }}</button>
+                </form>
+
+                {% if selectedStop %}
+                    <div class="mt-5 border-t border-slate-100 pt-4">
+                        <div class="flex items-start justify-between gap-3">
+                            <div>
+                                <p class="text-xs font-semibold uppercase tracking-wide text-red-600">{{ 'transport.next_departures'|trans }}</p>
+                                <h3 class="mt-1 font-bold">{{ selectedStop.line }} — {{ selectedStop.name }}</h3>
+                            </div>
+                            <span class="rounded-full bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-600">{{ 'transport.next_hours'|trans }}</span>
+                        </div>
+
+                        {% if departures is empty %}
+                            <p class="mt-4 rounded-2xl bg-slate-50 px-4 py-5 text-sm text-slate-500">{{ 'transport.no_departure'|trans }}</p>
+                        {% else %}
+                            <div class="mt-4 divide-y divide-slate-100">
+                                {% for departure in departures %}
+                                    <div class="flex items-center gap-3 py-3">
+                                        <time datetime="{{ departure.time|date('c') }}" class="min-w-14 text-lg font-bold text-slate-950">{{ departure.time|date('H:i') }}</time>
+                                        <div class="min-w-0 flex-1">
+                                            <p class="truncate text-sm font-semibold">{{ departure.headsign ?: 'transport.direction_unavailable'|trans }}</p>
+                                            <p class="text-xs text-slate-400">{{ departure.realtime ? 'transport.realtime_time'|trans : 'transport.theoretical_time'|trans }}</p>
+                                        </div>
+                                        <span class="size-2.5 rounded-full {{ departure.realtime ? 'bg-emerald-500' : 'bg-blue-400' }}" aria-hidden="true"></span>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                {% endif %}
+            </section>
+        {% endif %}
+
+        <p class="text-center text-xs leading-5 text-slate-400">{{ 'transport.opendata_attribution'|trans }}</p>
+
+        <div class="grid grid-cols-2 gap-3 lg:grid-cols-4">
+            <a href="{{ path('app_parking') }}" class="rounded-2xl bg-white p-4 font-semibold shadow-sm ring-1 ring-slate-100">
+                <span class="mb-3 flex size-10 items-center justify-center rounded-xl bg-blue-100 font-bold text-blue-700" aria-hidden="true">P</span>
+                {{ 'parking.view'|trans }}
+            </a>
+            {# Conserve le contexte routier lorsque le signalement part du réseau de transport. #}
+            <a href="{{ path('app_report_new', {category: 'route'}) }}" class="rounded-2xl bg-red-600 p-4 font-semibold text-white shadow-sm">
+                <span class="mb-3 flex size-10 items-center justify-center rounded-xl bg-white/20" aria-hidden="true">{{ include('components/_icon.html.twig', {name: 'alert', class: 'size-5'}) }}</span>
+                {{ 'report.report_incident'|trans }}
+            </a>
+        </div>
+    </div>
+</main>
+
+{% include 'components/_bottom_nav.html.twig' with {active: ''} %}
 {% endblock %}
+
+

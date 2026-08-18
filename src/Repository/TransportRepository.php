@@ -7,6 +7,8 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
+ * Centralise les requêtes Doctrine liées à Transport.
+ *
  * @extends ServiceEntityRepository<Transport>
  */
 class TransportRepository extends ServiceEntityRepository
@@ -41,3 +43,5 @@ class TransportRepository extends ServiceEntityRepository
     //        ;
     //    }
 }
+
+
