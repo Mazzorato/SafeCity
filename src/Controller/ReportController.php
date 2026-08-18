@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use App\Service\ReportRouter;
+
 use App\Entity\ReportStatusHistory;
 
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -40,6 +42,7 @@ final class ReportController extends AbstractController
         Request $request,
         EntityManagerInterface $entityManager,
         FileUploader $fileUploader,
+        ReportRouter $reportRouter,
         LoggerInterface $logger,
     ): Response {
         $this->denyAccessUnlessGranted('ROLE_USER');
@@ -75,6 +78,7 @@ final class ReportController extends AbstractController
                 ->setChangedAt(\DateTimeImmutable::createFromMutable($createdAt))
                 ->setChangedBy($user);
             $report->addStatusHistory($initialHistory);
+            $reportRouter->route($report);
 
             $uploadedPhotoFilenames = [];
 
@@ -266,6 +270,7 @@ final class ReportController extends AbstractController
         Report $report,
         EntityManagerInterface $entityManager,
         FileUploader $fileUploader,
+        ReportRouter $reportRouter,
         LoggerInterface $logger,
     ): Response {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
