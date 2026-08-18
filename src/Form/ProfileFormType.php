@@ -26,10 +26,6 @@ class ProfileFormType extends AbstractType
                 'label' => 'form.event_reminders',
                 'required' => false,
             ])
-            ->add('weatherNotifications', CheckboxType::class,[
-                'label' => 'Alerte météo',
-                'required' => false,
-            ])
             ->add('transportNotifications', CheckboxType::class,[
                 'label' => 'Perturbations transport',
                 'required' => false,
@@ -73,3 +69,5 @@ class ProfileFormType extends AbstractType
         ]);
     }
 }
+
+
