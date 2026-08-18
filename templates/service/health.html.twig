@@ -1,0 +1,214 @@
+{# Services de santé disponibles à proximité. #}
+{% extends 'base.html.twig' %}
+
+{% set isPharmacy = kind == 'pharmacy' %}
+
+{% block title %}{{ isPharmacy ? 'service.on_duty_pharmacies'|trans : 'service.on_duty_doctors'|trans }}{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('vendor/leaflet/dist/leaflet.min.css') }}">
+{% endblock %}
+
+{% block body %}
+<main
+    class="mx-auto min-h-screen max-w-md bg-white pb-28 text-slate-950 shadow-xl lg:max-w-7xl lg:pb-12 lg:pt-20 lg:shadow-none"
+    data-controller="health-location"
+    data-health-location-allowed-value="{{ locationAllowed ? 'true' : 'false' }}"
+    data-health-location-disabled-message-value="{{ 'service.location_disabled'|trans }}"
+    data-health-location-enable-message-value="{{ 'service.location_enable'|trans }}"
+    data-health-location-unavailable-message-value="{{ 'service.location_unavailable'|trans }}"
+    data-health-location-searching-message-value="{{ 'service.location_searching'|trans }}"
+    data-health-location-error-message-value="{{ 'service.location_error'|trans }}"
+>
+    <header class="bg-white px-5 pb-5 pt-6 text-slate-950">
+        <div class="flex items-center gap-4">
+            <a href="{{ path('app_service') }}" class="flex size-10 items-center justify-center" aria-label="{{ 'service.back'|trans }}">{{ include('components/_icon.html.twig', {name: 'back', class: 'size-7'}) }}</a>
+            <div>
+                <h1 class="text-2xl font-bold">{{ isPharmacy ? 'service.on_duty_pharmacies'|trans : 'service.on_duty_doctors'|trans }}</h1>
+                <p class="text-sm text-slate-500">{{ city ? city.name : 'city.none_selected'|trans }}</p>
+            </div>
+        </div>
+
+        <form method="get" action="{{ path('app_service_health', {kind: kind}) }}" class="mt-5 flex gap-2">
+            <label class="relative flex-1">
+                <span class="sr-only">{{ 'common.search'|trans }}</span>
+                <span class="pointer-events-none absolute inset-y-0 left-4 flex items-center text-slate-400" aria-hidden="true">{{ include('components/_icon.html.twig', {name: 'search', class: 'size-5'}) }}</span>
+                <input type="search" name="query" value="{{ search }}" placeholder="{{ isPharmacy ? 'service.pharmacy_search'|trans : 'service.doctor_search'|trans }}" class="h-12 w-full rounded-2xl border border-slate-200 bg-white pl-11 pr-4 text-sm text-slate-950 outline-none placeholder:text-slate-400 focus:border-red-500 focus:ring-2 focus:ring-red-100">
+            </label>
+            <input type="hidden" name="filter" value="{{ filter }}">
+            {% if userLatitude is not null and userLongitude is not null %}
+                {# La recherche textuelle conserve la position déjà autorisée. #}
+                <input type="hidden" name="latitude" value="{{ userLatitude }}">
+                <input type="hidden" name="longitude" value="{{ userLongitude }}">
+            {% endif %}
+            <button type="submit" class="flex size-12 items-center justify-center rounded-2xl bg-slate-950 text-white" aria-label="{{ 'common.start_search'|trans }}">{{ include('components/_icon.html.twig', {name: 'search', class: 'size-5'}) }}</button>
+        </form>
+    </header>
+
+    <nav class="flex gap-2 overflow-x-auto px-5 pb-2" aria-label="{{ 'service.filter_availability'|trans }}">
+        {% set filters = {
+            'all': 'common.all'|trans,
+            'open': 'service.on_duty'|trans,
+            'always': 'service.always_open'|trans
+        } %}
+        {% for value, label in filters %}
+            <a href="{{ path('app_service_health', {
+                kind: kind,
+                filter: value,
+                query: search,
+                latitude: userLatitude,
+                longitude: userLongitude
+            }) }}" class="shrink-0 rounded-xl px-4 py-2 text-sm font-semibold {{ filter == value ? (isPharmacy ? 'bg-red-600 text-white' : 'bg-slate-950 text-white') : 'border border-slate-200 bg-white text-slate-600' }}" {% if filter == value %}aria-current="page"{% endif %}>{{ label }}</a>
+        {% endfor %}
+    </nav>
+
+    <section class="px-5 pt-4 lg:px-8" aria-labelledby="health-location-title">
+        <div class="rounded-2xl border {{ isPharmacy ? 'border-red-200 bg-red-50' : 'border-blue-200 bg-blue-600 text-white' }} p-4">
+            <div class="flex items-center gap-3">
+                <span class="flex size-11 shrink-0 items-center justify-center rounded-xl {{ isPharmacy ? 'bg-white text-red-600' : 'bg-white text-blue-600' }}" aria-hidden="true">{{ include('components/_icon.html.twig', {name: 'pin', class: 'size-6'}) }}</span>
+                <div class="min-w-0 flex-1">
+                    <h2 id="health-location-title" class="font-bold">{{ 'service.near_me'|trans }}</h2>
+                    <p class="mt-1 text-xs leading-5 {{ isPharmacy ? 'text-slate-500' : 'text-blue-100' }}" data-health-location-target="status" role="status">
+                        {% if userLatitude is not null %}
+                            {{ 'service.sorted_by_distance'|trans }}
+                        {% elseif not locationAllowed %}
+                            {{ 'service.location_disabled'|trans }}
+                        {% else %}
+                            {{ 'service.location_help'|trans }}
+                        {% endif %}
+                    </p>
+                </div>
+                <button
+                    type="button"
+                    class="shrink-0 rounded-xl {{ isPharmacy ? 'bg-red-600' : 'bg-slate-950' }} px-3 py-2 text-xs font-bold text-white disabled:cursor-not-allowed disabled:bg-slate-300"
+                    data-health-location-target="button"
+                    data-action="health-location#locate"
+                    {% if not locationAllowed %}disabled aria-disabled="true"{% endif %}
+                >
+                    {{ 'service.locate'|trans }}
+                </button>
+            </div>
+            {% if not locationAllowed %}
+                <a href="{{ path('app_profile') }}" class="mt-3 inline-flex text-xs font-semibold {{ isPharmacy ? 'text-red-700' : 'text-white' }}">
+                    {{ 'service.change_location_preference'|trans }}
+                </a>
+            {% endif %}
+        </div>
+    </section>
+
+    <section class="px-5 pt-5 lg:px-8" aria-labelledby="health-results">
+        <div class="mb-3 flex items-center justify-between">
+            <h2 id="health-results" class="font-bold">{{ 'common.nearby'|trans }}</h2>
+            <span class="text-sm text-slate-500">{{ 'common.result_count'|trans({'%count%': services|length}) }}</span>
+        </div>
+
+        {% if services is empty %}
+            <div class="rounded-3xl border border-dashed border-slate-300 bg-white px-6 py-10 text-center">
+                <span class="mx-auto flex size-12 items-center justify-center rounded-2xl {{ isPharmacy ? 'bg-red-100 text-red-700' : 'bg-blue-100 text-blue-700' }}" aria-hidden="true">{{ include('components/_icon.html.twig', {name: isPharmacy ? 'pharmacy' : 'doctor', class: 'size-6'}) }}</span>
+                <p class="mt-3 font-semibold">{{ 'common.no_result'|trans }}</p>
+                <p class="mt-1 text-sm text-slate-500">{{ 'common.change_search_filter'|trans }}</p>
+            </div>
+        {% else %}
+            <section
+                class="mb-5 overflow-hidden rounded-3xl bg-white shadow-sm ring-1 ring-slate-100"
+                aria-labelledby="health-map-title"
+                data-controller="health-map"
+                data-health-map-services-value="{{ mapServices|json_encode|e('html_attr') }}"
+                data-health-map-is-pharmacy-value="{{ isPharmacy ? 'true' : 'false' }}"
+                data-health-map-on-duty-label-value="{{ 'service.on_duty'|trans }}"
+                data-health-map-distance-message-value="{{ 'service.distance_km'|trans }}"
+                data-health-map-user-label-value="{{ 'service.your_position'|trans }}"
+                {% if userLatitude is not null and userLongitude is not null %}
+                    data-health-map-user-latitude-value="{{ userLatitude }}"
+                    data-health-map-user-longitude-value="{{ userLongitude }}"
+                {% endif %}
+            >
+                <div class="flex items-center justify-between px-4 py-3">
+                    <div>
+                        <h3 id="health-map-title" class="font-bold">{{ 'service.map_title'|trans }}</h3>
+                        <p class="mt-0.5 text-xs text-slate-500">{{ 'service.map_help'|trans }}</p>
+                    </div>
+                    <span class="rounded-full bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-600">{{ services|length }}</span>
+                </div>
+                <div class="h-64 w-full bg-slate-200" data-health-map-target="canvas"></div>
+            </section>
+
+            <div class="space-y-3 lg:grid lg:grid-cols-2 lg:gap-4 lg:space-y-0">
+                {% for service in services %}
+                    <article class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm" data-health-service-id="{{ service.id }}">
+                        <div class="flex items-start gap-3">
+                            <span class="flex size-12 shrink-0 items-center justify-center rounded-xl {{ isPharmacy ? 'bg-red-100 text-red-600' : 'bg-slate-100 text-blue-600' }}" aria-hidden="true">{{ include('components/_icon.html.twig', {name: isPharmacy ? 'pharmacy' : 'doctor', class: 'size-6'}) }}</span>
+                            <div class="min-w-0 flex-1">
+                                <div class="flex items-start justify-between gap-2">
+                                    <h3 class="font-bold">{{ service.name }}</h3>
+                                    {% if service.onDuty %}
+                                        <span class="shrink-0 rounded-full bg-emerald-100 px-2.5 py-1 text-xs font-semibold text-emerald-700">{{ 'service.on_duty'|trans }}</span>
+                                    {% endif %}
+                                </div>
+                                <p class="mt-1 text-sm leading-5 text-slate-500">{{ service.address }}</p>
+                                {% if serviceDistances[service.id] is defined %}
+                                    <p class="mt-2 text-xs font-bold text-slate-700" data-service-distance="{{ serviceDistances[service.id] }}">
+                                        {{ 'service.distance_km'|trans({'%distance%': serviceDistances[service.id]|round(1)}) }}
+                                    </p>
+                                {% endif %}
+                                {% if service.openingHours %}
+                                    <p class="mt-2 text-xs font-semibold {{ isPharmacy ? 'text-emerald-700' : 'text-blue-700' }}">{{ service.openingHours }}</p>
+                                {% endif %}
+                                <div class="mt-3 flex gap-2">
+                                    {% if service.phone %}
+                                        <a href="tel:{{ service.phone }}" class="flex flex-1 items-center justify-center gap-2 rounded-xl bg-slate-950 px-3 py-2 text-xs font-semibold text-white">{{ include('components/_icon.html.twig', {name: 'phone', class: 'size-4'}) }} {{ 'common.call'|trans }}</a>
+                                    {% endif %}
+                                    <a href="https://www.google.com/maps/search/?api=1&amp;query={{ service.latitude }},{{ service.longitude }}" class="flex flex-1 items-center justify-center gap-2 rounded-xl bg-red-600 px-3 py-2 text-xs font-semibold text-white" rel="noreferrer">{{ include('components/_icon.html.twig', {name: 'directions', class: 'size-4'}) }} {{ 'common.directions'|trans }}</a>
+                                </div>
+                            </div>
+                        </div>
+
+                        {% set alternatives = nearbyAlternatives[service.id]|default([]) %}
+                        {% if alternatives is not empty %}
+                            {# Les alternatives sont calculées localement à partir
+                               des coordonnées enregistrées dans SafeCity. #}
+                            <div class="mt-4 rounded-2xl border border-amber-200 bg-amber-50 p-3" data-nearby-alternatives-for="{{ service.id }}">
+                                <h4 class="text-sm font-bold text-amber-950">{{ 'service.nearby_alternatives'|trans }}</h4>
+                                <div class="mt-2 divide-y divide-amber-200">
+                                    {% for alternativeItem in alternatives %}
+                                        {% set alternative = alternativeItem.service %}
+                                        <div class="py-3 first:pt-1 last:pb-1" data-alternative-service-id="{{ alternative.id }}" data-alternative-distance="{{ alternativeItem.distance }}">
+                                            <div class="flex items-start justify-between gap-3">
+                                                <div class="min-w-0">
+                                                    <p class="font-semibold text-amber-950" data-alternative-name>{{ alternative.name }}</p>
+                                                    <p class="mt-1 text-xs leading-5 text-amber-900/75">{{ alternative.address }}</p>
+                                                </div>
+                                                <span class="shrink-0 rounded-full bg-white px-2 py-1 text-[11px] font-bold text-amber-900">
+                                                    {{ 'service.distance_km'|trans({'%distance%': alternativeItem.distance|round(1)}) }}
+                                                </span>
+                                            </div>
+                                            {% if alternative.openingHours %}
+                                                <p class="mt-2 text-xs font-semibold text-amber-900">{{ alternative.openingHours }}</p>
+                                            {% endif %}
+                                            <div class="mt-2 flex gap-2">
+                                                {% if alternative.phone %}
+                                                    <a href="tel:{{ alternative.phone }}" class="rounded-xl bg-amber-900 px-3 py-2 text-xs font-semibold text-white">{{ 'common.call'|trans }}</a>
+                                                {% endif %}
+                                                <a href="https://www.google.com/maps/search/?api=1&amp;query={{ alternative.latitude }},{{ alternative.longitude }}" class="rounded-xl bg-white px-3 py-2 text-xs font-semibold text-amber-950" rel="noreferrer">{{ 'common.directions'|trans }}</a>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        {% endif %}
+                    </article>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </section>
+
+    <aside class="mx-5 mt-6 rounded-2xl {{ isPharmacy ? 'bg-red-50 text-red-900 ring-red-100' : 'bg-red-600 text-white ring-red-600' }} p-4 text-sm leading-5 ring-1">
+        <strong>{{ 'service.emergency_call'|trans }}</strong>
+        <p class="mt-1 {{ isPharmacy ? 'text-red-800' : 'text-red-100' }}">{{ 'service.availability_notice'|trans }}</p>
+    </aside>
+</main>
+
+{% include 'components/_bottom_nav.html.twig' with {active: 'services'} %}
+{% endblock %}
+
+
