@@ -1,0 +1,20 @@
+{# Confirmation de la demande de suppression du compte. #}
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ 'profile.disable_account'|trans }}{% endblock %}
+
+{% block body %}
+<main class="mx-auto flex min-h-screen max-w-md items-center bg-slate-50 px-5 py-10 text-slate-950 lg:max-w-2xl">
+    <section class="w-full rounded-3xl bg-white p-6 text-center shadow-xl ring-1 ring-slate-100">
+        <span class="mx-auto flex size-16 items-center justify-center rounded-2xl bg-red-100 text-3xl text-red-700" aria-hidden="true">!</span>
+        <h1 class="mt-5 text-2xl font-bold">{{ 'profile.disable_question'|trans }}</h1>
+        <p class="mt-3 text-sm leading-6 text-slate-600">{{ 'profile.disable_explanation'|trans }}</p>
+
+        <form method="post" action="{{ path('app_profile_delete') }}" class="mt-6">
+            <input type="hidden" name="_token" value="{{ csrf_token('delete_account') }}">
+            <button type="submit" class="h-13 w-full rounded-2xl bg-red-600 px-4 py-3 font-bold text-white">{{ 'profile.disable_confirm'|trans }}</button>
+        </form>
+        <a href="{{ path('app_profile') }}" class="mt-3 flex h-13 items-center justify-center rounded-2xl border border-slate-200 px-4 py-3 font-semibold">{{ 'common.cancel'|trans }}</a>
+    </section>
+</main>
+{% endblock %}

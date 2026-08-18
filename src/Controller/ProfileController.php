@@ -68,34 +68,36 @@ final class ProfileController extends AbstractController
         ]);
     }
 
-    #[Route('/delete', name: 'app_profile_delete', methods: ['POST'])]
-    public function delete(EntityManagerInterface $em, Request $request): Response
+#[Route('/delete', name: 'app_profile_delete', methods: ['POST'])]
+    public function delete(
+        EntityManagerInterface $entityManager,
+        Request $request,
+        TranslatorInterface $translator,
+    ): Response
     {
         $this->denyAccessUnlessGranted('ROLE_USER');
 
+        if (!$this->isCsrfTokenValid('delete_account', $request->getPayload()->getString('_token'))) {
+            throw $this->createAccessDeniedException($translator->trans('security.invalid_token'));
+        }
+
         /** @var User $user */
         $user = $this->getUser();
+        $user
+            ->setAccountActive(false)
+            ->setDeleteRequestedAt(new \DateTimeImmutable())
+            ->setEmail('deleted_' . $user->getId() . '@anonymous.local')
+            ->setFirstName('Compte')
+            ->setLastName('Désactivé');
 
-        if (!$this->isCsrfTokenValid('delete_account', $request->request->get('_token'))) {
-            throw $this->createAccessDeniedException('Token invalide');
-        }
-
-        // On désactive et on programme la demande — SANS toucher email/nom.
-        $user->setAccountActive(false);
-        $user->setDeleteRequestedAt(new \DateTimeImmutable());
-        $user->setEmail('deleted_' . $user->getId() . '@anonymous.local');
-        $user->setFirstName('Deleted');
-        $user->setLastName('User');
-
-        // On révoque les permissions sensibles immédiatement (pas besoin d'attendre 30 jours pour ça).
         $profile = $user->getProfile();
-        if ($profile) {
-            $profile->setLocationAccess(false);
-            $profile->setCameraAccess(false);
-            $profile->setMicrophoneAccess(false);
+        if ($profile !== null) {
+            $profile
+                ->setLocationAccess(false)
+                ->setCameraAccess(false);
         }
 
-        $em->flush();
+        $entityManager->flush();
 
         return $this->redirectToRoute('app_logout');
     }
@@ -113,5 +115,13 @@ private function createDefaultProfile(Request $request): Profile
             ->setCameraAccess(false)
             ->setLocationAccess(false)
             ->setLanguage(SupportedLocale::DEFAULT);
+    }
+
+#[Route('/delete/confirm', name: 'app_profile_delete_confirm', methods: ['GET'])]
+    public function confirmDelete(): Response
+    {
+        $this->denyAccessUnlessGranted('ROLE_USER');
+
+        return $this->render('profile/delete_confirm.html.twig');
     }
 }
