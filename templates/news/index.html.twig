@@ -27,7 +27,7 @@
                         <p class="font-medium text-red-600">{{ city ? city.name : 'city.none'|trans }} <span aria-hidden="true">●</span> {{ 'news.live'|trans }}</p>
                     </div>
                 </div>
-                <a href="{{ path('app_news') }}" class="relative mt-2 flex size-9 items-center justify-center" aria-label="{{ 'notification.title'|trans }}">
+                <a href="{{ path('app_notifications') }}" class="relative mt-2 flex size-9 items-center justify-center" aria-label="{{ 'notification.title'|trans }}">
                     {{ include('components/_icon.html.twig', {name: 'bell', class: 'size-6'}) }}
                     {% if unreadCount > 0 %}
                         {# Ce témoin disparaît dès que toutes les notifications sont lues. #}
@@ -103,5 +103,3 @@
         </div>
     </div>
 {% endblock %}
-
-

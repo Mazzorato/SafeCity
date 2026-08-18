@@ -1,0 +1,69 @@
+{# Centre de notifications de l’utilisateur. #}
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ 'notification.title'|trans }}{% endblock %}
+
+{% block body %}
+<main class="mx-auto min-h-screen max-w-md bg-slate-50 pb-28 text-slate-950 lg:max-w-7xl lg:pb-12 lg:pt-20">
+    <header class="flex items-center border-b border-slate-100 bg-white px-5 py-5">
+        <a href="{{ path('app_home') }}" class="flex size-10 items-center justify-center rounded-full bg-slate-100 text-xl" aria-label="{{ 'common.back'|trans }}">‹</a>
+        <div class="flex-1 text-center">
+            <h1 class="text-xl font-bold">{{ 'notification.title'|trans }}</h1>
+            <p class="text-xs text-slate-500">{{ 'notification.unread_count'|trans({'%count%': unreadCount}) }}</p>
+        </div>
+        <span class="size-10"></span>
+    </header>
+
+    <div class="space-y-4 px-5 py-6 lg:grid lg:grid-cols-2 lg:gap-4 lg:space-y-0 lg:px-8">
+        <button
+            type="button"
+            class="hidden w-full rounded-2xl bg-slate-950 px-4 py-3 font-semibold text-white transition hover:bg-red-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600 lg:col-span-2"
+            data-notifications-target="permission"
+            data-action="notifications#requestPermission"
+        >
+            {# La demande de permission reste disponible dans son contexte : les notifications. #}
+            <span class="flex items-center justify-center gap-2">
+                {{ include('components/_icon.html.twig', {name: 'bell', class: 'size-5'}) }}
+                {{ 'notification.enable_alerts'|trans }}
+            </span>
+        </button>
+
+        {% if unreadCount > 0 %}
+            <form method="post" action="{{ path('app_notifications_read_all') }}" class="text-right">
+                <input type="hidden" name="_token" value="{{ csrf_token('notifications_read_all') }}">
+                <button type="submit" class="text-sm font-semibold text-red-600">{{ 'notification.mark_all_read'|trans }}</button>
+            </form>
+        {% endif %}
+
+        {% for notification in notifications %}
+            {% set color = notification.type.value == 'emergency' ? 'bg-red-600' : notification.type.value == 'transport' ? 'bg-blue-600' : notification.type.value == 'moderation' ? 'bg-slate-950' : 'bg-violet-600' %}
+            <article class="rounded-2xl border {{ notification.read ? 'border-slate-200 bg-white' : 'border-red-200 bg-red-50/40' }} p-4">
+                <div class="flex items-start gap-3">
+                    <span class="mt-1 size-3 shrink-0 rounded-full {{ color }}"></span>
+                    <div class="min-w-0 flex-1">
+                        <div class="flex items-start justify-between gap-3">
+                            <h2 class="font-bold">{{ notification.title }}</h2>
+                            <time class="shrink-0 text-[10px] text-slate-400">{{ notification.sentAt|date('d/m H:i') }}</time>
+                        </div>
+                        <p class="mt-2 text-sm leading-6 text-slate-600">{{ notification.message }}</p>
+                        {% if not notification.read %}
+                            <form method="post" action="{{ path('app_notification_read', {id: notification.id}) }}" class="mt-3">
+                                <input type="hidden" name="_token" value="{{ csrf_token('notification_read_' ~ notification.id) }}">
+                                <button type="submit" class="text-xs font-semibold text-red-600">{{ 'notification.mark_read'|trans }}</button>
+                            </form>
+                        {% endif %}
+                    </div>
+                </div>
+            </article>
+        {% else %}
+            <div class="rounded-3xl border border-dashed border-slate-300 bg-white p-10 text-center">
+                <span class="text-3xl" aria-hidden="true">♢</span>
+                <p class="mt-3 font-bold">{{ 'notification.none'|trans }}</p>
+                <p class="mt-1 text-sm text-slate-500">{{ 'notification.none_help'|trans }}</p>
+            </div>
+        {% endfor %}
+    </div>
+</main>
+
+{% include 'components/_bottom_nav.html.twig' with {active: ''} %}
+{% endblock %}
