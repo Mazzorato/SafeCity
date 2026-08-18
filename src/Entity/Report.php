@@ -12,6 +12,9 @@ use Doctrine\ORM\Mapping as ORM;
 
 
 #[ORM\Entity(repositoryClass: ReportRepository::class)]
+/**
+ * Modèle Doctrine représentant les données persistées de Report.
+ */
 class Report
 {
     #[ORM\Id]
@@ -318,6 +321,9 @@ class Report
         return $this;
     }
 
+    /**
+     * Retourne la dernière date connue pour une étape donnée de la chronologie.
+     */
     public function getStatusChangedAt(ReportStatusEnum|string $status): ?\DateTimeImmutable
     {
         $expectedStatus = is_string($status) ? ReportStatusEnum::tryFrom($status) : $status;
@@ -335,6 +341,9 @@ class Report
         return $changedAt;
     }
 
+    /**
+     * Retourne l’entrée la plus récente selon l’ordre chronologique Doctrine.
+     */
     public function getLatestStatusHistory(): ?ReportStatusHistory
     {
         $latest = $this->statusHistory->last();
@@ -342,3 +351,5 @@ class Report
         return $latest === false ? null : $latest;
     }
 }
+
+
