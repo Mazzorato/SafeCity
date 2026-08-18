@@ -7,6 +7,9 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
+/**
+ * Gère la connexion et la déconnexion des utilisateurs.
+ */
 class SecurityController extends AbstractController
 {
     #[Route(path: '/login', name: 'app_login')]
@@ -28,11 +31,5 @@ class SecurityController extends AbstractController
     public function logout(): void
     {
         throw new \LogicException('This method can be blank - it will be intercepted by the logout key on your firewall.');
-    }
-
-    #[Route(path: '/reset-password', name: 'app_reset_password')]
-    public function resetPassword(): Response
-    {
-        return $this->render('security/reset_password.html.twig');
     }
 }
