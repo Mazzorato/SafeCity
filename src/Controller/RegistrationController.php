@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use App\Localization\SupportedLocale;
+
 use App\Entity\Profile;
 
 use App\Entity\User;
@@ -26,7 +28,7 @@ class RegistrationController extends AbstractController
     }
 
     #[Route('/register', name: 'app_register')]
-    public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager): Response
+    public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager, TranslatorInterface $translator): Response
     {
         $user = new User();
         $form = $this->createForm(RegistrationFormType::class, $user);
@@ -58,14 +60,8 @@ class RegistrationController extends AbstractController
             $entityManager->persist($user);
             $entityManager->flush();
 
-            $this->emailVerifier->sendEmailConfirmation('app_verify_email', $user,
-                (new TemplatedEmail())
-                    ->from(new Address('admin@safecity.fr', 'SafeCity'))
-                    ->to((string) $user->getEmail())
-                    ->subject('Please Confirm your Email')
-                    ->htmlTemplate('registration/confirmation_email.html.twig')
-            );
-
+            $language = SupportedLocale::normalize($user->getProfile()?->getLanguage());
+            $this->sendConfirmationEmail($user, $translator, $language);
 
             return $this->redirectToRoute('app_login');
         }
@@ -75,7 +71,7 @@ class RegistrationController extends AbstractController
         ]);
     }
 
-    #[Route('/verify/email', name: 'app_verify_email')]
+#[Route('/verify/email', name: 'app_verify_email')]
     public function verifyUserEmail(Request $request, TranslatorInterface $translator, UserRepository $userRepository): Response
     {
         $id = $request->query->get('id');
@@ -99,8 +95,61 @@ class RegistrationController extends AbstractController
             return $this->redirectToRoute('app_register');
         }
 
-        $this->addFlash('success', 'Your email address has been verified.');
+        $language = SupportedLocale::normalize($user->getProfile()?->getLanguage());
+        $request->getSession()->set('_locale', $language);
+        $this->addFlash('success', $translator->trans('flash.email_confirmed', locale: $language));
 
         return $this->redirectToRoute('app_login');
+    }
+
+#[Route('/verify/email/resend', name: 'app_resend_verification_email', methods: ['POST'])]
+    public function resendVerificationEmail(
+        Request $request,
+        UserRepository $userRepository,
+        TranslatorInterface $translator,
+    ): Response
+    {
+        if (!$this->isCsrfTokenValid('resend_verification_email', $request->request->getString('_token'))) {
+            throw $this->createAccessDeniedException();
+        }
+
+        $session = $request->getSession();
+        $now = time();
+        $lastRequestAt = (int) $session->get('verification_email_requested_at', 0);
+
+        // Une réponse identique est renvoyée dans tous les cas afin de ne pas
+        // révéler si une adresse possède déjà un compte SafeCity.
+        if ($now - $lastRequestAt >= 60) {
+            $session->set('verification_email_requested_at', $now);
+            $email = trim($request->request->getString('email'));
+            $user = $email !== '' ? $userRepository->findOneBy(['email' => $email]) : null;
+
+            if ($user instanceof User && !$user->isVerified() && $user->isAccountActive()) {
+                $language = SupportedLocale::normalize($user->getProfile()?->getLanguage());
+                $this->sendConfirmationEmail($user, $translator, $language);
+            }
+        }
+
+        $this->addFlash('success', $translator->trans('flash.confirmation_email_requested'));
+
+        return $this->redirectToRoute('app_login');
+    }
+
+private function sendConfirmationEmail(
+        User $user,
+        TranslatorInterface $translator,
+        string $language,
+    ): void
+    {
+        $this->emailVerifier->sendEmailConfirmation(
+            'app_verify_email',
+            $user,
+            (new TemplatedEmail())
+                ->from(new Address('admin@safecity.fr', 'SafeCity'))
+                ->to((string) $user->getEmail())
+                ->subject($translator->trans('email.confirm.subject', locale: $language))
+                ->locale($language)
+                ->htmlTemplate('registration/confirmation_email.html.twig'),
+        );
     }
 }

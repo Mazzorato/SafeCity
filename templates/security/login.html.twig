@@ -42,4 +42,9 @@
             <a href="{{ path('app_legal_privacy') }}">Politique de confidentialité</a>
         </p>
     </form>
-{% endblock %}
+    <form method="post" action="{{ path('app_resend_verification_email') }}">
+        <label for="resend-verification-email">Adresse e-mail</label>
+        <input type="email" id="resend-verification-email" name="email" value="{{ last_username }}" required>
+        <input type="hidden" name="_token" value="{{ csrf_token('resend_verification_email') }}">
+        <button type="submit">Renvoyer le courriel de confirmation</button>
+    </form>{% endblock %}
