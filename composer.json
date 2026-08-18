@@ -26,6 +26,7 @@
         "symfony/http-client": "8.1.*",
         "symfony/intl": "8.1.*",
         "symfony/mailer": "8.1.*",
+        "symfony/mercure-bundle": "^0.4.2",
         "symfony/mime": "8.1.*",
         "symfony/monolog-bundle": "^3.0|^4.0",
         "symfony/notifier": "8.1.*",
@@ -45,6 +46,7 @@
         "symfony/web-link": "8.1.*",
         "symfony/yaml": "8.1.*",
         "symfonycasts/reset-password-bundle": "^1.25",
+        "symfonycasts/tailwind-bundle": "^1.0",
         "symfonycasts/verify-email-bundle": "^1.18",
         "twig/extra-bundle": "^2.12|^3.0",
         "twig/twig": "^2.12|^3.0"
@@ -91,6 +93,10 @@
         ],
         "post-update-cmd": [
             "@auto-scripts"
+        ],
+        "serve:local": [
+            "Composer\\Config::disableProcessTimeout",
+            "@php -d extension=php_pdo_pgsql.dll -d extension=php_fileinfo.dll -d upload_max_filesize=12M -d post_max_size=32M -S 127.0.0.1:8000 -t public"
         ],
         "worker:local": [
             "Composer\\Config::disableProcessTimeout",

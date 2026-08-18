@@ -1,4 +1,4 @@
-
+# Déclare les conteneurs locaux PostgreSQL, Mercure, Mailpit et outils associés.
 services:
 ###> doctrine/doctrine-bundle ###
   database:
@@ -19,7 +19,25 @@ services:
       # - ./docker/db/data:/var/lib/postgresql/data:rw
 ###< doctrine/doctrine-bundle ###
 
+  mercure:
+    image: dunglas/mercure
+    restart: unless-stopped
+    environment:
+      SERVER_NAME: ':80'
+      MERCURE_PUBLISHER_JWT_KEY: '${MERCURE_JWT_SECRET:-SafeCityMercureLocalDevelopmentKey2026}'
+      MERCURE_SUBSCRIBER_JWT_KEY: '${MERCURE_JWT_SECRET:-SafeCityMercureLocalDevelopmentKey2026}'
+      MERCURE_EXTRA_DIRECTIVES: |
+        anonymous
+        cors_origins *
+    ports:
+      - "3000:80"
+    volumes:
+      - mercure_data:/data
+      - mercure_config:/config
+
 volumes:
 ###> doctrine/doctrine-bundle ###
   database_data:
 ###< doctrine/doctrine-bundle ###
+  mercure_data:
+  mercure_config:
