@@ -29,12 +29,18 @@
         <article>
             <strong>{{ comment.author ? comment.author.firstName : 'Utilisateur SafeCity' }}</strong>
             <p>{{ comment.content }}</p>
+            {% if comment.photos is not empty %}
+                <p>{{ comment.photos|length }} photo ajoutée</p>
+                {% for photo in comment.photos %}
+                    <img src="{{ asset(photo.url) }}" alt="Photo ajoutée au commentaire">
+                {% endfor %}
+            {% endif %}
         </article>
     {% else %}
         <p>Aucun commentaire pour le moment.</p>
     {% endfor %}
 
-    {{ form_start(commentForm) }}
+    {{ form_start(commentForm, {attr: {'data-controller': 'photo-preview'}}) }}
         {{ form_row(commentForm.content) }}
         <button type="submit">Envoyer</button>
     {{ form_end(commentForm) }}
