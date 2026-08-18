@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Comment;
 use App\Entity\Report;
 use App\Enum\ReportStatusEnum;
+use App\Service\ModerationVisibility;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -20,6 +21,7 @@ final class CommunityController extends AbstractController
     public function index(
         EntityManagerInterface $em,
         Request $request,
+        ModerationVisibility $moderationVisibility,
     ): Response
     {
         $this->denyAccessUnlessGranted('ROLE_USER');
@@ -70,7 +72,7 @@ final class CommunityController extends AbstractController
             // Réutilise la règle de visibilité centrale pour empêcher un contenu masqué
             // de réapparaître dans le bloc des commentaires récents.
             foreach ($allReports as $report) {
-                array_push($comments, ...$report->getComments()->toArray());
+                array_push($comments, ...$moderationVisibility->visibleComments($report));
             }
 
             usort(
