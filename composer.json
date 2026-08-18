@@ -91,6 +91,10 @@
         ],
         "post-update-cmd": [
             "@auto-scripts"
+        ],
+        "worker:local": [
+            "Composer\\Config::disableProcessTimeout",
+            "@php -d extension=php_pdo_pgsql.dll bin/console messenger:consume async scheduler_default -vv"
         ]
     },
     "conflict": {

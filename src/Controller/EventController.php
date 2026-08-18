@@ -153,6 +153,43 @@ final class EventController extends AbstractController
             : $this->redirectToRoute('app_event', $request->query->all());
     }
 
+    #[Route(
+        '/events/favorites/{id}/reminder',
+        name: 'app_event_favorite_reminder',
+        methods: ['POST'],
+        requirements: ['id' => '\d+']
+    )]
+    public function toggleReminder(
+        EventFavorite $favorite,
+        EntityManagerInterface $entityManager,
+        Request $request,
+        TranslatorInterface $translator,
+    ): Response {
+        $this->denyAccessUnlessGranted('ROLE_USER');
+
+        /** @var User $user */
+        $user = $this->getUser();
+        if ($favorite->getEventUser()?->getId() !== $user->getId()) {
+            throw $this->createAccessDeniedException($translator->trans('security.favorite_not_owned'));
+        }
+
+        if (!$this->isCsrfTokenValid(
+            'favorite_reminder_' . $favorite->getId(),
+            $request->getPayload()->getString('_token')
+        )) {
+            throw $this->createAccessDeniedException($translator->trans('security.invalid_token'));
+        }
+
+        $favorite->setReminderActive(!$favorite->isReminderActive());
+        $entityManager->flush();
+
+        $this->addFlash(
+            'success',
+            $favorite->isReminderActive()
+                ? $translator->trans('flash.event_reminder_enabled')
+                : $translator->trans('flash.event_reminder_disabled')
+        );
+
+        return $this->redirectToRoute('app_event_favorites');
+    }
 }
-
-

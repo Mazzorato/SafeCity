@@ -1,43 +1,108 @@
+{# Agenda des événements locaux. #}
 {% extends 'base.html.twig' %}
 
-{% block title %}Evénements{% endblock %}
+{% block title %}{{ 'event.title'|trans }}{% endblock %}
 
 {% block body %}
-<div>
-    <h1>Evénements</h1>
-    <p> {{ city ? city.name ~ '& agglomération' : 'Aucune ville sélectionné'}} </p>
+    {% set category_labels = {
+        musique: 'event.category.music'|trans,
+        sport: 'event.category.sport'|trans,
+        culture: 'event.category.culture'|trans
+    } %}
+    {% set category_colors = {musique: 'text-blue-600', sport: 'text-green-600', culture: 'text-orange-500'} %}
+    {% set featured = events|first %}
 
-    <nav>
-        <a href="{{ path('app_event', {category: 'all'}) }}" class="{{ category == 'all' ? 'active' : ''}}"> Tout</a>
-        <a href="{{ path('app_event', {category: 'musique'}) }}" class="{{ category == 'musique' ? 'active' : ''}}"> Musique</a>
-        <a href="{{ path('app_event', {category: 'sport'}) }}" class="{{ category == 'sport' ? 'active' : ''}}"> Sport</a>
-        <a href="{{ path('app_event', {category: 'culture'}) }}" class="{{ category == 'culture' ? 'active' : ''}}"> Culture</a>
-    </nav>
+    <div class="min-h-screen bg-stone-200 font-sans text-slate-950">
+        <div class="relative mx-auto min-h-screen w-full max-w-md bg-white pb-28 shadow-xl lg:max-w-7xl lg:pb-12 lg:pt-20 lg:shadow-none">
+            <header class="flex items-center justify-between border-b border-slate-200 px-5 py-7">
+                <div class="flex items-start gap-3">
+                    <a href="{{ path('app_home') }}" class="flex size-8 items-center justify-center" aria-label="{{ 'common.back_home'|trans }}">{{ include('components/_icon.html.twig', {name: 'back', class: 'size-6'}) }}</a>
+                    <div>
+                        <h1 class="text-3xl font-bold">{{ 'event.title'|trans }}</h1>
+                        <p class="flex items-center gap-1 font-semibold text-red-600">{{ include('components/_icon.html.twig', {name: 'pin', class: 'size-3'}) }} {{ city ? 'event.city_area'|trans({'%city%': city.name}) : 'city.none_selected'|trans }}</p>
+                    </div>
+                </div>
+                <a href="{{ path('app_event_favorites') }}" class="flex items-center gap-2 rounded-2xl bg-red-600 px-4 py-3 font-semibold text-white">{{ include('components/_icon.html.twig', {name: 'bookmark', class: 'size-4'}) }} {{ 'event.favorites'|trans }}</a>
+            </header>
 
-    {% if events is empty %}
-        <p>Aucun événement dans votre ville pour le moment.</p>
-    {% else %}
-        <ul>
-            {% for event in events %}
-                <li>
-                    {% if event.imageUrl %}
-                        <img src="{{ event.imageUrl }}" alt="{{ event.title }}">
-                    {% endif %}
-                    <span>{{ event.category.value }} </span>
-                    <h3>{{ event.title }}</h3>
-                    <p>{{ event.location }}</p>
-                    <p>{{ event.startedAt|date('d/m/Y') }}</p>
-                    <p>{{ event.isFree ? 'Gratuit' : 'Payant' }} </p>
+            <main class="space-y-7 px-5 py-8 lg:grid lg:grid-cols-12 lg:gap-8 lg:space-y-0 lg:px-8">
+                <form method="get" action="{{ path('app_event') }}" class="flex h-16 items-center gap-3 rounded-2xl bg-white px-4 shadow-lg shadow-slate-200/80 lg:col-span-12">
+                    {{ include('components/_icon.html.twig', {name: 'search', class: 'size-5 shrink-0 text-red-600'}) }}
+                    <input type="search" name="query" value="{{ search }}" class="min-w-0 flex-1 border-0 bg-transparent text-sm font-medium outline-none placeholder:text-slate-400" placeholder="{{ 'event.search_placeholder'|trans }}">
+                    <input type="hidden" name="category" value="{{ category }}">
+                    <button type="submit" class="text-sm font-semibold text-red-600">{{ 'common.search'|trans }}</button>
+                </form>
 
-                    <form method="post" action="{{ path('app_event_favorite', {id: event.id}) }}">
-                        <input type="hidden" name="_token" value="{{ csrf_token('favorite' ~ event.id) }}">
-                        <button type="submit">Rechercher</button>
-                            {{ event.id in favoriteIds ? '*Favori' : 'Ajouter aux favoris'}}
-                        </button>
-                    </form>
-                </li>
-            {% endfor %}
-        </ul>
-    {% endif %}
-</div>
+                <nav class="grid grid-cols-4 gap-2 lg:col-span-12" aria-label="{{ 'event.filter'|trans }}">
+                    {% set filters = {
+                        all: 'common.all'|trans,
+                        musique: 'event.category.music'|trans,
+                        sport: 'event.category.sport'|trans,
+                        culture: 'event.category.culture'|trans
+                    } %}
+                    {% for value, label in filters %}
+                        <a href="{{ path('app_event', {category: value, query: search}) }}" class="flex h-12 items-center justify-center rounded-xl border text-sm font-semibold {{ category == value ? 'border-red-600 bg-red-600 text-white' : 'border-slate-200 bg-white text-slate-700' }}">
+                            {{ label }}
+                        </a>
+                    {% endfor %}
+                </nav>
+
+                {% if featured %}
+                    <article id="event-{{ featured.id }}" class="relative overflow-hidden rounded-xl bg-gradient-to-b from-red-700 to-red-600 text-white shadow-lg lg:col-span-7">
+                        <div class="relative flex h-64 items-center justify-center overflow-hidden bg-red-800 text-white">
+                            {% if featured.imageUrl %}
+                                <img src="{{ featured.imageUrl }}" alt="" class="absolute inset-0 size-full object-cover opacity-60">
+                            {% else %}
+                                {{ include('components/_icon.html.twig', {name: 'news', class: 'size-8'}) }}
+                            {% endif %}
+                        </div>
+                        <div class="p-5">
+                            <p class="font-semibold"><span class="mr-2 rounded-full bg-white px-3 py-1 text-sm text-red-600">{{ category_labels[featured.category.value] }}</span> {{ 'event.featured'|trans }}</p>
+                            <h2 class="mt-4 text-4xl font-bold leading-none">{{ featured.title }}</h2>
+                            {% if featured.description %}
+                                <p class="mt-3 line-clamp-3 text-sm font-medium">{{ featured.description }}</p>
+                            {% endif %}
+                            <p class="mt-5 flex items-center gap-2 font-semibold">{{ include('components/_icon.html.twig', {name: 'calendar', class: 'size-5'}) }} {{ featured.startedAt|date('d/m/Y') }}{% if featured.endedAt %} – {{ featured.endedAt|date('d/m/Y') }}{% endif %}</p>
+                            <p class="mt-2 flex items-center gap-2 font-semibold">{{ include('components/_icon.html.twig', {name: 'pin', class: 'size-4'}) }} {{ featured.location }}</p>
+                            <form method="post" action="{{ path('app_event_favorite', {id: featured.id, category: category, query: search}) }}" class="absolute bottom-5 right-5">
+                                <input type="hidden" name="_token" value="{{ csrf_token('favorite' ~ featured.id) }}">
+                                <button type="submit" class="flex size-12 items-center justify-center bg-white text-red-600" aria-label="{{ featured.id in favoriteIds ? 'event.remove_favorite'|trans : 'event.add_favorite'|trans }}">{{ include('components/_icon.html.twig', {name: 'bookmark', class: 'size-5'}) }}</button>
+                            </form>
+                        </div>
+                    </article>
+                {% endif %}
+
+                <section class="{{ featured ? 'lg:col-span-5' : 'lg:col-span-12' }}" aria-labelledby="upcoming-title">
+                    <div class="mb-5 flex items-center justify-between">
+                        <h2 id="upcoming-title" class="text-2xl font-bold">{{ 'event.coming_soon'|trans }}</h2>
+                    </div>
+                    <div class="space-y-3">
+                        {% for event in events|slice(featured ? 1 : 0) %}
+                            <article id="event-{{ event.id }}" class="flex min-h-28 items-center border border-slate-200">
+                                <span class="flex min-h-28 w-24 shrink-0 flex-col items-center justify-center bg-stone-100 text-center">
+                                    {{ include('components/_icon.html.twig', {name: 'calendar', class: 'size-5'}) }}
+                                    <strong class="mt-3 {{ category_colors[event.category.value] }}">{{ event.startedAt|date('d/m') }}</strong>
+                                </span>
+                                <div class="min-w-0 flex-1 px-5">
+                                    <span class="text-sm font-semibold {{ category_colors[event.category.value] }}">{{ category_labels[event.category.value] }}</span>
+                                    <h3 class="truncate text-lg font-bold">{{ event.title }}</h3>
+                                    <p class="flex items-center gap-1 truncate text-sm text-stone-500">{{ include('components/_icon.html.twig', {name: 'pin', class: 'size-3 shrink-0 text-red-600'}) }} {{ event.location }}</p>
+                                </div>
+                                <form method="post" action="{{ path('app_event_favorite', {id: event.id, category: category, query: search}) }}" class="pr-4">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('favorite' ~ event.id) }}">
+                                    <button type="submit" class="flex size-10 items-center justify-center rounded-xl {{ event.id in favoriteIds ? 'bg-red-600 text-white' : 'bg-stone-100 text-stone-400' }}" aria-label="{{ event.id in favoriteIds ? 'event.remove_favorite'|trans : 'event.add_favorite'|trans }}">{{ include('components/_icon.html.twig', {name: 'bookmark', class: 'size-4'}) }}</button>
+                                </form>
+                            </article>
+                        {% else %}
+                            {% if not featured %}
+                                <p class="rounded-xl bg-slate-50 px-5 py-10 text-center text-sm text-stone-500">{{ 'event.none_city'|trans }}</p>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </section>
+            </main>
+
+            {{ include('components/_bottom_nav.html.twig', { active: 'home' }) }}
+        </div>
+    </div>
 {% endblock %}
