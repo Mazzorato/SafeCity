@@ -260,12 +260,43 @@ final class ReportController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'app_report_delete', methods: ['POST'])]
-    public function delete(Request $request, Report $report, EntityManagerInterface $entityManager): Response
-    {
-        if ($this->isCsrfTokenValid('delete'.$report->getId(), $request->getPayload()->getString('_token'))) {
+#[Route('/{id}/delete', name: 'app_report_delete', methods: ['POST'], requirements: ['id' => '\d+'])]
+    public function delete(
+        Request $request,
+        Report $report,
+        EntityManagerInterface $entityManager,
+        FileUploader $fileUploader,
+        LoggerInterface $logger,
+    ): Response {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
+        if ($this->isCsrfTokenValid('delete' . $report->getId(), $request->getPayload()->getString('_token'))) {
+            $photoFilenames = [];
+            foreach ($report->getPhotos() as $photo) {
+                $url = $photo->getUrl();
+                if ($url !== null && str_starts_with($url, '/uploads/photos/')) {
+                    // Seuls les médias gérés par le stockage local SafeCity sont
+                    // concernés ; une éventuelle URL externe n’est jamais suivie.
+                    $photoFilenames[] = basename($url);
+                }
+            }
+
             $entityManager->remove($report);
             $entityManager->flush();
+
+            // La base est supprimée avant les fichiers : une erreur Doctrine ne
+            // peut donc pas laisser un signalement actif avec une image absente.
+            foreach (array_unique($photoFilenames) as $photoFilename) {
+                try {
+                    $fileUploader->remove($photoFilename);
+                } catch (\Throwable $exception) {
+                    $logger->warning('Nettoyage impossible après la suppression administrative d’un signalement.', [
+                        'report_id' => $report->getId(),
+                        'filename' => $photoFilename,
+                        'exception' => $exception,
+                    ]);
+                }
+            }
         }
 
         return $this->redirectToRoute('app_report_index', [], Response::HTTP_SEE_OTHER);

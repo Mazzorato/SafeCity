@@ -1,4 +1,13 @@
-<form method="post" action="{{ path('app_report_delete', {'id': report.id}) }}" onsubmit="return confirm('Are you sure you want to delete this item?');">
+{# Formulaire sécurisé de suppression d’un signalement. #}
+<form
+    method="post"
+    action="{{ path('app_report_delete', {'id': report.id}) }}"
+    data-controller="confirm"
+    data-action="submit->confirm#submit"
+    data-confirm-message-value="{{ 'report.delete_confirm'|trans }}"
+>
     <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ report.id) }}">
-    <button class="btn">Delete</button>
+    <button type="submit" class="h-12 w-full rounded-2xl border border-red-200 bg-red-50 px-4 font-bold text-red-700">{{ 'common.delete'|trans }}</button>
 </form>
+
+
