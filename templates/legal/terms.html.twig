@@ -1,0 +1,49 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Conditions Générales{% endblock %}
+
+{% block body %}
+<main class="mx-auto min-h-screen max-w-md bg-slate-50 px-5 py-8 text-slate-950 lg:max-w-5xl lg:px-8 lg:py-10">
+    <header class="rounded-3xl bg-slate-950 p-6 text-white shadow-xl">
+        <a href="{{ path('app_register') }}" class="inline-flex items-center gap-2 text-sm font-semibold text-slate-300">← Retour à l’inscription</a>
+        <h1 class="mt-5 text-3xl font-bold">Conditions Générales</h1>
+        <p class="mt-2 text-sm text-slate-300">Version locale du 1er août 2026</p>
+    </header>
+
+    <aside class="mt-5 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm leading-6 text-amber-950">
+        SafeCity est ici un projet local de démonstration. Ces conditions décrivent le fonctionnement du logiciel et ne constituent pas les conditions d’un service public en production.
+    </aside>
+
+    <div class="mt-6 space-y-4 lg:grid lg:grid-cols-2 lg:gap-4 lg:space-y-0">
+        <section class="rounded-3xl bg-white p-5 shadow-sm ring-1 ring-slate-100">
+            <h2 class="text-lg font-bold">1. Objet de l’application</h2>
+            <p class="mt-2 text-sm leading-6 text-slate-600">SafeCity permet de consulter des informations locales, de créer des signalements, d’échanger des commentaires et de recevoir des notifications liées à la ville sélectionnée.</p>
+        </section>
+
+        <section class="rounded-3xl bg-white p-5 shadow-sm ring-1 ring-slate-100">
+            <h2 class="text-lg font-bold">2. Création et utilisation du compte</h2>
+            <p class="mt-2 text-sm leading-6 text-slate-600">L’utilisateur fournit des informations exactes, conserve son mot de passe confidentiel et valide son adresse e-mail avant sa première connexion. Un compte désactivé ou non vérifié ne peut pas accéder à l’espace authentifié.</p>
+        </section>
+
+        <section class="rounded-3xl bg-white p-5 shadow-sm ring-1 ring-slate-100">
+            <h2 class="text-lg font-bold">3. Signalements et contenus</h2>
+            <p class="mt-2 text-sm leading-6 text-slate-600">Les descriptions, positions, commentaires et photos doivent être utiles au signalement et respecter les autres utilisateurs. Les contenus trompeurs, dangereux, illicites ou exposant inutilement des données personnelles peuvent être masqués par la modération.</p>
+        </section>
+
+        <section class="rounded-3xl bg-white p-5 shadow-sm ring-1 ring-slate-100">
+            <h2 class="text-lg font-bold">4. Informations locales</h2>
+            <p class="mt-2 text-sm leading-6 text-slate-600">Les horaires, parkings, services, événements et transports présents dans cette copie locale sont des données de démonstration. Ils ne doivent pas être utilisés comme source d’urgence ou comme garantie de disponibilité réelle.</p>
+        </section>
+
+        <section class="rounded-3xl bg-white p-5 shadow-sm ring-1 ring-slate-100">
+            <h2 class="text-lg font-bold">5. Désactivation du compte</h2>
+            <p class="mt-2 text-sm leading-6 text-slate-600">La demande effectuée depuis le profil désactive et anonymise immédiatement le compte. La suppression définitive locale est prévue après un délai de trente jours.</p>
+        </section>
+    </div>
+
+    <nav class="mt-6 grid gap-3 pb-6">
+        <a href="{{ path('app_legal_privacy') }}" class="flex min-h-12 items-center justify-center rounded-2xl bg-red-600 px-4 py-3 text-center font-bold text-white">Politique de confidentialité</a>
+        <a href="{{ path('app_register') }}" class="flex min-h-12 items-center justify-center rounded-2xl border border-slate-200 bg-white px-4 py-3 text-center font-semibold">Retour à l’inscription</a>
+    </nav>
+</main>
+{% endblock %}

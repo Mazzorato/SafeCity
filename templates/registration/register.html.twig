@@ -19,6 +19,10 @@
         {{ form_row(registrationForm.plainPassword.second) }}
         {{ form_row(registrationForm.city) }}
         {{ form_row(registrationForm.agreeTerms) }}
+        <p>
+            <a href="{{ path('app_legal_terms') }}">Conditions générales d'utilisation</a>
+            <a href="{{ path('app_legal_privacy') }}">Politique de confidentialité</a>
+        </p>
 
         <button type="submit" class="btn">Register</button>
     {{ form_end(registrationForm) }}
