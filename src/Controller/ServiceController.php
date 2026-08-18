@@ -110,9 +110,18 @@ final class ServiceController extends AbstractController
         $city = $user->getCity();
         $search = trim($request->query->getString('query'));
         $filter = $request->query->getString('filter', 'all');
-        $locationAllowed = false;
-        $latitude = null;
-        $longitude = null;
+        $locationAllowed = $user->getProfile()?->isLocationAccess() === true;
+        $queryParameters = $request->query->all();
+        $latitude = $locationAllowed
+            ? $this->parseCoordinate($queryParameters['latitude'] ?? null, -90.0, 90.0)
+            : null;
+        $longitude = $locationAllowed
+            ? $this->parseCoordinate($queryParameters['longitude'] ?? null, -180.0, 180.0)
+            : null;
+        if ($latitude === null || $longitude === null) {
+            $latitude = null;
+            $longitude = null;
+        }
         $filter = 'all';
         $services = [];
         if ($city !== null) {
@@ -138,6 +147,23 @@ final class ServiceController extends AbstractController
         }
 
         $serviceDistances = [];
+        if ($latitude !== null && $longitude !== null) {
+            foreach ($services as $service) {
+                $serviceDistances[$service->getId()] = $this->distanceInKilometers(
+                    $latitude,
+                    $longitude,
+                    (float) $service->getLatitude(),
+                    (float) $service->getLongitude(),
+                );
+            }
+            usort($services, static function (LocalService $first, LocalService $second) use ($serviceDistances): int {
+                $comparison = $serviceDistances[$first->getId()] <=> $serviceDistances[$second->getId()];
+
+                return $comparison !== 0
+                    ? $comparison
+                    : strcasecmp((string) $first->getName(), (string) $second->getName());
+            });
+        }
         $mapServices = array_map(
             static fn (LocalService $service): array => [
                 'id' => $service->getId(),
@@ -164,6 +190,44 @@ final class ServiceController extends AbstractController
             'userLatitude' => $latitude,
             'userLongitude' => $longitude,
         ]);
+    }
+
+
+private function parseCoordinate(mixed $value, float $minimum, float $maximum): ?float
+    {
+        if (!is_string($value) && !is_int($value) && !is_float($value)) {
+            return null;
+        }
+
+        $normalizedValue = str_replace(',', '.', trim((string) $value));
+        if ($normalizedValue === '' || !is_numeric($normalizedValue)) {
+            return null;
+        }
+
+        $coordinate = (float) $normalizedValue;
+
+        return is_finite($coordinate) && $coordinate >= $minimum && $coordinate <= $maximum
+            ? $coordinate
+            : null;
+    }
+
+private function distanceInKilometers(
+        float $latitudeA,
+        float $longitudeA,
+        float $latitudeB,
+        float $longitudeB,
+    ): float {
+        $earthRadius = 6371.0;
+        $latitudeDelta = deg2rad($latitudeB - $latitudeA);
+        $longitudeDelta = deg2rad($longitudeB - $longitudeA);
+
+        $haversine = sin($latitudeDelta / 2) ** 2
+            + cos(deg2rad($latitudeA))
+            * cos(deg2rad($latitudeB))
+            * sin($longitudeDelta / 2) ** 2;
+        $haversine = min(1.0, max(0.0, $haversine));
+
+        return $earthRadius * 2 * atan2(sqrt($haversine), sqrt(1 - $haversine));
     }
 }
 
