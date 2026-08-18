@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use App\Entity\ReportStatusHistory;
+
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 use Symfony\Component\Form\FormError;
@@ -66,6 +68,14 @@ final class ReportController extends AbstractController
                 ->setStatus(ReportStatusEnum::REPORTED)
                 ->setCreatedAt($createdAt);
 
+            // La première étape est enregistrée avec la même date que l’envoi
+            // afin que la chronologie soit exacte dès la création.
+            $initialHistory = (new ReportStatusHistory())
+                ->setStatus(ReportStatusEnum::REPORTED)
+                ->setChangedAt(\DateTimeImmutable::createFromMutable($createdAt))
+                ->setChangedBy($user);
+            $report->addStatusHistory($initialHistory);
+
             $uploadedPhotoFilenames = [];
 
             try {
@@ -110,6 +120,7 @@ final class ReportController extends AbstractController
             }
 
             $entityManager->persist($report);
+            $entityManager->persist($initialHistory);
 
             try {
                 $entityManager->flush();

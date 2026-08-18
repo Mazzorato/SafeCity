@@ -1,17 +1,26 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Signalement #{{ report.id }}{% endblock %}
+{% block title %}Détail du signalement{% endblock %}
 
 {% block body %}
-<h1>Signalement #{{ report.id }}</h1>
+<main>
+    <h1>Détail du signalement</h1>
+    <p>{{ report.category ? report.category.name : 'Autre' }}</p>
+    <p>{{ report.address ?: 'Adresse non renseignée' }}</p>
+    <p>{{ report.description }}</p>
+    <p>Créé le {{ report.createdAt|date('d/m/Y H:i') }}</p>
 
-<p>Catégorie : {{ report.category.name }}</p>
-<p>Gravité : {{ report.gravityLevel.value }}</p>
-<p>Statut : {{ report.status.value }}</p>
-<p>Description : {{ report.description }}</p>
-<p>Adresse : {{ report.address }}</p>
-<p>Date : {{ report.createdAt|date('d/m/Y H:i') }}</p>
-<p>Updated At : {{ report.updatedAt ? report.updatedAt |date ('d/m/Y H:i') : ''}}
+    {% include 'report/_status_steps.html.twig' with {report: report} %}
 
-<a href="{{ path('app_report_index') }}">Retour à la liste</a>
+    {% if report.photos is not empty %}
+        <section>
+            <h2>Photos</h2>
+            {% for photo in report.photos %}
+                <img src="{{ asset(photo.url) }}" alt="Photo du signalement">
+            {% endfor %}
+        </section>
+    {% endif %}
+</main>
 {% endblock %}
+
+

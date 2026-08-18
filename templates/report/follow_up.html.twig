@@ -1,122 +1,118 @@
+{# Suivi détaillé d’un signalement par son auteur. #}
 {% extends 'base.html.twig' %}
 
-{% block title %}Suivi du signalement #{{ report.id }}
-{% endblock %}
+{% block title %}{{ 'report.follow_title'|trans({'%id%': report.id}) }}{% endblock %}
 
 {% block body %}
-	<header>
-		<div>
-			<a href="{{ path('app_report_show', {id: report.id}) }}">← Retour</a>
-		</div>
-	</header>
-	<main>
-		<div class="signalement">
-			<div>
-				<h2>Suivi de mon signalement #{{ report.id }}</h2>
+{% set currentStep = report.status.value == 'resolved' ? 3 : (report.status.value == 'in_progress' ? 2 : 1) %}
+{# Les dates proviennent désormais des transitions persistées, avec un repli
+   sur la date de création pour les anciens signalements. #}
+{% set reportedAt = report.statusChangedAt('reported') ?: report.createdAt %}
+{% set inProgressAt = report.statusChangedAt('in_progress') %}
+{% set resolvedAt = report.statusChangedAt('resolved') %}
+{% set currentStatusAt = report.latestStatusHistory ? report.latestStatusHistory.changedAt : (report.updatedAt ?: report.createdAt) %}
+{% set statusLabels = {
+    reported: 'report.status.reported'|trans,
+    in_progress: 'report.status.in_progress'|trans,
+    resolved: 'report.status.resolved'|trans
+} %}
+
+<main class="mx-auto min-h-screen max-w-md bg-white pb-28 text-slate-950 shadow-xl lg:max-w-5xl lg:pb-12 lg:pt-20 lg:shadow-none">
+    <header class="flex items-center px-5 py-6">
+        <a href="{{ path('app_report_show', {id: report.id}) }}" class="flex size-10 items-center justify-center" aria-label="{{ 'report.back'|trans }}">{{ include('components/_icon.html.twig', {name: 'back', class: 'size-7'}) }}</a>
+        <h1 class="flex-1 text-center text-xl font-bold">{{ 'report.my_tracking'|trans }}</h1>
+        <span class="size-10"></span>
+    </header>
+
+    <div class="space-y-7 px-5 pt-4 lg:px-8 lg:py-8">
+        <section class="rounded-2xl bg-slate-950 p-5 text-white" aria-labelledby="tracking-report-title">
+            <div class="flex items-start justify-between gap-3">
+                <div>
+                    <p class="text-sm text-slate-400">{{ 'report.number'|trans({'%id%': report.id}) }}</p>
+                    <h2 id="tracking-report-title" class="mt-1 text-xl font-bold">{{ report.category.name }}</h2>
+                    <p class="mt-3 flex items-center gap-1 text-xs text-slate-300">{{ include('components/_icon.html.twig', {name: 'pin', class: 'size-4 text-red-500'}) }} {{ report.address ?: report.city.name }}</p>
+                </div>
+                <span class="rounded bg-white px-2 py-1 text-xs font-semibold text-slate-950">{{ statusLabels[report.status.value] }}</span>
+            </div>
+            <div class="mt-6">
+                {% include 'report/_status_steps.html.twig' with {report: report, dark: true} %}
+            </div>
+        </section>
+
+        <section class="flex items-center gap-4 px-2" aria-label="{{ 'form.destination_service'|trans }}">
+            <span class="flex size-11 shrink-0 items-center justify-center rounded-xl bg-slate-100" aria-hidden="true">{{ include('components/_icon.html.twig', {name: 'send', class: 'size-5'}) }}</span>
+            <div class="min-w-0 flex-1">
+                <p class="text-xs text-slate-500">{{ report.emergencyService ? 'report.transmitted_to'|trans : 'report.transmission'|trans }}</p>
+                <p class="truncate font-bold">{{ report.emergencyService ? report.emergencyService.name : 'report.awaiting_assignment'|trans }}</p>
+            </div>
+            <time class="text-xs text-slate-400">{{ currentStatusAt|date('H:i') }}</time>
+        </section>
+
+        <section aria-labelledby="tracking-history">
+            <h2 id="tracking-history" class="mb-5 text-xl font-bold">{{ 'report.event_history'|trans }}</h2>
+            <div class="ml-3 border-l-2 border-slate-200 pl-7">
+                <article class="relative pb-6">
+                    <span class="absolute -left-[2.45rem] top-0 flex size-5 items-center justify-center rounded-full bg-slate-950 text-white">{{ include('components/_icon.html.twig', {name: 'check', class: 'size-3'}) }}</span>
+                    <div class="flex items-start justify-between gap-3">
+                        <div>
+                            <h3 class="font-semibold">{{ 'report.sent'|trans }}</h3>
+                            <p class="mt-1 text-xs leading-5 text-slate-500">{{ 'report.received_system'|trans }}{{ report.latitude ? ' · ' ~ 'location.confirmed'|trans : '' }}</p>
+                        </div>
+                        <time class="text-xs text-slate-400">{{ reportedAt|date('H:i') }}</time>
+                    </div>
+                </article>
+
+                <article class="relative pb-6">
+                    <span class="absolute -left-[2.45rem] top-0 flex size-5 items-center justify-center rounded-full bg-slate-950 text-white">{{ include('components/_icon.html.twig', {name: 'check', class: 'size-3'}) }}</span>
+                    <div class="flex items-start justify-between gap-3">
+                        <div>
+                            <h3 class="font-semibold">{{ 'report.triage_done'|trans }}</h3>
+                            <p class="mt-1 text-xs leading-5 text-slate-500">{{ 'report.gravity_value'|trans({'%gravity%': ('gravity.' ~ report.gravityLevel.value)|trans}) }}{{ report.emergencyService ? ' · ' ~ 'report.routed_to'|trans({'%service%': report.emergencyService.name}) : '' }}</p>
+                        </div>
+                        <time class="text-xs text-slate-400">{{ report.createdAt|date('H:i') }}</time>
+                    </div>
+                </article>
+
+                <article class="relative pb-6 {{ currentStep < 2 ? 'text-slate-400' : '' }}">
+                    <span class="absolute -left-[2.45rem] top-0 flex size-5 items-center justify-center rounded-full border-2 {{ currentStep >= 2 ? 'border-slate-950 bg-slate-950 text-white' : 'border-slate-300 bg-white text-transparent' }}">{{ include('components/_icon.html.twig', {name: 'check', class: 'size-3'}) }}</span>
+                    <div class="flex items-start justify-between gap-3">
+                        <div>
+                            <h3 class="font-semibold">{{ 'report.status.in_progress'|trans }}</h3>
+                            <p class="mt-1 text-xs leading-5 text-slate-500">{{ currentStep >= 2 ? 'report.service_received'|trans : 'report.awaiting_handling'|trans }}</p>
+                        </div>
+                        {% if currentStep >= 2 %}
+                            <time class="text-xs text-slate-400">{{ inProgressAt ? inProgressAt|date('H:i') : 'common.time_unavailable'|trans }}</time>
+                        {% endif %}
+                    </div>
+                </article>
+
+                <article class="relative {{ currentStep < 3 ? 'text-slate-400' : 'text-emerald-700' }}">
+                    <span class="absolute -left-[2.45rem] top-0 flex size-5 items-center justify-center rounded-full border-2 {{ currentStep >= 3 ? 'border-emerald-600 bg-emerald-600 text-white' : 'border-slate-300 bg-white text-transparent' }}">{{ include('components/_icon.html.twig', {name: 'check', class: 'size-3'}) }}</span>
+                    <div class="flex items-start justify-between gap-3">
+                        <div>
+                            <h3 class="font-semibold">{{ 'report.resolution'|trans }}</h3>
+                            <p class="mt-1 text-xs leading-5 {{ currentStep >= 3 ? 'text-emerald-600' : 'text-slate-400' }}">{{ currentStep >= 3 ? 'report.marked_resolved'|trans : 'report.awaiting_intervention'|trans }}</p>
+                        </div>
+                        {% if currentStep >= 3 %}
+                            <time class="text-xs text-emerald-600">{{ resolvedAt ? resolvedAt|date('H:i') : 'common.time_unavailable'|trans }}</time>
+                        {% endif %}
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <section class="flex items-center gap-3 rounded-2xl border border-slate-200 p-4" aria-label="{{ 'report.tracking_notifications'|trans }}">
+            <span class="flex size-12 shrink-0 items-center justify-center rounded-xl {{ app.user.profile and app.user.profile.emergencyNotifications ? 'bg-emerald-600' : 'bg-slate-950' }} text-white" aria-hidden="true">{{ include('components/_icon.html.twig', {name: 'bell', class: 'size-6'}) }}</span>
+            <div class="flex-1">
+                <p class="font-semibold">{{ app.user.profile and app.user.profile.emergencyNotifications ? 'report.security_alerts_on'|trans : 'report.security_alerts_off'|trans }}</p>
+                <p class="mt-1 text-xs leading-4 text-slate-500">{{ 'report.status_realtime_help'|trans }}</p>
+            </div>
+            <a href="{{ path('app_profile') }}" class="rounded-xl bg-slate-100 px-3 py-2 text-xs font-semibold text-slate-700">{{ 'common.settings'|trans }}</a>
+        </section>
+    </div>
+</main>
+
+{% include 'components/_bottom_nav.html.twig' with {active: ''} %}
+{% endblock %}
 
 
-				<div class="card">
-					<div>
-						<div>
-							<small>Signalement #{{ report.id}}</small>
-							<h3>
-								{{ report.category.name }}
-							</h3>
-							<p>
-								{{ report.address}}
-							</p>
-						</div>
-						<span>
-							{{ report.status.value }}
-						</span>
-					</div>
-				</div>
-
-
-				<!-- {# Barre de progression #} -->
-				{% set currentStep = 1 %}
-
-				{% if report.status.value == 'Pris en compte' %}
-					{% set currentStep = 2 %}
-				{% elseif report.status.value == 'Résolu' %}
-					{% set currentStep = 3 %}
-				{% endif %}
-
-				<div class="progress-steps">
-
-					<div class="step {{ currentStep >= 1 ? 'active' : '' }}">
-						Envoyé
-					</div>
-
-					<div class="step {{ currentStep >= 2 ? 'active' : '' }}">
-						Pris en compte
-					</div>
-
-					<div class="step {{ currentStep >= 3 ? 'active' : '' }}">
-						Résolu
-					</div>
-
-				</div>
-
-				{#  Transmissions #}
-				<div class="transmission">
-					{% if report.emergencyService%}
-						<p>Transmis à
-							{{ report.emergencyService.name}}</p>
-					{% else %}
-						<p>
-							En attente de transmission</p>
-					{% endif %}
-					<small>{{ report.updatedAt ? report.updatedAt|date('H:i') : report.createdAt|date('H:i') }}</small>
-				</div>
-
-				<div class="historique">
-					<div>
-						<div>
-							<h4>Historique des événements</h4>
-						</div>
-
-						<div>
-							<div>
-								<p>Signalement envoyé</p>
-								<small>{{ report.createdAt|date('H:i') }}</small>
-                                
-							</div>
-
-							<div>
-								<p>Triage automatique effectué</p>
-								{% if report.status.value in ['reported', 'in_progress', 'resolved'] %}
-									<small>{{ report.updatedAt|date('H:i') }}</small>
-								{% endif %}
-							</div>
-
-							<div>
-								<p>Pris en compte</p>
-								<small>{{ report.updatedAt|date('H:i') }}</small>	
-							</div>
-                            <div>
-                            <p> Résolu</p>
-                            <small>{{ report.updatedAt|date('H:i') }}</small> 
-                            </div>
-						</div>
-					</div>
-				</div>
-
-			</main>
-
-
-			<div class="notiftoogle">
-				<div>
-					<p>Notifications activée</p><br>
-					<small>Vous serez alerté à chaque mis à jours du statut</small>
-				</div>
-
-				<div>
-					<input type="checkbox" id="notiftoogle" name="notiftoogle" checked>
-				</div>
-			</div>
-
-
-			<footer></footer>
-
-		{% endblock %}
