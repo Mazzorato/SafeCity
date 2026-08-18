@@ -7,6 +7,9 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ParkingRepository::class)]
+/**
+ * Modèle Doctrine représentant les données persistées de Parking.
+ */
 class Parking
 {
     #[ORM\Id]
@@ -28,6 +31,13 @@ class Parking
 
     #[ORM\Column]
     private ?bool $isFree = null;
+
+    /**
+     * Doctrine conserve les montants décimaux sous forme de chaîne afin de ne
+     * pas introduire les erreurs d'arrondi propres aux nombres flottants.
+     */
+    #[ORM\Column(type: Types::DECIMAL, precision: 6, scale: 2)]
+    private ?string $hourlyRate = null;
 
     #[ORM\Column]
     private ?int $availableSpots = null;
@@ -104,6 +114,18 @@ class Parking
         return $this;
     }
 
+    public function getHourlyRate(): ?string
+    {
+        return $this->hourlyRate;
+    }
+
+    public function setHourlyRate(string $hourlyRate): static
+    {
+        $this->hourlyRate = $hourlyRate;
+
+        return $this;
+    }
+
     public function getAvailableSpots(): ?int
     {
         return $this->availableSpots;
@@ -140,3 +162,5 @@ class Parking
         return $this;
     }
 }
+
+
