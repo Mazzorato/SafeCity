@@ -69,10 +69,18 @@ class Report
     #[ORM\OneToMany(targetEntity: Comment::class, mappedBy: 'report', orphanRemoval: true)]
     private Collection $comments;
 
+    /**
+     * @var Collection<int, ReportStatusHistory>
+     */
+    #[ORM\OneToMany(targetEntity: ReportStatusHistory::class, mappedBy: 'report', orphanRemoval: true)]
+    #[ORM\OrderBy(['changedAt' => 'ASC', 'id' => 'ASC'])]
+    private Collection $statusHistory;
+
     public function __construct()
     {
         $this->photos = new ArrayCollection();
         $this->comments = new ArrayCollection();
+        $this->statusHistory = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -281,5 +289,56 @@ class Report
         }
 
         return $this;
+    }
+
+    /**
+     * @return Collection<int, ReportStatusHistory>
+     */
+    public function getStatusHistory(): Collection
+    {
+        return $this->statusHistory;
+    }
+
+    public function addStatusHistory(ReportStatusHistory $history): static
+    {
+        if (!$this->statusHistory->contains($history)) {
+            $this->statusHistory->add($history);
+            $history->setReport($this);
+        }
+
+        return $this;
+    }
+
+    public function removeStatusHistory(ReportStatusHistory $history): static
+    {
+        if ($this->statusHistory->removeElement($history) && $history->getReport() === $this) {
+            $history->setReport(null);
+        }
+
+        return $this;
+    }
+
+    public function getStatusChangedAt(ReportStatusEnum|string $status): ?\DateTimeImmutable
+    {
+        $expectedStatus = is_string($status) ? ReportStatusEnum::tryFrom($status) : $status;
+        if ($expectedStatus === null) {
+            return null;
+        }
+
+        $changedAt = null;
+        foreach ($this->statusHistory as $history) {
+            if ($history->getStatus() === $expectedStatus) {
+                $changedAt = $history->getChangedAt();
+            }
+        }
+
+        return $changedAt;
+    }
+
+    public function getLatestStatusHistory(): ?ReportStatusHistory
+    {
+        $latest = $this->statusHistory->last();
+
+        return $latest === false ? null : $latest;
     }
 }
