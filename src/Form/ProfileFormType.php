@@ -38,10 +38,6 @@ class ProfileFormType extends AbstractType
                 'label' => 'Rappel d\'evenement',
                 'required' => false,
             ])
-            ->add('microphoneAccess', CheckboxType::class,[
-                'label' => 'Accès microphone',
-                'required' => false,
-            ])
             ->add('cameraAccess', CheckboxType::class, [
                 'label' => 'form.camera_access',
                 'required' => false,
