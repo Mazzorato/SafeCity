@@ -1,0 +1,67 @@
+{# Navigation mobile réutilisable de l’espace citoyen. #}
+{% set active = active|default('') %}
+
+{# Les tailles standard garantissent un rendu compact et stable après compilation Tailwind. #}
+<nav class="fixed inset-x-0 bottom-0 z-40 mx-auto grid h-20 w-full max-w-md grid-cols-5 border-t border-slate-200 bg-white px-2 pb-1 pt-2 shadow-[0_-4px_18px_rgba(15,23,42,0.04)] lg:hidden" aria-label="{{ 'nav.main'|trans }}">
+    <a href="{{ path('app_home') }}" class="flex min-w-0 flex-col items-center justify-center gap-1 {{ active == 'home' ? 'text-red-600' : 'text-stone-400' }}" {% if active == 'home' %}aria-current="page"{% endif %}>
+        {{ include('components/_icon.html.twig', {name: 'home', class: 'size-5'}) }}
+        <span class="text-[10px] leading-none {{ active == 'home' ? 'font-bold' : 'font-medium' }}">{{ 'nav.home'|trans }}</span>
+    </a>
+    <a href="{{ path('app_report_map') }}" class="flex min-w-0 flex-col items-center justify-center gap-1 {{ active == 'map' ? 'text-red-600' : 'text-stone-400' }}" {% if active == 'map' %}aria-current="page"{% endif %}>
+        {{ include('components/_icon.html.twig', {name: 'map', class: 'size-5'}) }}
+        <span class="text-[10px] leading-none {{ active == 'map' ? 'font-bold' : 'font-medium' }}">{{ 'nav.map'|trans }}</span>
+    </a>
+    <a href="{{ path('app_report_new') }}" class="flex min-w-0 flex-col items-center justify-center text-stone-400" {% if active == 'report' %}aria-current="page"{% endif %}>
+        <span class="flex size-14 -translate-y-2 items-center justify-center rounded-full bg-red-600 text-white shadow-md shadow-red-200" aria-hidden="true">
+            <span class="flex size-8 items-center justify-center rounded-full border-2 border-white">
+                {{ include('components/_icon.html.twig', {name: 'plus', class: 'size-5'}) }}
+            </span>
+        </span>
+        <span class="-mt-1 text-[10px] font-medium leading-none {{ active == 'report' ? 'text-red-600' : '' }}">{{ 'nav.report'|trans }}</span>
+    </a>
+    <a href="{{ path('app_service') }}" class="flex min-w-0 flex-col items-center justify-center gap-1 {{ active == 'services' ? 'text-red-600' : 'text-stone-400' }}" {% if active == 'services' %}aria-current="page"{% endif %}>
+        {{ include('components/_icon.html.twig', {name: 'services', class: 'size-5'}) }}
+        <span class="text-[10px] leading-none {{ active == 'services' ? 'font-bold' : 'font-medium' }}">{{ 'nav.services'|trans }}</span>
+    </a>
+    <a href="{{ path('app_news') }}" class="flex min-w-0 flex-col items-center justify-center gap-1 {{ active == 'news' ? 'text-red-600' : 'text-stone-400' }}" {% if active == 'news' %}aria-current="page"{% endif %}>
+        {{ include('components/_icon.html.twig', {name: 'news', class: 'size-5'}) }}
+        <span class="text-[10px] leading-none {{ active == 'news' ? 'font-bold' : 'font-medium' }}">{{ 'nav.news'|trans }}</span>
+    </a>
+</nav>
+
+{# Sur ordinateur, la navigation devient un en-tête horizontal lisible et conserve les mêmes destinations. #}
+<header class="fixed inset-x-0 top-0 z-40 hidden h-20 border-b border-slate-200 bg-white/95 shadow-sm backdrop-blur lg:block">
+    <div class="mx-auto flex h-full max-w-7xl items-center gap-8 px-8">
+        <a href="{{ path('app_home') }}" class="flex shrink-0 items-center gap-3" aria-label="{{ 'nav.home'|trans }}">
+            <span class="flex size-10 items-center justify-center rounded-xl bg-red-600 text-white">
+                {{ include('components/_icon.html.twig', {name: 'brand-shield', class: 'size-6'}) }}
+            </span>
+            <span class="text-xl font-extrabold tracking-tight text-slate-950">SafeCity</span>
+        </a>
+
+        <nav class="ml-auto flex items-center gap-2" aria-label="{{ 'nav.main'|trans }}">
+            <a href="{{ path('app_home') }}" class="flex items-center gap-2 rounded-xl px-4 py-3 text-sm font-semibold transition hover:bg-red-50 hover:text-red-600 {{ active == 'home' ? 'bg-red-50 text-red-600' : 'text-stone-500' }}" {% if active == 'home' %}aria-current="page"{% endif %}>
+                {{ include('components/_icon.html.twig', {name: 'home', class: 'size-5'}) }}
+                {{ 'nav.home'|trans }}
+            </a>
+            <a href="{{ path('app_report_map') }}" class="flex items-center gap-2 rounded-xl px-4 py-3 text-sm font-semibold transition hover:bg-red-50 hover:text-red-600 {{ active == 'map' ? 'bg-red-50 text-red-600' : 'text-stone-500' }}" {% if active == 'map' %}aria-current="page"{% endif %}>
+                {{ include('components/_icon.html.twig', {name: 'map', class: 'size-5'}) }}
+                {{ 'nav.map'|trans }}
+            </a>
+            <a href="{{ path('app_service') }}" class="flex items-center gap-2 rounded-xl px-4 py-3 text-sm font-semibold transition hover:bg-red-50 hover:text-red-600 {{ active == 'services' ? 'bg-red-50 text-red-600' : 'text-stone-500' }}" {% if active == 'services' %}aria-current="page"{% endif %}>
+                {{ include('components/_icon.html.twig', {name: 'services', class: 'size-5'}) }}
+                {{ 'nav.services'|trans }}
+            </a>
+            <a href="{{ path('app_news') }}" class="flex items-center gap-2 rounded-xl px-4 py-3 text-sm font-semibold transition hover:bg-red-50 hover:text-red-600 {{ active == 'news' ? 'bg-red-50 text-red-600' : 'text-stone-500' }}" {% if active == 'news' %}aria-current="page"{% endif %}>
+                {{ include('components/_icon.html.twig', {name: 'news', class: 'size-5'}) }}
+                {{ 'nav.news'|trans }}
+            </a>
+            <a href="{{ path('app_report_new') }}" class="ml-2 flex items-center gap-2 rounded-xl bg-red-600 px-5 py-3 text-sm font-bold text-white shadow-sm shadow-red-200 transition hover:bg-red-700" {% if active == 'report' %}aria-current="page"{% endif %}>
+                {{ include('components/_icon.html.twig', {name: 'plus', class: 'size-5'}) }}
+                {{ 'nav.report'|trans }}
+            </a>
+        </nav>
+    </div>
+</header>
+
+
