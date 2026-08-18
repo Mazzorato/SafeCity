@@ -14,6 +14,9 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
+/**
+ * Construit et valide le formulaire Symfony ReportFormType.
+ */
 class ReportFormType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
@@ -22,21 +25,21 @@ class ReportFormType extends AbstractType
             ->add('category', EntityType::class,[
                 'class' => ReportCategory::class,
                 'choice_label' => 'name',
-                'label' => 'Type d\incident',
+                'label' => 'form.report_category',
                 'constaints' => [
-                new NotBlank (message: 'Veuillez choisir une catégorie')],
+                new NotBlank (message: 'validation.report_category_required')],
             ]) 
 
             ->add('description', TextareaType::class, [
-                'label' => 'Description de l\incident',
+                'label' => 'form.report_description',
                 'required' => false,
-                'attr' => ['placeholder' => 'Décrivez l\incident en quelques mots...', 'rows' => 4],
+                'attr' => ['placeholder' => 'form.report_description_placeholder', 'rows' => 4],
             ])
             ->add('gravityLevel', EnumType::class, [
                 'class' => GravityLevelEnum::class,
-                'label' => 'Degré de gravité',
+                'label' => 'form.gravity',
                 'constraints' => [
-                    new NotBlank(message: 'Veuillez choisir un niveau de gravité'),
+                    new NotBlank(message: 'validation.gravity_required'),
                 ]
             ])
             
@@ -59,3 +62,5 @@ class ReportFormType extends AbstractType
         ]);
     }
 }
+
+

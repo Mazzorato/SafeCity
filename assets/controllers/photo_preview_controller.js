@@ -1,29 +1,43 @@
+// Prévisualise et retire les photos sélectionnées avant l’envoi du formulaire.
 import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
 
     static targets = ["input", "slot"];
 
-    connect() {
+    select(event) {
+        if (event.target instanceof HTMLInputElement || event.target.closest(".remove")) {
+            return;
+        }
 
-        this.slotTargets.forEach((slot, index) => {
+        event.preventDefault();
+        const index = this.slotTargets.indexOf(event.currentTarget);
+        const input = this.inputTargets[index];
+        if (input) {
+            // Un clic sur une case reste toujours un choix depuis la galerie.
+            input.removeAttribute("capture");
+            input.click();
+        }
+    }
 
-            slot.addEventListener("click", (event) => {
+    capture(event) {
+        event.preventDefault();
 
-                if (event.target.classList.contains("remove")) {
-                    return;
-                }
+        // La prise de vue utilise la première case encore libre afin de
+        // conserver la limite des trois champs du formulaire Symfony.
+        const input = this.inputTargets.find((candidate) => !candidate.files?.length);
+        if (!input) {
+            return;
+        }
 
-                this.inputTargets[index].click();
+        input.setAttribute("capture", "environment");
+        input.click();
 
-            });
-
-        });
-
+        // L’attribut ne doit pas transformer les clics suivants en accès caméra.
+        window.setTimeout(() => input.removeAttribute("capture"), 0);
     }
 
     preview(event) {
-
         const input = event.target;
         const index = this.inputTargets.indexOf(input);
         const file = input.files[0];
@@ -35,27 +49,22 @@ export default class extends Controller {
         const reader = new FileReader();
 
         reader.onload = (e) => {
-
             const slot = this.slotTargets[index];
-
             const image = slot.querySelector(".preview-image");
             const placeholder = slot.querySelector(".placeholder");
             const remove = slot.querySelector(".remove");
 
             image.src = e.target.result;
 
-            image.classList.remove("d-none");
-            placeholder.classList.add("d-none");
-            remove.classList.remove("d-none");
-
+            image.classList.remove("hidden");
+            placeholder.classList.add("hidden");
+            remove.classList.remove("hidden");
         };
 
         reader.readAsDataURL(file);
-
     }
 
     remove(event) {
-
         event.preventDefault();
         event.stopPropagation();
 
@@ -70,11 +79,11 @@ export default class extends Controller {
         const remove = slot.querySelector(".remove");
 
         image.src = "";
-        image.classList.add("d-none");
+        image.classList.add("hidden");
 
-        placeholder.classList.remove("d-none");
-        remove.classList.add("d-none");
-
+        placeholder.classList.remove("hidden");
+        remove.classList.add("hidden");
     }
-
 }
+
+

@@ -6,6 +6,9 @@ use App\Repository\PhotoRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: PhotoRepository::class)]
+/**
+ * Modèle Doctrine représentant les données persistées de Photo.
+ */
 class Photo
 {
     #[ORM\Id]
@@ -78,4 +81,6 @@ class Photo
 
         return $this;
     }
+
 }
+
