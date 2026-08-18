@@ -2,6 +2,9 @@
 
 namespace App\Enum;
 
+/**
+ * Définit les valeurs métier autorisées pour NewsCategoryEnum.
+ */
 enum NewsCategoryEnum : string
 {
     case SECURITE = "securite";
@@ -9,3 +12,5 @@ enum NewsCategoryEnum : string
     case MOBILITE = "mobilite";
     case TRAVAUX = "travaux";
 }
+
+

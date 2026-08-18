@@ -7,6 +7,8 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
+ * Centralise les requêtes Doctrine liées à News.
+ *
  * @extends ServiceEntityRepository<News>
  */
 class NewsRepository extends ServiceEntityRepository
@@ -41,3 +43,5 @@ class NewsRepository extends ServiceEntityRepository
     //        ;
     //    }
 }
+
+
