@@ -2,20 +2,21 @@
 
 namespace App\Controller;
 
-use App\Enum\ServiceTypeEnum;
-
-use App\Entity\User;
-
 use App\Entity\LocalService;
+use App\Entity\User;
+use App\Enum\ServiceTypeEnum;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
 
+/**
+ * Présente les services municipaux et de santé.
+ */
 final class ServiceController extends AbstractController
 {
-#[Route('/service', name: 'app_service')]
+    #[Route('/service', name: 'app_service')]
     public function index(EntityManagerInterface $em, Request $request): Response
     {
         $this->denyAccessUnlessGranted('ROLE_USER');
@@ -61,8 +62,7 @@ final class ServiceController extends AbstractController
         ]);
     }
 
-
-#[Route('/service/city', name: 'app_service_city', methods: ['GET'])]
+    #[Route('/service/city', name: 'app_service_city', methods: ['GET'])]
     public function cityServices(EntityManagerInterface $entityManager, Request $request): Response
     {
         $this->denyAccessUnlessGranted('ROLE_USER');
@@ -100,7 +100,7 @@ final class ServiceController extends AbstractController
         ]);
     }
 
-#[Route('/service/health/{kind}', name: 'app_service_health', methods: ['GET'], requirements: ['kind' => 'doctor|pharmacy'])]
+    #[Route('/service/health/{kind}', name: 'app_service_health', methods: ['GET'], requirements: ['kind' => 'doctor|pharmacy'])]
     public function health(EntityManagerInterface $entityManager, Request $request, string $kind): Response
     {
         $this->denyAccessUnlessGranted('ROLE_USER');
@@ -109,7 +109,7 @@ final class ServiceController extends AbstractController
         $user = $this->getUser();
         $city = $user->getCity();
         $search = trim($request->query->getString('query'));
-        $filter = $request->query->getString('filter', 'all');
+        $filter = $request->query->get('filter', 'all');
         $locationAllowed = $user->getProfile()?->isLocationAccess() === true;
         $queryParameters = $request->query->all();
         $latitude = $locationAllowed
@@ -118,14 +118,20 @@ final class ServiceController extends AbstractController
         $longitude = $locationAllowed
             ? $this->parseCoordinate($queryParameters['longitude'] ?? null, -180.0, 180.0)
             : null;
+
+        // Une position n'est exploitable que lorsque ses deux coordonnées
+        // sont valides. Une valeur isolée est donc ignorée sans bloquer la page.
         if ($latitude === null || $longitude === null) {
             $latitude = null;
             $longitude = null;
         }
+
         if (!in_array($filter, ['all', 'open', 'always'], true)) {
             $filter = 'all';
         }
+
         $services = [];
+        $nearbyAlternatives = [];
         if ($city !== null) {
             $queryBuilder = $entityManager->getRepository(LocalService::class)->createQueryBuilder('service')
                 ->where('service.city = :city')
@@ -151,7 +157,56 @@ final class ServiceController extends AbstractController
                     ->andWhere('LOWER(service.openingHours) LIKE :always')
                     ->setParameter('always', '%24%');
             }
+
             $services = $queryBuilder->getQuery()->getResult();
+
+            // Les alternatives ne dépendent pas de la recherche courante : un
+            // établissement de garde reste proposé même si son nom ne correspond
+            // pas au texte saisi pour l'établissement indisponible.
+            $alternativeQueryBuilder = $entityManager->getRepository(LocalService::class)->createQueryBuilder('alternative')
+                ->where('alternative.city = :alternativeCity')
+                ->andWhere('alternative.type = :alternativeHealth')
+                ->andWhere('alternative.onDuty = true')
+                ->setParameter('alternativeCity', $city)
+                ->setParameter('alternativeHealth', ServiceTypeEnum::HEALTH);
+
+            $kind === 'pharmacy'
+                ? $alternativeQueryBuilder
+                    ->andWhere('LOWER(alternative.name) LIKE :alternativePharmacy')
+                    ->setParameter('alternativePharmacy', '%pharmacie%')
+                : $alternativeQueryBuilder
+                    ->andWhere('LOWER(alternative.name) NOT LIKE :alternativePharmacy')
+                    ->setParameter('alternativePharmacy', '%pharmacie%');
+
+            /** @var LocalService[] $onDutyAlternatives */
+            $onDutyAlternatives = $alternativeQueryBuilder->getQuery()->getResult();
+
+            foreach ($services as $service) {
+                if ($service->isOnDuty()) {
+                    continue;
+                }
+
+                $rankedAlternatives = array_map(
+                    fn (LocalService $alternative): array => [
+                        'service' => $alternative,
+                        'distance' => $this->distanceInKilometers(
+                            (float) $service->getLatitude(),
+                            (float) $service->getLongitude(),
+                            (float) $alternative->getLatitude(),
+                            (float) $alternative->getLongitude(),
+                        ),
+                    ],
+                    $onDutyAlternatives,
+                );
+                usort(
+                    $rankedAlternatives,
+                    static fn (array $first, array $second): int => $first['distance'] <=> $second['distance'],
+                );
+
+                // Deux choix suffisent à aider l'utilisateur sans surcharger la
+                // fiche mobile avec toute la liste des services de la ville.
+                $nearbyAlternatives[$service->getId()] = array_slice($rankedAlternatives, 0, 2);
+            }
         }
 
         $serviceDistances = [];
@@ -164,14 +219,20 @@ final class ServiceController extends AbstractController
                     (float) $service->getLongitude(),
                 );
             }
-            usort($services, static function (LocalService $first, LocalService $second) use ($serviceDistances): int {
-                $comparison = $serviceDistances[$first->getId()] <=> $serviceDistances[$second->getId()];
 
-                return $comparison !== 0
-                    ? $comparison
+            // La distance devient le premier critère lorsque l'utilisateur
+            // partage sa position. Le nom garantit un ordre stable en cas d'égalité.
+            usort($services, static function (LocalService $first, LocalService $second) use ($serviceDistances): int {
+                $distanceComparison = $serviceDistances[$first->getId()] <=> $serviceDistances[$second->getId()];
+
+                return $distanceComparison !== 0
+                    ? $distanceComparison
                     : strcasecmp((string) $first->getName(), (string) $second->getName());
             });
         }
+
+        // La carte ne reçoit que les informations nécessaires à l'affichage.
+        // Les valeurs sont ensuite encodées en JSON par Twig.
         $mapServices = array_map(
             static fn (LocalService $service): array => [
                 'id' => $service->getId(),
@@ -188,7 +249,7 @@ final class ServiceController extends AbstractController
         return $this->render('service/health.html.twig', [
             'services' => $services,
             'serviceDistances' => $serviceDistances,
-            'nearbyAlternatives' => [],
+            'nearbyAlternatives' => $nearbyAlternatives,
             'mapServices' => $mapServices,
             'kind' => $kind,
             'filter' => $filter,
@@ -200,7 +261,10 @@ final class ServiceController extends AbstractController
         ]);
     }
 
-private function parseCoordinate(mixed $value, float $minimum, float $maximum): ?float
+    /**
+     * Convertit une coordonnée issue de l'URL et refuse les valeurs hors limites.
+     */
+    private function parseCoordinate(mixed $value, float $minimum, float $maximum): ?float
     {
         if (!is_string($value) && !is_int($value) && !is_float($value)) {
             return null;
@@ -218,7 +282,11 @@ private function parseCoordinate(mixed $value, float $minimum, float $maximum): 
             : null;
     }
 
-private function distanceInKilometers(
+    /**
+     * Calcule la distance à vol d'oiseau sans service externe ni extension
+     * géographique de base de données.
+     */
+    private function distanceInKilometers(
         float $latitudeA,
         float $longitudeA,
         float $latitudeB,
