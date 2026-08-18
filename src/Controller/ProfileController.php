@@ -2,6 +2,10 @@
 
 namespace App\Controller;
 
+use Symfony\Contracts\Translation\TranslatorInterface;
+
+use App\Localization\SupportedLocale;
+
 use App\Entity\Profile;
 use App\Entity\User;
 use App\Form\ProfileFormType;
@@ -15,67 +19,52 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/profile')]
 final class ProfileController extends AbstractController
 {
-    #[Route('', name: 'app_profile', methods: ['GET', 'POST'])]
-    public function index(Request $request, EntityManagerInterface $em): Response
+#[Route('', name: 'app_profile', methods: ['GET', 'POST'])]
+    public function index(
+        Request $request,
+        EntityManagerInterface $entityManager,
+        TranslatorInterface $translator,
+    ): Response
     {
         $this->denyAccessUnlessGranted('ROLE_USER');
 
         /** @var User $user */
         $user = $this->getUser();
-
-        // Création automatiquement si profile non existant
         $profile = $user->getProfile();
 
-        if (!$profile) {
-            $profile = new Profile();
-            $profile->setEmergencyNotifications(true);
-            $profile->setWeatherNotifications(true);
-            $profile->setTransportNotifications(true);
-            $profile->setEventNotifications(true);
-            $profile->setMicrophoneAccess(false);
-            $profile->setCameraAccess(false);
-            $profile->setLocationAccess(false);
-
-            $browserLanguage = substr(
-                $request->getPreferredLanguage(['fr', 'en', 'es', 'pt', 'it', 'de', 'ja', 'ar', 'ru', 'tr', 'pl', 'nl']) ?? 'fr',
-                0,
-                2
-            );
-
-            $profile->setLanguage($browserLanguage);
-
+        if ($profile === null) {
+            $profile = $this->createDefaultProfile($request);
             $user->setProfile($profile);
-            $em->persist($profile);
+            $entityManager->persist($profile);
         }
 
-        // Formulaire Utilisateur
         $userForm = $this->createForm(UserFormType::class, $user);
         $userForm->handleRequest($request);
 
         if ($userForm->isSubmitted() && $userForm->isValid()) {
-            $em->flush();
-
-            $this->addFlash('success', 'Informations mises à jour.');
+            $entityManager->flush();
+            $this->addFlash('success', $translator->trans('flash.profile_updated'));
 
             return $this->redirectToRoute('app_profile');
         }
 
-        // Formulaire Profile
         $profileForm = $this->createForm(ProfileFormType::class, $profile);
         $profileForm->handleRequest($request);
 
         if ($profileForm->isSubmitted() && $profileForm->isValid()) {
-            $em->flush();
-
-            $this->addFlash('success', 'Préférences mises à jour.');
+            $profile->setLanguage(SupportedLocale::normalize($profile->getLanguage()));
+            $entityManager->flush();
+            // Le prochain écran, y compris après déconnexion, reprend le choix.
+            $request->getSession()->set('_locale', $profile->getLanguage());
+            $this->addFlash('success', $translator->trans('flash.preferences_updated'));
 
             return $this->redirectToRoute('app_profile');
         }
 
         return $this->render('profile/index.html.twig', [
             'user' => $user,
-            'userForm' => $userForm->createView(),
-            'profileForm' => $profileForm->createView(),
+            'userForm' => $userForm,
+            'profileForm' => $profileForm,
         ]);
     }
 
@@ -112,4 +101,17 @@ final class ProfileController extends AbstractController
     }
 
     
+
+private function createDefaultProfile(Request $request): Profile
+    {
+        $profile = new Profile();
+
+        return $profile
+            ->setEmergencyNotifications(true)
+            ->setTransportNotifications(true)
+            ->setEventNotifications(true)
+            ->setCameraAccess(false)
+            ->setLocationAccess(false)
+            ->setLanguage(SupportedLocale::DEFAULT);
+    }
 }
