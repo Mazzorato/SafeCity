@@ -1,64 +1,105 @@
+{# Fil communautaire des signalements publics. #}
 {% extends 'base.html.twig' %}
 
-{% block title %}Communauté{% endblock %}
+{% block title %}{{ 'community.title'|trans }}{% endblock %}
 
 {% block body %}
-<div>
-    <h1>Communauté</h1>
-    <p> incidents signalés autour de vous</p>
-    
-    <a href=" {{ path('app_report_new') }}"> + </a>
+    {% set status_styles = {
+        reported: { label: 'report.status.reported'|trans, badge: 'bg-red-600', icon: 'alert', iconClass: 'bg-red-100 text-red-600' },
+        in_progress: { label: 'report.status.in_progress'|trans, badge: 'bg-orange-500', icon: 'construction', iconClass: 'bg-orange-100 text-orange-500' },
+        resolved: { label: 'report.status.resolved'|trans, badge: 'bg-emerald-500', icon: 'check', iconClass: 'bg-emerald-100 text-emerald-600' }
+    } %}
 
-    <div class="stats"> 
-        <span>{{ stats.active }} Actifs</span>
-        <span>{{ stats.thisMonth }} Ce mois</span>
-        <span>{{ stats.resolved }} Résolus</span>
+    <div class="min-h-screen bg-stone-200 font-sans text-slate-950">
+        <div class="relative mx-auto min-h-screen w-full max-w-md bg-white pb-28 shadow-xl lg:max-w-7xl lg:pb-12 lg:pt-20 lg:shadow-none">
+            <header class="flex items-center justify-between border-b border-slate-100 px-6 py-7">
+                <div>
+                    <h1 class="text-4xl font-bold">{{ 'community.title'|trans }}</h1>
+                    <p class="text-sm font-semibold text-stone-500">{{ 'community.nearby_incidents'|trans }}</p>
+                </div>
+                <a href="{{ path('app_report_new') }}" class="flex size-14 items-center justify-center rounded-2xl bg-slate-950 text-white" aria-label="{{ 'report.new'|trans }}">{{ include('components/_icon.html.twig', {name: 'plus', class: 'size-7'}) }}</a>
+            </header>
+
+            <main class="space-y-10 px-5 py-5 lg:grid lg:grid-cols-2 lg:gap-8 lg:space-y-0 lg:px-8 lg:py-8">
+                <section class="grid grid-cols-4 items-center rounded-2xl bg-white px-4 py-5 text-center shadow-lg shadow-slate-200/70 lg:col-span-2" aria-label="{{ 'community.statistics'|trans }}">
+                    <div>
+                        <strong class="block text-xl text-red-600">{{ stats.active }}</strong>
+                        <span class="text-xs text-stone-500">{{ 'community.active'|trans }}</span>
+                    </div>
+                    <div>
+                        <strong class="block text-xl">{{ stats.thisMonth }}</strong>
+                        <span class="text-xs text-stone-500">{{ 'community.this_month'|trans }}</span>
+                    </div>
+                    <div>
+                        <strong class="block text-xl text-green-500">{{ stats.resolved }}</strong>
+                        <span class="text-xs text-stone-500">{{ 'report.status.resolved_plural'|trans }}</span>
+                    </div>
+                    <div class="border-l border-slate-300 pl-3">
+                        <strong class="flex items-center justify-center gap-1 text-xs text-red-600">{{ include('components/_icon.html.twig', {name: 'pin', class: 'size-4'}) }} 500 m</strong>
+                        <span class="text-[10px] text-stone-500">{{ 'community.around_me'|trans }}</span>
+                    </div>
+                </section>
+
+                <section class="relative h-60 overflow-hidden rounded-2xl bg-indigo-50 shadow-lg shadow-slate-200/70 lg:col-span-2 lg:h-80" aria-label="{{ 'community.map_preview'|trans }}">
+                    <span class="absolute left-4 top-4 rounded-full bg-white px-4 py-2 text-xs font-semibold shadow"><span class="mr-2 inline-block size-2 rounded-full bg-red-600"></span>{{ 'community.local_view'|trans }}</span>
+                    <span class="absolute left-1/3 top-1/2 flex size-12 items-center justify-center rounded-2xl border-2 border-white bg-red-600 text-white shadow" aria-hidden="true">{{ include('components/_icon.html.twig', {name: 'alert', class: 'size-6'}) }}</span>
+                    <span class="absolute left-2/3 top-2/3 flex size-12 items-center justify-center rounded-2xl border-2 border-white bg-slate-950 text-white shadow" aria-hidden="true">{{ include('components/_icon.html.twig', {name: 'construction', class: 'size-6'}) }}</span>
+                    <span class="absolute bottom-8 left-1/4 flex size-12 items-center justify-center rounded-2xl border-2 border-white bg-red-600 text-white shadow" aria-hidden="true">{{ include('components/_icon.html.twig', {name: 'car', class: 'size-6'}) }}</span>
+                    <a href="{{ path('app_report_map') }}" class="absolute bottom-4 right-4 rounded-xl bg-white px-4 py-3 text-sm font-semibold shadow">{{ 'community.open_map'|trans }}</a>
+                </section>
+
+                <nav class="grid grid-cols-4 gap-2 lg:col-span-2" aria-label="{{ 'report.filter'|trans }}">
+                    {% set filters = {all: 'common.all', reported: 'report.status.reported_plural', in_progress: 'report.status.in_progress', resolved: 'report.status.resolved_plural'} %}
+                    {% for value, labelKey in filters %}
+                        <a href="{{ path('app_community', {status: value}) }}" class="flex h-14 items-center justify-center rounded-xl border text-center text-sm font-bold {{ status == value ? 'border-red-600 bg-red-600 text-white' : 'border-slate-200 bg-white text-stone-500' }}">
+                            {{ labelKey|trans }}
+                        </a>
+                    {% endfor %}
+                </nav>
+
+                <section aria-labelledby="feed-title">
+                    <div class="mb-4 flex items-center justify-between">
+                        <h2 id="feed-title" class="text-2xl font-bold">{{ 'community.report_feed'|trans }}</h2>
+                        <a href="{{ path('app_report_all') }}" class="font-medium text-red-600">{{ 'common.view_all'|trans }}</a>
+                    </div>
+                    <div class="divide-y divide-slate-200 border border-slate-200">
+                        {% for report in reports|slice(0, 5) %}
+                            {% set style = status_styles[report.status.value] %}
+                            <a href="{{ path('app_report_show', {id: report.id}) }}" class="flex items-center gap-4 px-3 py-4">
+                                <span class="flex size-14 shrink-0 items-center justify-center rounded-xl {{ style.iconClass }}" aria-hidden="true">{{ include('components/_icon.html.twig', {name: style.icon, class: 'size-7'}) }}</span>
+                                <span class="min-w-0 flex-1">
+                                    <span class="block truncate font-bold">{{ report.category.name }}</span>
+                                    <span class="mt-1 flex items-center gap-1 truncate text-sm text-stone-500">{{ include('components/_icon.html.twig', {name: 'pin', class: 'size-4 shrink-0'}) }} {{ report.address ?: (city ? city.name : 'community.unknown_location'|trans) }} · {{ report.createdAt|date('d/m H:i') }}</span>
+                                </span>
+                                <span class="self-start rounded-full px-3 py-1 text-[10px] font-semibold uppercase text-white {{ style.badge }}">{{ style.label }}</span>
+                            </a>
+                        {% else %}
+                            <p class="px-5 py-8 text-center text-sm text-stone-500">{{ 'community.no_city_report'|trans }}</p>
+                        {% endfor %}
+                    </div>
+                </section>
+
+                <section aria-labelledby="comments-title">
+                    <div class="mb-4 flex items-center justify-between">
+                        <h2 id="comments-title" class="text-2xl font-bold">{{ 'community.recent_comments'|trans }}</h2>
+                    </div>
+                    <div class="space-y-4">
+                        {% for comment in comments %}
+                            <article class="border border-slate-200 px-5 py-4">
+                                <div class="flex items-center justify-between gap-4">
+                                    <strong>{{ comment.author ? comment.author.firstName ~ ' ' ~ comment.author.lastName|first ~ '.' : 'community.anonymous'|trans }}</strong>
+                                    <time class="text-xs text-stone-500">{{ comment.createdAt|date('d/m H:i') }}</time>
+                                </div>
+                                <p class="mt-4 text-sm leading-relaxed">{{ comment.content }}</p>
+                            </article>
+                        {% else %}
+                            <p class="rounded-xl bg-slate-50 px-5 py-8 text-center text-sm text-stone-500">{{ 'report.no_comment'|trans }}</p>
+                        {% endfor %}
+                    </div>
+                </section>
+            </main>
+
+            {{ include('components/_bottom_nav.html.twig', { active: 'home' }) }}
+        </div>
     </div>
-
-    <div class="map-placeholder">
-        Carte à venir
-    </div>
-
-    <nav>
-        <a href="{{ path('app_community', {status: 'all'}) }}" class="{{ status == 'all' ? 'active' : '' }}">Tous</a>
-        <a href="{{ path('app_community', {status: 'reported'}) }}" class="{{ status == 'reported' ? 'active' : '' }}">Signalés</a>
-        <a href="{{ path('app_community', {status: 'in_progress'}) }}" class="{{ status == 'in_progress' ? 'active' : '' }}">En cours</a>
-        <a href="{{ path('app_community', {status: 'resolved'}) }}" class="{{ status == 'resolved' ? 'active' : '' }}">Résolus</a>
-    </nav>
-
-    <h2>Fil des signalements</h2>
-    
-    {% if reports is empty %}
-        <p> Aucun signalement pour votre ville pour le moment.</p>
-    {% else %}
-        <ul>
-            {% for report in reports %}
-                <li>{{ report.status.value}}
-                    {{ report.category.name }}
-                    <span> {{ report.status.value }}</span>
-                    {% if report.address %}
-                        <p>{{ report.address }}</p>
-                    {% endif %}
-                    <p>{{ report.createdAt|date('d/m/Y h:i') }}</p>
-                </li>
-            {% endfor %}
-        </ul>
-    {% endif %}
-
-    <h2>Commentaires récents <a href="#"> Voir tout</a> </h2>
-
-    {% if reports is empty %}
-        <p>Aucun commentaire pour le moment.</p>
-    {% else %}
-        <ul>
-            {% for comment in comments %}
-                <li>
-                    {{comment.author ? comment.author.firstName : 'Anonyme'}}
-                    <span>{{ comment.createdAt|date('d/m/Y h:i') }}</span>
-                    <p> {{ comment.content }}</p>
-                </li>
-            {% endfor %}
-        </ul>
-    {% endif %}
-</div>
 {% endblock %}
