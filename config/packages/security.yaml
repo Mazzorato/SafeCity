@@ -38,6 +38,7 @@ security:
     - { path: ^/legal, roles: PUBLIC_ACCESS }
     - { path: ^/report/my-reports, roles: ROLE_USER }
     - { path: ^/report/new, roles: ROLE_USER }
+    - { path: ^/report/map/view$, roles: ROLE_USER }
     - { path: ^/report, roles: ROLE_ADMIN }
     - { path: ^/, roles: ROLE_USER }
 
