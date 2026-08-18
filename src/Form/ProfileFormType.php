@@ -14,8 +14,16 @@ class ProfileFormType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('emergencyNotifications', CheckboxType::class,[
-                'label' => 'Notification d\'urgence',
+            ->add('emergencyNotifications', CheckboxType::class, [
+                'label' => 'form.emergency_notifications',
+                'required' => false,
+            ])
+            ->add('transportNotifications', CheckboxType::class, [
+                'label' => 'form.transport_notifications',
+                'required' => false,
+            ])
+            ->add('eventNotifications', CheckboxType::class, [
+                'label' => 'form.event_reminders',
                 'required' => false,
             ])
             ->add('weatherNotifications', CheckboxType::class,[
