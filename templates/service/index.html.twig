@@ -49,12 +49,12 @@
                     <h3 class="mt-4 font-bold">{{ 'service.city_services'|trans }}</h3>
                     <p class="mt-1 text-xs leading-5 text-slate-500">{{ 'service.city_services_help'|trans }}</p>
                 </a>
-                <a href="{{ path('app_service') }}" class="rounded-2xl border-b-4 border-red-600 bg-white p-4 shadow-sm">
+                <a href="{{ path('app_service_health', {kind: 'pharmacy'}) }}" class="rounded-2xl border-b-4 border-red-600 bg-white p-4 shadow-sm">
                     <span class="flex size-11 items-center justify-center rounded-xl bg-red-50 text-red-600" aria-hidden="true">{{ include('components/_icon.html.twig', {name: 'pharmacy', class: 'size-6'}) }}</span>
                     <h3 class="mt-4 font-bold">{{ 'service.pharmacies'|trans }}</h3>
                     <p class="mt-1 text-xs leading-5 text-slate-500">{{ 'service.on_duty_hours'|trans }}</p>
                 </a>
-                <a href="{{ path('app_service') }}" class="rounded-2xl border-b-4 border-violet-600 bg-white p-4 shadow-sm">
+                <a href="{{ path('app_service_health', {kind: 'doctor'}) }}" class="rounded-2xl border-b-4 border-violet-600 bg-white p-4 shadow-sm">
                     <span class="flex size-11 items-center justify-center rounded-xl bg-violet-50 text-violet-700" aria-hidden="true">{{ include('components/_icon.html.twig', {name: 'doctor', class: 'size-6'}) }}</span>
                     <h3 class="mt-4 font-bold">{{ 'service.doctors'|trans }}</h3>
                     <p class="mt-1 text-xs leading-5 text-slate-500">{{ 'service.on_duty_doctors'|trans }}</p>
