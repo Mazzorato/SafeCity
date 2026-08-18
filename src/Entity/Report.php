@@ -70,6 +70,7 @@ class Report
      * @var Collection<int, Comment>
      */
     #[ORM\OneToMany(targetEntity: Comment::class, mappedBy: 'report', orphanRemoval: true)]
+    #[ORM\OrderBy(['createdAt' => 'ASC', 'id' => 'ASC'])]
     private Collection $comments;
 
     /**
@@ -351,5 +352,4 @@ class Report
         return $latest === false ? null : $latest;
     }
 }
-
 
