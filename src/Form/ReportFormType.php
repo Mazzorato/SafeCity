@@ -49,10 +49,6 @@ class ReportFormType extends AbstractType
             ->add('address', HiddenType::class, [
                 'required' => false,
             ])
-            ->add('audioUrl')
-            ->add('audioLanguage', HiddenType::class, [
-                'required' => false,
-            ])
         ;
     }
 

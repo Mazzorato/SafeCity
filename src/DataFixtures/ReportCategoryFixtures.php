@@ -6,6 +6,9 @@ use App\Entity\ReportCategory;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 
+/**
+ * Charge les données locales de démonstration gérées par ReportCategoryFixtures.
+ */
 class ReportCategoryFixtures extends Fixture
 {
     public function load(ObjectManager $manager): void
@@ -21,10 +24,14 @@ class ReportCategoryFixtures extends Fixture
         ];
 
         foreach ($categories as $data) {
-            $category = new ReportCategory();
-            $category->setName($data['name']);
-            $category->setDescription($data['description']);
-            $category->setIcon($data['icon']);
+            // L'icône est le code métier stable déjà utilisé par les filtres.
+            $category = $manager->getRepository(ReportCategory::class)->findOneBy([
+                'icon' => $data['icon'],
+            ]) ?? new ReportCategory();
+            $category
+                ->setName($data['name'])
+                ->setDescription($data['description'])
+                ->setIcon($data['icon']);
 
             $manager->persist($category);
             $this->addReference('category_' . $data['icon'], $category);

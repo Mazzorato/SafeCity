@@ -37,12 +37,6 @@ class Report
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $address = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $audioUrl = null;
-
-    #[ORM\Column(length: 10, nullable: true)]
-    private ?string $audioLanguage = null;
-
     #[ORM\Column]
     private ?\DateTime $createdAt = null;
 
@@ -127,7 +121,7 @@ class Report
         return $this->latitude;
     }
 
-    public function setLatitude(string $latitude): static
+    public function setLatitude(?string $latitude): static
     {
         $this->latitude = $latitude;
 
@@ -139,7 +133,7 @@ class Report
         return $this->longitude;
     }
 
-    public function setLongitude(string $longitude): static
+    public function setLongitude(?string $longitude): static
     {
         $this->longitude = $longitude;
 
@@ -154,30 +148,6 @@ class Report
     public function setAddress(?string $address): static
     {
         $this->address = $address;
-
-        return $this;
-    }
-
-    public function getAudioUrl(): ?string
-    {
-        return $this->audioUrl;
-    }
-
-    public function setAudioUrl(?string $audioUrl): static
-    {
-        $this->audioUrl = $audioUrl;
-
-        return $this;
-    }
-
-    public function getAudioLanguage(): ?string
-    {
-        return $this->audioLanguage;
-    }
-
-    public function setAudioLanguage(?string $audioLanguage): static
-    {
-        $this->audioLanguage = $audioLanguage;
 
         return $this;
     }

@@ -26,9 +26,6 @@ class Profile
     private ?bool $eventNotifications = null;
 
     #[ORM\Column]
-    private ?bool $microphoneAccess = null;
-
-    #[ORM\Column]
     private ?bool $cameraAccess = null;
 
     #[ORM\Column]
@@ -86,18 +83,6 @@ class Profile
     public function setEventNotifications(bool $eventNotifications): static
     {
         $this->eventNotifications = $eventNotifications;
-
-        return $this;
-    }
-
-    public function isMicrophoneAccess(): ?bool
-    {
-        return $this->microphoneAccess;
-    }
-
-    public function setMicrophoneAccess(bool $microphoneAccess): static
-    {
-        $this->microphoneAccess = $microphoneAccess;
 
         return $this;
     }
