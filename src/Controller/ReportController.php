@@ -2,6 +2,14 @@
 
 namespace App\Controller;
 
+use Symfony\Contracts\Translation\TranslatorInterface;
+
+use Symfony\Component\Form\FormError;
+
+use Psr\Log\LoggerInterface;
+
+use App\Enum\ReportStatusEnum;
+
 use App\Entity\Photo;
 use App\Service\FileUploader;
 use App\Entity\Report;
@@ -25,60 +33,117 @@ final class ReportController extends AbstractController
         ]);
     }
 
-    #[Route('/new', name: 'app_report_new', methods: ['GET', 'POST'])]
-public function new(
-    Request $request,
-    EntityManagerInterface $entityManager,
-    FileUploader $fileUploader
-): Response
-{
-    $this->denyAccessUnlessGranted('ROLE_USER');
+#[Route('/new', name: 'app_report_new', methods: ['GET', 'POST'])]
+    public function new(
+        Request $request,
+        EntityManagerInterface $entityManager,
+        FileUploader $fileUploader,
+        LoggerInterface $logger,
+    ): Response {
+        $this->denyAccessUnlessGranted('ROLE_USER');
 
-    $report = new Report();
-    $form = $this->createForm(ReportType::class, $report);
-    $form->handleRequest($request);
+        /** @var User $user */
+        $user = $this->getUser();
 
-    if ($form->isSubmitted() && $form->isValid()) {
+        if ($user->getCity() === null) {
+            $this->addFlash('warning', $this->translator->trans('flash.choose_city_first'));
 
-        $report->setReporter($this->getUser());
-        $report->setStatus(\App\Enum\ReportStatusEnum::REPORTED);
-        $report->setCreatedAt(new \DateTime());
-
-        // Enregistrement des 3 photos
-        foreach (['photo1', 'photo2', 'photo3'] as $field) {
-
-            $photoFile = $form->get($field)->getData();
-
-            if ($photoFile === null) {
-                continue;
-            }
-
-            $filename = $fileUploader->upload($photoFile);
-
-            $photo = new Photo();
-            $photo->setUrl('/uploads/photos/' . $filename);
-            $photo->setUploadedAt(new \DateTime());
-            $photo->setUploader($this->getUser());
-            $photo->setReport($report);
-
-            $entityManager->persist($photo);
+            return $this->redirectToRoute('app_city_select');
         }
 
-        $entityManager->persist($report);
-        $entityManager->flush();
+        $report = new Report();
+        $report->setCity($user->getCity());
 
-        $this->addFlash('success', 'Votre signalement a bien été envoyé.');
+        $form = $this->createForm(ReportType::class, $report, [
+            'report_creation' => true,
+        ]);
+        $form->handleRequest($request);
 
-        return $this->redirectToRoute('app_report_show', [
-            'id' => $report->getId(),
+        if ($form->isSubmitted() && $form->isValid()) {
+            $createdAt = new \DateTime();
+            $report
+                ->setReporter($user)
+                ->setStatus(ReportStatusEnum::REPORTED)
+                ->setCreatedAt($createdAt);
+
+            $uploadedPhotoFilenames = [];
+
+            try {
+                foreach (['photo1', 'photo2', 'photo3'] as $field) {
+                    $photoFile = $form->get($field)->getData();
+
+                    if ($photoFile !== null) {
+                        $uploadedPhotoFilenames[] = $fileUploader->upload($photoFile);
+                    }
+                }
+            } catch (\Throwable $exception) {
+                $this->cleanupFailedPhotoUploads(
+                    $uploadedPhotoFilenames,
+                    $fileUploader,
+                    $logger,
+                );
+                $logger->error('Échec du téléversement des médias d’un signalement.', [
+                    'user_id' => $user->getId(),
+                    'exception' => $exception,
+                ]);
+                $form->addError(new FormError(
+                    $this->translator->trans('flash.media_upload_failed')
+                ));
+                $response = $this->render('report/new.html.twig', [
+                    'report' => $report,
+                    'form' => $form,
+                ]);
+                $response->setStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY);
+
+                return $response;
+            }
+
+            foreach ($uploadedPhotoFilenames as $photoFilename) {
+                $photo = new Photo();
+                $photo
+                    ->setUrl('/uploads/photos/' . $photoFilename)
+                    ->setUploadedAt(new \DateTime())
+                    ->setUploader($user)
+                    ->setReport($report);
+
+                $entityManager->persist($photo);
+            }
+
+            $entityManager->persist($report);
+
+            try {
+                $entityManager->flush();
+            } catch (\Throwable $exception) {
+                $this->cleanupFailedPhotoUploads(
+                    $uploadedPhotoFilenames,
+                    $fileUploader,
+                    $logger,
+                );
+                $logger->error('Échec de l’enregistrement en base d’un signalement.', [
+                    'user_id' => $user->getId(),
+                    'exception' => $exception,
+                ]);
+                $this->addFlash(
+                    'error',
+                    $this->translator->trans('flash.report_save_failed')
+                );
+
+                return $this->redirectToRoute('app_report_new');
+            }
+
+            $this->addFlash('success', $this->translator->trans('flash.report_sent'));
+
+            return $this->redirectToRoute('app_report_show', [
+                'id' => $report->getId(),
+            ]);
+        }
+
+        return $this->render('report/new.html.twig', [
+            'report' => $report,
+            'form' => $form,
         ]);
     }
 
-    return $this->render('report/new.html.twig', [
-        'report' => $report,
-        'form' => $form,
-    ]);
-}
     #[Route('/my-reports', name: 'app_report_my_reports', methods: ['GET'])]
 public function myReports(): Response
 {
@@ -220,5 +285,26 @@ public function myReports(): Response
             'city' => $city,
             'category' => $category,
         ]);
+    }
+
+public function __construct(private TranslatorInterface $translator)
+    {
+    }
+
+private function cleanupFailedPhotoUploads(
+        array $photoFilenames,
+        FileUploader $fileUploader,
+        LoggerInterface $logger,
+    ): void {
+        foreach ($photoFilenames as $photoFilename) {
+            try {
+                $fileUploader->remove($photoFilename);
+            } catch (\Throwable $exception) {
+                $logger->warning('Nettoyage impossible d’une photo incomplète.', [
+                    'filename' => $photoFilename,
+                    'exception' => $exception,
+                ]);
+            }
+        }
     }
 }

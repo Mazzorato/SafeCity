@@ -7,6 +7,8 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
+ * Centralise les requêtes Doctrine liées à Photo.
+ *
  * @extends ServiceEntityRepository<Photo>
  */
 class PhotoRepository extends ServiceEntityRepository
@@ -41,3 +43,5 @@ class PhotoRepository extends ServiceEntityRepository
     //        ;
     //    }
 }
+
+

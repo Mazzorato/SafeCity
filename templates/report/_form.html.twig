@@ -1,39 +1,225 @@
-{{ form_start(form, {attr: {'data-controller': 'report-location'}}) }}
+{# Formulaire Symfony partagé de création et d’édition d’un signalement. #}
+{% set categoryStyles = {
+    accident: {background: 'bg-red-600', text: 'text-white', icon: 'car'},
+    travaux: {background: 'bg-amber-400', text: 'text-slate-950', icon: 'construction'},
+    incivilite: {background: 'bg-fuchsia-500', text: 'text-white', icon: 'alert'},
+    incendie: {background: 'bg-yellow-300', text: 'text-slate-950', icon: 'fire'},
+    sante: {background: 'bg-blue-600', text: 'text-white', icon: 'health'},
+    autre: {background: 'bg-white', text: 'text-slate-950', icon: 'more'}
+} %}
 
-    
-    {{ form_row(form.category) }}
-    {{ form_row(form.gravityLevel) }}
-    {{ form_row(form.description) }}
+{% set gravityContent = {
+    low: {
+        title: 'gravity.low'|trans,
+        description: 'gravity.low_help'|trans,
+        color: 'text-slate-950',
+        selected: 'peer-checked:border-slate-500 peer-checked:[&_.gravity-dot]:border-slate-500 peer-checked:[&_.gravity-dot]:bg-slate-500'
+    },
+    medium: {
+        title: 'gravity.medium'|trans,
+        description: 'gravity.medium_help'|trans,
+        color: 'text-orange-500',
+        selected: 'peer-checked:border-orange-500 peer-checked:[&_.gravity-dot]:border-orange-500 peer-checked:[&_.gravity-dot]:bg-orange-500'
+    },
+    high: {
+        title: 'gravity.high'|trans,
+        description: 'gravity.high_help'|trans,
+        color: 'text-red-600',
+        selected: 'peer-checked:border-red-500 peer-checked:[&_.gravity-dot]:border-red-500 peer-checked:[&_.gravity-dot]:bg-red-500'
+    }
+} %}
 
-    <div data-controller="photo-preview">
-        <div class="photo-grid">
-            {% for field in [form.photo1, form.photo2, form.photo3] %}
+{# Les préférences pilotent les actions proposées sans remplacer les
+   autorisations système que le navigateur reste seul à pouvoir accorder. #}
+{% set locationAllowed = app.user.profile and app.user.profile.locationAccess %}
+{% set cameraAllowed = app.user.profile and app.user.profile.cameraAccess %}
 
-                <div class="slot" data-photo-preview-target="slot">
+{{ form_start(form, {
+    attr: {
+        class: 'space-y-8',
+        novalidate: 'novalidate'
+    }
+}) }}
+    {% if form.vars.errors|length > 0 %}
+        <div class="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-semibold text-red-700" role="alert">
+            {{ form_errors(form) }}
+        </div>
+    {% endif %}
 
-                    {{ form_widget(field, {
-                        attr: {
-                            class: "d-none",
-                            "data-photo-preview-target": "input",
-                            "data-action": "change->photo-preview#preview"
-                        }
-                    })}}
+    <section
+        aria-labelledby="location-title"
+        data-controller="report-location"
+        data-report-location-allowed-value="{{ locationAllowed ? 'true' : 'false' }}"
+        data-report-location-automatic-value="{{ app.user.profile and app.user.profile.locationAccess ? 'true' : 'false' }}"
+        data-report-location-locale-value="{{ app.request.locale }}"
+        data-report-location-confirmed-message-value="{{ 'location.confirmed'|trans }}"
+        data-report-location-disabled-message-value="{{ 'location.disabled'|trans }}"
+        data-report-location-enable-message-value="{{ 'location.enable_for_report'|trans }}"
+        data-report-location-unavailable-message-value="{{ 'location.unavailable'|trans }}"
+        data-report-location-searching-message-value="{{ 'location.searching'|trans }}"
+        data-report-location-error-message-value="{{ 'location.report_error'|trans }}"
+        data-report-location-address-searching-message-value="{{ 'location.address_searching'|trans }}"
+        data-report-location-address-unavailable-message-value="{{ 'location.address_unavailable'|trans }}"
+    >
+        <h2 id="location-title" class="mb-2 text-sm font-semibold text-slate-500">{{ 'report.automatic_location'|trans }}</h2>
+        <div class="flex min-h-12 items-center gap-3 rounded-xl border border-slate-200 bg-white px-3 py-2.5">
+            {{ include('components/_icon.html.twig', {name: 'pin', class: 'size-6 shrink-0 text-red-600'}) }}
+            <span class="min-w-0 flex-1 truncate text-sm font-semibold" data-report-location-target="display">{{ app.user.city.name }}</span>
+            <button
+                type="button"
+                class="flex size-9 shrink-0 items-center justify-center rounded-xl bg-red-50 font-bold text-red-600 transition {{ not locationAllowed ? 'cursor-not-allowed opacity-50' : '' }}"
+                data-report-location-target="button"
+                data-action="report-location#locate"
+                aria-label="{{ 'location.use_position'|trans }}"
+                {% if not locationAllowed %}disabled aria-disabled="true"{% endif %}
+            >{{ include('components/_icon.html.twig', {name: 'target', class: 'size-5'}) }}</button>
+        </div>
+        <p class="mt-2 text-xs text-slate-500" data-report-location-target="status">
+            {{ locationAllowed ? 'location.searching'|trans : 'location.disabled'|trans }}
+        </p>
+        {% if not locationAllowed %}
+            <a href="{{ path('app_profile') }}" class="mt-1 inline-flex text-xs font-semibold text-red-600 underline underline-offset-2">{{ 'profile.update_preferences'|trans }}</a>
+        {% endif %}
+        <p class="mt-1 text-[10px] text-slate-400">{{ 'location.address_provider'|trans }} <a href="https://www.openstreetmap.org/copyright" class="underline" rel="noreferrer">OpenStreetMap</a>.</p>
+        {{ form_widget(form.address, {attr: {'data-report-location-target': 'address'}}) }}
+        {{ form_widget(form.latitude, {attr: {'data-report-location-target': 'latitude'}}) }}
+        {{ form_widget(form.longitude, {attr: {'data-report-location-target': 'longitude'}}) }}
+        <div class="mt-2 space-y-1 text-xs font-medium text-red-600">
+            {{ form_errors(form.address) }}
+            {{ form_errors(form.latitude) }}
+            {{ form_errors(form.longitude) }}
+        </div>
+    </section>
 
-                    <button type="button" class="remove d-none" data-action= "click->photo-preview#remove"> x </button>
-                    <img class="preview-image d-none" alt="Prévisualisation">
-                    <span class="placeholder"> + </span>
+    <section aria-labelledby="category-title">
+        <h2 id="category-title" class="mb-3 text-lg font-bold text-slate-500">{{ 'form.report_category'|trans }}</h2>
+        <div class="grid grid-cols-3 gap-2.5">
+            {% for choice in form.category %}
+                {% set categoryIcon = choice.vars.attr['data-category-icon'] ?? 'autre' %}
+                {% set style = categoryStyles[categoryIcon] ?? categoryStyles.autre %}
+                <div class="relative">
+                    {{ form_widget(choice, {attr: {class: 'peer sr-only'}}) }}
+                    <label for="{{ choice.vars.id }}" class="{{ style.background }} {{ style.text }} flex aspect-[1.12] cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border border-slate-200 px-1 text-center shadow-sm transition peer-checked:border-slate-950 peer-checked:ring-2 peer-checked:ring-slate-950 peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-slate-950">
+                        {{ include('components/_icon.html.twig', {name: style.icon, class: 'size-6'}) }}
+                        {% set categoryKey = 'report.category.' ~ categoryIcon %}
+                        <span class="text-[11px] font-semibold leading-tight">{{ categoryKey|trans == categoryKey ? choice.vars.label : categoryKey|trans }}</span>
+                    </label>
                 </div>
             {% endfor %}
         </div>
+        <div class="mt-2 text-xs font-medium text-red-600">{{ form_errors(form.category) }}</div>
+    </section>
+
+    <section aria-labelledby="gravity-title">
+        <h2 id="gravity-title" class="mb-2 text-lg font-bold">{{ 'form.gravity'|trans }}</h2>
+        <div class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+            {% for choice in form.gravityLevel %}
+                {% set content = gravityContent[choice.vars.value] %}
+                <div class="relative">
+                    {{ form_widget(choice, {attr: {class: 'peer sr-only'}}) }}
+                    <label for="{{ choice.vars.id }}" class="{{ content.selected }} flex min-h-[76px] cursor-pointer items-center gap-5 border border-transparent px-5 py-3 transition peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-inset peer-focus-visible:outline-slate-950 {{ not loop.last ? 'border-b-slate-200' : '' }}">
+                        <span class="gravity-dot size-5 shrink-0 rounded-full border-2 border-slate-300"></span>
+                        <span>
+                            <span class="{{ content.color }} block text-base font-semibold">{{ content.title }}</span>
+                            <span class="block text-xs font-medium text-stone-400">{{ content.description }}</span>
+                        </span>
+                    </label>
+                </div>
+            {% endfor %}
+        </div>
+        <div class="mt-2 text-xs font-medium text-red-600">{{ form_errors(form.gravityLevel) }}</div>
+    </section>
+
+    <section aria-labelledby="description-title">
+        <h2 id="description-title" class="mb-2 text-lg font-bold text-slate-500">{{ 'form.report_description'|trans }}</h2>
+        {# Le mode texte reste l’unique mode de saisie, conformément au retrait
+           explicite de l’audio et de la transcription. #}
+        <div class="mb-3 flex h-8 items-center justify-center rounded-full bg-stone-200 text-xs font-bold text-slate-950">{{ 'form.report_description'|trans }}</div>
+        {{ form_widget(form.description, {
+            attr: {
+                class: 'min-h-32 w-full resize-none rounded-xl border border-slate-200 bg-white px-3 py-3 text-sm font-medium text-slate-950 outline-none placeholder:text-slate-500 focus:border-slate-500 focus:ring-2 focus:ring-slate-200'
+            }
+        }) }}
+        <div class="mt-2 text-xs font-medium text-red-600">{{ form_errors(form.description) }}</div>
+    </section>
+
+    <section aria-labelledby="photos-title" data-controller="photo-preview" data-camera-access="{{ cameraAllowed ? 'true' : 'false' }}">
+        <h2 id="photos-title" class="mb-3 text-sm font-semibold">{{ 'report.photos_max'|trans }}</h2>
+        <div class="grid grid-cols-3 gap-4">
+            {% for field in [form.photo1, form.photo2, form.photo3] %}
+                <div class="min-w-0">
+                    <div
+                        class="slot relative aspect-square cursor-pointer overflow-hidden rounded-lg border-2 border-dashed border-slate-300 bg-white transition hover:border-slate-500 focus:border-slate-600 focus:outline-none focus:ring-2 focus:ring-slate-200"
+                        role="button"
+                        tabindex="0"
+                        data-photo-preview-target="slot"
+                        data-action="click->photo-preview#select keydown.enter->photo-preview#select keydown.space->photo-preview#select"
+                    >
+                        {{ form_widget(field, {
+                            attr: {
+                                class: 'hidden',
+                                'data-photo-preview-target': 'input',
+                                'data-action': 'change->photo-preview#preview',
+                                accept: 'image/jpeg,image/png,image/webp'
+                            }
+                        }) }}
+                        <img class="preview-image hidden size-full object-cover" alt="{{ 'report.photo_preview'|trans }}">
+                        <span class="placeholder flex size-full flex-col items-center justify-center text-slate-400">
+                            {{ include('components/_icon.html.twig', {name: 'plus', class: 'size-7'}) }}
+                            <span class="mt-1 text-xs">{{ 'common.add'|trans }}</span>
+                        </span>
+                        <button type="button" class="remove absolute right-1 top-1 hidden size-6 rounded-full border-2 border-white bg-slate-900 text-xs font-bold text-white shadow" data-action="click->photo-preview#remove" aria-label="{{ 'report.remove_photo'|trans }}">×</button>
+                    </div>
+                    <div class="mt-1 text-[10px] font-medium leading-tight text-red-600">{{ form_errors(field) }}</div>
+                </div>
+            {% endfor %}
+        </div>
+        {% if cameraAllowed %}
+            <button
+                type="button"
+                class="mt-3 flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-slate-950 px-4 text-sm font-semibold text-white"
+                data-action="photo-preview#capture"
+            >
+                {{ include('components/_icon.html.twig', {name: 'camera', class: 'size-5'}) }}
+                {{ 'report.take_photo'|trans }}
+            </button>
+        {% else %}
+            <p class="mt-3 text-xs text-slate-500">
+                {{ 'report.gallery_available'|trans }}
+                <a href="{{ path('app_profile') }}" class="font-semibold text-red-600 underline underline-offset-2">{{ 'report.enable_camera'|trans }}</a>
+                {{ 'report.take_directly'|trans }}
+            </p>
+        {% endif %}
+        <p class="mt-3 text-[10px] text-slate-400">{{ 'report.photo_formats'|trans }}</p>
+    </section>
+
+    <section aria-labelledby="tracking-title">
+        <h2 id="tracking-title" class="mb-5 flex items-center gap-2 text-sm font-semibold">{{ include('components/_icon.html.twig', {name: 'history', class: 'size-5'}) }}{{ 'report.tracking'|trans }}</h2>
+        <div class="relative grid grid-cols-3 text-center">
+            <div class="absolute left-[16.66%] right-[16.66%] top-3 h-0.5 bg-slate-300"></div>
+            <div class="relative">
+                <span class="mx-auto flex size-7 items-center justify-center rounded-full bg-slate-950 text-white">{{ include('components/_icon.html.twig', {name: 'check', class: 'size-4'}) }}</span>
+                <span class="mt-3 block text-[10px] font-semibold">{{ 'report.status.sent'|trans }}</span>
+            </div>
+            <div class="relative">
+                <span class="mx-auto block size-7 rounded-full border-2 border-slate-400 bg-white"></span>
+                <span class="mt-3 block text-[10px] font-semibold">{{ 'report.status.in_progress'|trans }}</span>
+            </div>
+            <div class="relative">
+                <span class="mx-auto block size-7 rounded-full border-2 border-slate-400 bg-white"></span>
+                <span class="mt-3 block text-[10px] font-semibold">{{ 'report.status.resolved'|trans }}</span>
+            </div>
+        </div>
+        <p class="mt-7 text-center text-[11px] leading-relaxed text-slate-400">{{ 'report.tracking_help'|trans }}</p>
+    </section>
+
+    <div class="pt-2">
+        <button type="submit" class="flex h-16 w-full items-center justify-center gap-2 rounded-xl bg-red-600 px-5 text-base font-bold text-white shadow-sm transition hover:bg-red-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600 active:scale-[0.99]">
+            {{ include('components/_icon.html.twig', {name: 'send', class: 'size-5'}) }}
+            {{ 'report.submit'|trans }}
+        </button>
+        <p class="mt-4 text-center text-[10px] font-medium">{{ 'report.submit_help'|trans }}</p>
     </div>
-        
-
-    {{ form_widget(form.address) }}
-    {{ form_widget(form.latitude, {attr: {'data-report-location-target': 'latitude'}}) }}
-    {{ form_widget(form.longitude, {attr: {'data-report-location-target': 'longitude'}}) }}
-
-    <button type="submit"> Envoyer le formulaire </button>
-
-
-
 {{ form_end(form) }}
+
+

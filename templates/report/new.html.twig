@@ -1,10 +1,31 @@
+{# Page mobile de création d’un signalement. #}
 {% extends 'base.html.twig' %}
 
-{% block title %}Nouveau signalement{% endblock %}
+{% block title %}{{ 'report.new'|trans }}{% endblock %}
 
 {% block body %}
-    <h1>Nouveau signalement</h1>
+    <div class="min-h-screen bg-stone-200 font-sans text-slate-950">
+        <div class="relative mx-auto min-h-screen w-full max-w-md overflow-hidden bg-white shadow-xl lg:max-w-4xl lg:pt-20 lg:shadow-none">
+            <header class="sticky top-0 z-30 flex h-20 items-center border-b border-slate-100 bg-white px-5 lg:top-20 lg:px-8">
+                <a
+                    href="{{ path('app_home') }}"
+                    class="flex size-10 items-center justify-center text-slate-950"
+                    aria-label="{{ 'common.back_home'|trans }}"
+                >
+                    {{ include('components/_icon.html.twig', {name: 'back', class: 'size-7'}) }}
+                </a>
+                <h1 class="absolute left-1/2 -translate-x-1/2 whitespace-nowrap text-xl font-bold">
+                    {{ 'report.new'|trans }}
+                </h1>
+            </header>
 
-    {{ include('report/_form.html.twig') }}
+            <main class="px-5 pb-32 pt-8 lg:px-8 lg:pb-12">
+                {{ include('report/_form.html.twig') }}
+            </main>
 
+            {{ include('components/_bottom_nav.html.twig', { active: 'report' }) }}
+        </div>
+    </div>
 {% endblock %}
+
+
