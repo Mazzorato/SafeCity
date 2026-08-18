@@ -1,0 +1,91 @@
+{# Liste complète et filtrable des actualités. #}
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ 'news.all_title'|trans }}{% endblock %}
+
+{% block body %}
+    {% set category_labels = {
+        securite: 'news.category.security'|trans,
+        sante: 'news.category.health'|trans,
+        mobilite: 'news.category.mobility'|trans,
+        travaux: 'news.category.works'|trans
+    } %}
+    {% set category_colors = {
+        securite: 'border-blue-300 bg-blue-50 text-blue-600',
+        sante: 'border-red-300 bg-red-50 text-red-600',
+        mobilite: 'border-violet-300 bg-violet-50 text-violet-600',
+        travaux: 'border-lime-300 bg-lime-50 text-lime-600'
+    } %}
+
+    <div class="min-h-screen bg-stone-200 font-sans text-slate-950">
+        <div class="relative mx-auto min-h-screen w-full max-w-md bg-white pb-28 shadow-xl lg:max-w-7xl lg:pb-12 lg:pt-20 lg:shadow-none">
+            <header class="flex h-24 items-center gap-3 px-5">
+                <a href="{{ path('app_news') }}" class="flex size-8 items-center justify-center" aria-label="{{ 'news.back'|trans }}">{{ include('components/_icon.html.twig', {name: 'back', class: 'size-6'}) }}</a>
+                <h1 class="text-2xl font-bold">{{ 'news.all_title'|trans }}</h1>
+            </header>
+
+            <main class="px-5 lg:px-8 lg:py-8">
+                <form method="get" action="{{ path('app_news_all') }}" class="space-y-5">
+                    <div class="flex h-14 items-center gap-3 border border-slate-300 px-4 focus-within:border-red-500 focus-within:ring-2 focus-within:ring-red-100">
+                        {{ include('components/_icon.html.twig', {name: 'search', class: 'size-5 shrink-0 text-stone-400'}) }}
+                        <input type="search" name="query" value="{{ search }}" class="min-w-0 flex-1 border-0 bg-transparent text-sm outline-none placeholder:text-stone-300" placeholder="{{ 'news.search_placeholder'|trans }}">
+                        <button type="submit" class="text-sm font-semibold text-red-600">{{ 'common.search'|trans }}</button>
+                    </div>
+                    <input type="hidden" name="sort" value="{{ sort }}">
+
+                    <div class="grid grid-cols-4 gap-2">
+                        {% set filters = {
+                            all: 'common.all'|trans,
+                            securite: 'news.category.security'|trans,
+                            travaux: 'news.category.works'|trans,
+                            sante: 'news.category.health'|trans
+                        } %}
+                        {% for value, label in filters %}
+                            <a href="{{ path('app_news_all', {category: value, query: search, sort: sort}) }}" class="flex h-10 items-center justify-center rounded-lg text-xs font-semibold {{ category == value ? 'bg-red-600 text-white' : 'bg-stone-200' }}">
+                                {{ label }}
+                            </a>
+                        {% endfor %}
+                    </div>
+                </form>
+
+                <div class="mb-5 mt-8 flex items-center justify-between">
+                    <h2 class="text-xl font-bold">{{ 'news.count'|trans({'%count%': news|length}) }}</h2>
+                    <form method="get" action="{{ path('app_news_all') }}" class="flex items-center gap-2">
+                        <input type="hidden" name="query" value="{{ search }}">
+                        <input type="hidden" name="category" value="{{ category }}">
+                        <select name="sort" class="rounded-xl border-0 bg-slate-50 px-3 py-2 text-xs font-semibold">
+                            <option value="recent" {{ sort == 'recent' ? 'selected' : '' }}>{{ 'common.recent'|trans }}</option>
+                            <option value="oldest" {{ sort == 'oldest' ? 'selected' : '' }}>{{ 'common.oldest'|trans }}</option>
+                        </select>
+                        <button type="submit" class="rounded-lg bg-slate-950 px-3 py-2 text-xs font-semibold text-white">OK</button>
+                    </form>
+                </div>
+
+                <div class="space-y-3 lg:grid lg:grid-cols-3 lg:gap-4 lg:space-y-0">
+                    {% for item in news %}
+                        <article class="flex min-h-28 items-center gap-4 rounded-xl border p-3 {{ category_colors[item.category.value] }}">
+                            <span class="flex size-20 shrink-0 items-center justify-center overflow-hidden bg-white/60">
+                                {% if item.imageUrl %}
+                                    <img src="{{ item.imageUrl }}" alt="" class="size-full object-cover">
+                                {% else %}
+                                    {{ include('components/_icon.html.twig', {name: 'news', class: 'size-6'}) }}
+                                {% endif %}
+                            </span>
+                            <div class="min-w-0 flex-1 text-slate-950">
+                                <span class="rounded-full bg-white/70 px-3 py-1 text-[10px] font-semibold {{ category_colors[item.category.value]|split(' ')|last }}">{{ category_labels[item.category.value] }}</span>
+                                <h3 class="mt-2 line-clamp-2 text-sm font-bold">{{ item.title }}</h3>
+                                <p class="mt-2 truncate text-[10px] text-stone-500">{{ item.source ?: 'SafeCity' }} · {{ item.publishedAt|date('d/m/Y') }}</p>
+                            </div>
+                        </article>
+                    {% else %}
+                        <p class="rounded-xl bg-slate-50 px-5 py-10 text-center text-sm text-stone-500">{{ 'news.no_result'|trans }}</p>
+                    {% endfor %}
+                </div>
+            </main>
+
+            {{ include('components/_bottom_nav.html.twig', { active: 'news' }) }}
+        </div>
+    </div>
+{% endblock %}
+
+
