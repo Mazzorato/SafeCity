@@ -1,4 +1,4 @@
-{{ form_start(form) }}
+{{ form_start(form, {attr: {'data-controller': 'report-location'}}) }}
 
     
     {{ form_row(form.category) }}
@@ -29,8 +29,8 @@
         
 
     {{ form_widget(form.address) }}
-    {{ form_widget(form.latitude) }}
-    {{ form_widget(form.longitude) }}
+    {{ form_widget(form.latitude, {attr: {'data-report-location-target': 'latitude'}}) }}
+    {{ form_widget(form.longitude, {attr: {'data-report-location-target': 'longitude'}}) }}
 
     <button type="submit"> Envoyer le formulaire </button>
 
