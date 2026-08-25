@@ -4,14 +4,19 @@ namespace App\Controller;
 
 use App\Entity\Comment;
 use App\Entity\ModerationCase;
+use App\Entity\Notification;
 use App\Entity\Photo;
 use App\Entity\Report;
 use App\Entity\User;
 use App\Enum\ModerationStatusEnum;
 use App\Enum\ModerationTargetEnum;
+use App\Enum\NotificationTypeEnum;
+use App\Localization\SupportedLocale;
 use App\Repository\CommentRepository;
 use App\Repository\ModerationCaseRepository;
 use App\Repository\PhotoRepository;
+use App\Service\ModerationNotifier;
+use App\Service\UserNotificationPublisher;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -128,6 +133,8 @@ final class ModerationController extends AbstractController
         string $decision,
         Request $request,
         EntityManagerInterface $entityManager,
+        ModerationNotifier $notifier,
+        UserNotificationPublisher $notificationPublisher,
     ): Response {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
@@ -151,10 +158,35 @@ final class ModerationController extends AbstractController
             ->setModerator($moderator)
             ->setModeratedAt($decision === 'reopen' ? null : new \DateTimeImmutable());
 
+        $notification = null;
+        if ($status === ModerationStatusEnum::HIDDEN && $case->getAuthor() !== null) {
+            // Les notifications enregistrées sont localisées selon le profil
+            // du destinataire, indépendamment de la langue de l’administrateur.
+            $recipientLocale = SupportedLocale::normalize($case->getAuthor()->getProfile()?->getLanguage());
+            $notification = (new Notification())
+                ->setTitle($this->translator->trans(
+                    'notification.moderation_hidden_title',
+                    locale: $recipientLocale,
+                ))
+                ->setMessage($this->translator->trans(
+                    'notification.moderation_hidden_message',
+                    ['%reason%' => $this->translatedReason($case->getReason(), $recipientLocale)],
+                    locale: $recipientLocale,
+                ))
+                ->setType(NotificationTypeEnum::MODERATION)
+                ->setSentAt(new \DateTime())
+                ->setIsRead(false)
+                ->setRecipient($case->getAuthor());
+            $entityManager->persist($notification);
+        }
+
         $entityManager->flush();
 
         if ($status === ModerationStatusEnum::HIDDEN) {
             $notifier->sendHiddenContentWarning($case);
+        }
+        if ($notification !== null) {
+            $notificationPublisher->publish($notification);
         }
 
         $this->addFlash('success', $this->translator->trans('flash.moderation_decision_saved'));
@@ -182,6 +214,8 @@ final class ModerationController extends AbstractController
             $case = (new ModerationCase())
                 ->setTargetType($targetType)
                 ->setTargetId($targetId)
+                // La valeur enregistrée est un code stable ; son affichage et
+                // les notifications sont traduits au moment de leur lecture.
                 ->setReason($this->normalizedReason($request->getPayload()->getString('reason')))
                 ->setStatus(ModerationStatusEnum::FLAGGED)
                 ->setReportedAt(new \DateTimeImmutable())
@@ -217,6 +251,10 @@ final class ModerationController extends AbstractController
             : 'inappropriate';
     }
 
+    /**
+     * Assure aussi la traduction des dossiers créés avant l’utilisation de
+     * codes de motif indépendants de la langue.
+     */
     private function translatedReason(string $reason, string $locale): string
     {
         $reasonCode = match ($reason) {
