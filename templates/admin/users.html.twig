@@ -1,0 +1,46 @@
+{# Gestion administrative des comptes utilisateurs. #}
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ 'admin.users'|trans }}{% endblock %}
+
+{% block body %}
+<main class="mx-auto min-h-screen max-w-md bg-slate-50 pb-28 text-slate-950 lg:max-w-7xl lg:pb-12 lg:pt-20">
+    <header class="bg-white px-5 pb-5 pt-6">
+        <div class="flex items-center gap-4">
+            <a href="{{ path('app_admin') }}" class="flex size-10 items-center justify-center rounded-full bg-slate-100 text-xl" aria-label="{{ 'admin.back_dashboard'|trans }}">‹</a>
+            <h1 class="text-2xl font-bold">{{ 'admin.users'|trans }}</h1>
+        </div>
+        <form method="get" action="{{ path('app_admin_users') }}" class="mt-5 flex gap-2">
+            <input type="search" name="query" value="{{ search }}" placeholder="{{ 'admin.user_search'|trans }}" class="h-12 min-w-0 flex-1 rounded-2xl border border-slate-200 bg-slate-50 px-4 text-sm outline-none focus:border-red-500 focus:ring-2 focus:ring-red-100">
+            <button type="submit" class="flex size-12 items-center justify-center rounded-2xl bg-slate-950 text-white" aria-label="{{ 'common.search'|trans }}">→</button>
+        </form>
+    </header>
+
+    <section class="px-5 pt-5 lg:px-8" aria-labelledby="user-results">
+        <div class="mb-3 flex items-center justify-between">
+            <h2 id="user-results" class="font-bold">{{ 'admin.accounts'|trans }}</h2>
+            <span class="text-sm text-slate-500">{{ 'admin.result_count'|trans({'%count%': users|length}) }}</span>
+        </div>
+        <div class="space-y-3 lg:grid lg:grid-cols-2 lg:gap-4 lg:space-y-0">
+            {% for user in users %}
+                <article class="flex items-center gap-3 rounded-2xl bg-white p-4 shadow-sm ring-1 ring-slate-100">
+                    <span class="flex size-12 shrink-0 items-center justify-center rounded-full bg-slate-950 font-bold text-white">{{ user.firstName|slice(0, 1)|upper }}{{ user.lastName|slice(0, 1)|upper }}</span>
+                    <div class="min-w-0 flex-1">
+                        <div class="flex items-center gap-2">
+                            <h3 class="truncate font-bold">{{ user.firstName }} {{ user.lastName }}</h3>
+                            {% if 'ROLE_ADMIN' in user.roles %}<span class="rounded bg-red-50 px-2 py-0.5 text-[10px] font-semibold text-red-600">{{ 'admin.role'|trans }}</span>{% endif %}
+                        </div>
+                        <p class="truncate text-sm text-slate-500">{{ user.email }}</p>
+                        <p class="mt-1 text-xs text-slate-400">{{ user.city ? user.city.name : 'admin.no_city'|trans }} · {{ 'admin.registered_on'|trans({'%date%': user.registrationDate|date('d/m/Y')}) }}</p>
+                    </div>
+                    <span class="size-2.5 rounded-full {{ user.accountActive ? 'bg-emerald-500' : 'bg-slate-300' }}" title="{{ user.accountActive ? 'admin.active'|trans : 'admin.disabled'|trans }}"></span>
+                </article>
+            {% else %}
+                <p class="rounded-2xl border border-dashed border-slate-300 bg-white p-8 text-center text-sm text-slate-500">{{ 'admin.no_user'|trans }}</p>
+            {% endfor %}
+        </div>
+    </section>
+</main>
+
+{% include 'components/_admin_nav.html.twig' with {active: 'users'} %}
+{% endblock %}
