@@ -1,30 +1,148 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello HomeController!{% endblock %}
+{% block title %}{{ 'home.title'|trans }}{% endblock %}
 
 {% block body %}
+    {% set report_status = {
+        reported: { label: 'report.status.reported'|trans, class: 'bg-orange-100 text-orange-500' },
+        in_progress: { label: 'report.status.in_progress'|trans, class: 'bg-lime-100 text-lime-600' },
+        resolved: { label: 'report.status.resolved'|trans, class: 'bg-emerald-100 text-emerald-600' }
+    } %}
 
+    <div class="min-h-screen bg-stone-200 font-sans text-slate-950">
+        {# Le tableau mobile s'étend en véritable espace de travail à partir du format desktop. #}
+        <div class="relative mx-auto min-h-screen w-full max-w-md bg-[#f8f8ff] pb-28 shadow-xl lg:max-w-7xl lg:pb-12 lg:pt-20 lg:shadow-none">
+            <header class="flex min-h-20 items-center border-b border-red-100 bg-white px-5 py-4 lg:mx-8 lg:mt-6 lg:rounded-2xl lg:border lg:px-6 lg:shadow-sm">
+                <a href="{{ path('app_city_select') }}" class="min-w-0 flex-1">
+                    <span class="block text-sm font-semibold text-red-700">{{ 'city.selected'|trans }}</span>
+                    <span class="mt-0.5 flex items-center gap-1 truncate font-bold">{{ include('components/_icon.html.twig', {name: 'pin', class: 'size-3 shrink-0'}) }}{{ city.name }}</span>
+                </a>
+                {% if is_granted('ROLE_ADMIN') %}
+                    <a href="{{ path('app_admin') }}" class="ml-3 flex h-10 items-center justify-center rounded-xl bg-red-600 px-3 text-xs font-bold text-white">{{ 'profile.administration'|trans }}</a>
+                {% endif %}
+                <a href="{{ path('app_notifications') }}" class="ml-3 flex size-11 items-center justify-center text-red-700" aria-label="{{ 'notification.title'|trans }}">{{ include('components/_icon.html.twig', {name: 'bell', class: 'size-6'}) }}</a>
+                {# Réserve la place du raccourci de profil global pour éviter de recouvrir la cloche. #}
+                <span class="ml-1 size-11 shrink-0" aria-hidden="true"></span>
+            </header>
 
-<div class="example-wrapper">
-    <h1>Bienvenue {{ app.user.firstName}} ! ✅</h1>
+            <main class="space-y-7 px-5 py-5 lg:grid lg:grid-cols-12 lg:gap-6 lg:space-y-0 lg:px-8 lg:py-6">
+                <section class="lg:col-span-12" aria-labelledby="quick-actions-title">
+                    <h1 id="quick-actions-title" class="mb-3 text-xl font-medium">{{ 'home.quick_actions'|trans }}</h1>
+                    <div class="grid grid-cols-2 gap-4 lg:grid-cols-4">
+                        <a href="{{ path('app_report_new') }}" class="flex min-h-36 flex-col items-center justify-center rounded-2xl bg-white px-3 text-center shadow-lg shadow-slate-200/70 transition hover:-translate-y-0.5">
+                            {{ include('components/_icon.html.twig', {name: 'alert', class: 'size-6 text-red-600'}) }}
+                            <span class="mt-2 text-xl font-medium text-red-600">{{ 'nav.report'|trans }}</span>
+                            <span class="text-stone-500">{{ 'home.an_incident'|trans }}</span>
+                        </a>
+                        <a href="{{ path('app_report_map') }}" class="flex min-h-36 flex-col items-center justify-center rounded-2xl bg-white px-3 text-center shadow-lg shadow-slate-200/70 transition hover:-translate-y-0.5">
+                            {{ include('components/_icon.html.twig', {name: 'map', class: 'size-6 text-emerald-500'}) }}
+                            <span class="mt-2 text-xl font-medium">{{ 'nav.map'|trans }}</span>
+                            <span class="text-stone-400">{{ 'home.live_incidents'|trans }}</span>
+                        </a>
+                        <a href="{{ path('app_service', {type: 'health'}) }}" class="flex min-h-36 flex-col items-center justify-center rounded-2xl bg-white px-3 text-center shadow-lg shadow-slate-200/70 transition hover:-translate-y-0.5">
+                            {{ include('components/_icon.html.twig', {name: 'health', class: 'size-6 text-red-600'}) }}
+                            <span class="mt-2 text-xl font-medium">{{ 'home.health_emergencies'|trans }}</span>
+                            <span class="text-sm text-stone-400">{{ 'home.doctors_pharmacies'|trans }}</span>
+                        </a>
+                        <a href="{{ path('app_parking') }}" class="flex min-h-36 flex-col items-center justify-center rounded-2xl bg-white px-3 text-center shadow-lg shadow-slate-200/70 transition hover:-translate-y-0.5">
+                            <span class="flex size-10 items-center justify-center rounded-xl bg-blue-50 text-2xl font-bold text-blue-700" aria-hidden="true">P</span>
+                            <span class="mt-2 text-xl font-medium">{{ 'parking.title'|trans }}</span>
+                            <span class="text-stone-400">{{ 'parking.free_and_paid'|trans }}</span>
+                        </a>
+                    </div>
+                </section>
 
-    This friendly message is coming from:
-    <ul>
-        <li>Action Rapide</li> 
+                <section class="lg:col-span-12 lg:rounded-2xl lg:bg-white lg:p-6 lg:shadow-sm" aria-labelledby="transport-title">
+                    <div class="mb-3 flex items-center justify-between">
+                        <h2 id="transport-title" class="text-lg font-bold">{{ 'transport.network'|trans }}</h2>
+                        <a href="{{ path('app_transport') }}" class="text-sm text-red-700 underline">{{ 'common.view_all'|trans }}</a>
+                    </div>
+                    {% if not transportDataAvailable %}
+                        <p class="rounded-xl border border-amber-200 bg-amber-50 px-4 py-4 text-sm text-amber-800">{{ 'transport.data_unavailable'|trans }}</p>
+                    {% elseif transports is empty %}
+                        <p class="rounded-xl bg-white px-4 py-4 text-sm text-stone-500">{{ 'transport.none'|trans }}</p>
+                    {% else %}
+                        <div class="flex flex-wrap gap-2">
+                            {% for transport in transports %}
+                                {% set disrupted = transport.status == 'disrupted' %}
+                                {% set unknown = transport.status == 'unknown' %}
+                                <span class="rounded-full border px-4 py-2 text-xs shadow-sm {{ disrupted ? 'border-red-200 bg-red-50' : 'border-slate-100 bg-white' }}">
+                                    <span class="mr-2 inline-block size-2 rounded-full {{ disrupted ? 'bg-red-500' : (unknown ? 'bg-slate-400' : 'bg-green-500') }}"></span>
+                                    <strong>{{ ('transport.type.' ~ transport.type)|trans }} {{ transport.line }}</strong>
+                                    <span class="ml-2 {{ disrupted ? 'text-red-500' : 'text-stone-400' }}">{{ disrupted ? 'transport.disrupted'|trans : (unknown ? 'transport.unknown'|trans : 'transport.ok'|trans) }}</span>
+                                </span>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </section>
 
-        <li>Signaler un incident</li> 
+                <section class="lg:col-span-7" aria-labelledby="recent-reports-title">
+                    <div class="mb-3 flex items-center justify-between">
+                        <h2 id="recent-reports-title" class="text-lg font-bold">{{ 'report.recent'|trans }}</h2>
+                        <a href="{{ path('app_report_all') }}" class="text-sm text-red-700 underline">{{ 'common.view_all'|trans }}</a>
+                    </div>
+                    <div class="space-y-3">
+                        {% for report in reports %}
+                            {% set status = report_status[report.status.value] %}
+                            <a href="{{ path('app_report_show', {id: report.id}) }}" class="flex items-center gap-4 rounded-2xl bg-white px-4 py-5 shadow-sm">
+                                <span class="flex size-16 shrink-0 items-center justify-center rounded-xl bg-stone-200">{{ include('components/_icon.html.twig', {name: 'car', class: 'size-5'}) }}</span>
+                                <span class="min-w-0 flex-1">
+                                    <span class="block truncate text-lg font-bold">{{ report.category.name }}</span>
+                                    <span class="block truncate text-sm">{{ report.address ?: city.name }}</span>
+                                    <span class="block text-xs text-stone-500">{{ 'common.on_date'|trans({'%date%': report.createdAt|date('d/m H:i')}) }}</span>
+                                    <span class="mt-2 flex items-center justify-end gap-1 text-xs text-slate-600">{{ include('components/_icon.html.twig', {name: 'comment', class: 'size-4'}) }} {{ report.comments|length }}</span>
+                                </span>
+                                <span class="self-start rounded-full px-3 py-1 text-xs {{ status.class }}">{{ status.label }}</span>
+                            </a>
+                        {% else %}
+                            <p class="rounded-xl bg-white px-4 py-5 text-sm text-stone-500">{{ 'report.no_recent'|trans }}</p>
+                        {% endfor %}
+                    </div>
+                </section>
 
-        <li>Carte incident en direct</li>
+                <section class="lg:col-span-5" aria-labelledby="events-title">
+                    <div class="mb-3 flex items-center justify-between">
+                        <h2 id="events-title" class="text-xl font-medium">{{ 'event.upcoming'|trans }}</h2>
+                        <a href="{{ path('app_event') }}" class="text-sm text-red-700 underline">{{ 'common.view_all'|trans }}</a>
+                    </div>
+                    <div class="space-y-3 rounded-2xl bg-white p-1 shadow-sm">
+                        {% for event in events %}
+                            <a href="{{ path('app_event') }}#event-{{ event.id }}" class="flex min-h-24 items-center overflow-hidden rounded-xl border border-slate-200">
+                                <span class="flex h-24 w-24 shrink-0 flex-col items-center justify-center bg-stone-200 font-semibold text-red-800">
+                                    <span class="text-xl">{{ event.startedAt|date('d') }}</span>
+                                    <span>{{ event.startedAt|date('m/Y') }}</span>
+                                </span>
+                                <span class="min-w-0 flex-1 px-5">
+                                    <span class="block truncate text-lg font-bold">{{ event.title }}</span>
+                                    <span class="mt-1 flex items-center gap-1 truncate text-sm font-semibold text-red-900">{{ include('components/_icon.html.twig', {name: 'pin', class: 'size-3 shrink-0 text-red-700'}) }} {{ event.location }}</span>
+                                </span>
+                                <span class="pr-4 text-stone-400">{{ include('components/_icon.html.twig', {name: 'chevron-right', class: 'size-5'}) }}</span>
+                            </a>
+                        {% else %}
+                            <p class="px-4 py-5 text-sm text-stone-500">{{ 'event.none_upcoming'|trans }}</p>
+                        {% endfor %}
+                    </div>
+                </section>
 
-        <li>Urgences santé</li>
-        <li>Médecin/Pharmacie</li>
+                <section class="lg:col-span-12" aria-labelledby="local-info-title">
+                    <div class="mb-3 flex items-center justify-between">
+                        <h2 id="local-info-title" class="text-xl font-medium">{{ 'home.local_info'|trans }}</h2>
+                        <a href="{{ path('app_service') }}" class="text-sm text-red-700 underline">{{ 'common.view_all'|trans }}</a>
+                    </div>
+                    <div class="grid grid-cols-3 gap-3 lg:grid-cols-4">
+                        {% for service in localServices %}
+                            <a href="{{ path('app_service') }}" class="flex min-h-32 flex-col items-center justify-center rounded-xl bg-stone-200 px-2 text-center shadow-sm">
+                                {{ include('components/_icon.html.twig', {name: 'building', class: 'size-6 text-red-500'}) }}
+                                <span class="mt-4 text-sm font-medium">{{ service.name }}</span>
+                            </a>
+                        {% else %}
+                            <p class="col-span-3 rounded-xl bg-white px-4 py-5 text-sm text-stone-500 lg:col-span-4">{{ 'home.no_local_info'|trans }}</p>
+                        {% endfor %}
+                    </div>
+                </section>
+            </main>
 
-        <li>Parkings</li>
-        <li>Gratuit et Payants</li>
-
-    <a href="{{ path('app_report_new') }}" class="btn btn-lg btn-danger"> Créer un signalement </a>
-
-    <a href="{{ path('app_logout')}}" class="btn btn-lg btn-danger">Se déconnecter</a>
-    </ul>
-</div>
+            {{ include('components/_bottom_nav.html.twig', { active: 'home' }) }}
+        </div>
+    </div>
 {% endblock %}
