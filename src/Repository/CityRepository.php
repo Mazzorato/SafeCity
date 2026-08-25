@@ -7,6 +7,8 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
+ * Centralise les requêtes Doctrine liées à City.
+ *
  * @extends ServiceEntityRepository<City>
  */
 class CityRepository extends ServiceEntityRepository

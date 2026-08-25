@@ -8,6 +8,9 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: CityRepository::class)]
+/**
+ * Modèle Doctrine représentant les données persistées de City.
+ */
 class City
 {
     #[ORM\Id]
@@ -210,7 +213,9 @@ class City
 
     public function removeReport(Report $report): static
     {
-        if (!$this->reports->removeElement($report)) {
+        if ($this->reports->removeElement($report)) {
+            // Le côté propriétaire est détaché uniquement lorsque la collection
+            // contenait réellement le signalement à retirer.
             if ($report->getCity() === $this) {
                 $report->setCity(null);
             }
