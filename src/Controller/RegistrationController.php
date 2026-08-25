@@ -2,12 +2,10 @@
 
 namespace App\Controller;
 
-use App\Localization\SupportedLocale;
-
 use App\Entity\Profile;
-
 use App\Entity\User;
 use App\Form\RegistrationFormType;
+use App\Localization\SupportedLocale;
 use App\Repository\UserRepository;
 use App\Security\EmailVerifier;
 use Doctrine\ORM\EntityManagerInterface;
@@ -18,25 +16,46 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Mime\Address;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Translation\LocaleSwitcher;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use SymfonyCasts\Bundle\VerifyEmail\Exception\VerifyEmailExceptionInterface;
 
+/**
+ * Gère l’inscription et la vérification des nouveaux comptes.
+ */
 class RegistrationController extends AbstractController
 {
-    public function __construct(private EmailVerifier $emailVerifier)
-    {
+    public function __construct(
+        private EmailVerifier $emailVerifier,
+        private LocaleSwitcher $localeSwitcher,
+    ) {
     }
 
     #[Route('/register', name: 'app_register')]
-    public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager, TranslatorInterface $translator): Response
+    public function register(
+        Request $request,
+        UserPasswordHasherInterface $userPasswordHasher,
+        EntityManagerInterface $entityManager,
+        TranslatorInterface $translator,
+    ): Response
     {
         $user = new User();
         $form = $this->createForm(RegistrationFormType::class, $user);
         $form->handleRequest($request);
 
+        if ($form->isSubmitted()) {
+            // Un formulaire invalide est également réaffiché dans la langue que
+            // la personne vient de choisir.
+            $submittedLanguage = SupportedLocale::normalize($form->get('interfaceLanguage')->getData());
+            $request->setLocale($submittedLanguage);
+            $request->getSession()->set('_locale', $submittedLanguage);
+            $this->localeSwitcher->setLocale($submittedLanguage);
+        }
+
         if ($form->isSubmitted() && $form->isValid()) {
             /** @var string $plainPassword */
             $plainPassword = $form->get('plainPassword')->getData();
+            $language = SupportedLocale::normalize($form->get('interfaceLanguage')->getData());
 
             // encode the plain password
             $user->setPassword($userPasswordHasher->hashPassword($user, $plainPassword));
@@ -45,24 +64,26 @@ class RegistrationController extends AbstractController
             $user->setRole(\App\Enum\RoleEnum::ROLE_USER);
             $user->setAccountActive(true);
             $user->setCguAccepted($form->get('agreeTerms')->getData());
-
+            // Le profil est créé avec le compte afin que la langue choisie soit
+            // disponible dès la première authentification.
             $user->setProfile(
                 (new Profile())
                     ->setEmergencyNotifications(true)
-                    ->setWeatherNotifications(true)
                     ->setTransportNotifications(true)
                     ->setEventNotifications(true)
-                    ->setMicrophoneAccess(false)
                     ->setCameraAccess(false)
                     ->setLocationAccess(false)
-                    ->setLanguage('fr')
+                    ->setLanguage($language)
             );
+
             $entityManager->persist($user);
             $entityManager->flush();
+            $request->getSession()->set('_locale', $language);
 
-            $language = SupportedLocale::normalize($user->getProfile()?->getLanguage());
+            // Le même service d'envoi est partagé avec le renvoi demandé depuis la connexion.
             $this->sendConfirmationEmail($user, $translator, $language);
 
+            $this->addFlash('success', $translator->trans('flash.account_created', locale: $language));
             return $this->redirectToRoute('app_login');
         }
 
@@ -71,38 +92,7 @@ class RegistrationController extends AbstractController
         ]);
     }
 
-#[Route('/verify/email', name: 'app_verify_email')]
-    public function verifyUserEmail(Request $request, TranslatorInterface $translator, UserRepository $userRepository): Response
-    {
-        $id = $request->query->get('id');
-
-        if (null === $id) {
-            return $this->redirectToRoute('app_register');
-        }
-
-        $user = $userRepository->find($id);
-
-        if (null === $user) {
-            return $this->redirectToRoute('app_register');
-        }
-
-        // validate email confirmation link, sets User::isVerified=true and persists
-        try {
-            $this->emailVerifier->handleEmailConfirmation($request, $user);
-        } catch (VerifyEmailExceptionInterface $exception) {
-            $this->addFlash('verify_email_error', $translator->trans($exception->getReason(), [], 'VerifyEmailBundle'));
-
-            return $this->redirectToRoute('app_register');
-        }
-
-        $language = SupportedLocale::normalize($user->getProfile()?->getLanguage());
-        $request->getSession()->set('_locale', $language);
-        $this->addFlash('success', $translator->trans('flash.email_confirmed', locale: $language));
-
-        return $this->redirectToRoute('app_login');
-    }
-
-#[Route('/verify/email/resend', name: 'app_resend_verification_email', methods: ['POST'])]
+    #[Route('/verify/email/resend', name: 'app_resend_verification_email', methods: ['POST'])]
     public function resendVerificationEmail(
         Request $request,
         UserRepository $userRepository,
@@ -135,7 +125,41 @@ class RegistrationController extends AbstractController
         return $this->redirectToRoute('app_login');
     }
 
-private function sendConfirmationEmail(
+    #[Route('/verify/email', name: 'app_verify_email')]
+    public function verifyUserEmail(Request $request, TranslatorInterface $translator, UserRepository $userRepository): Response
+    {
+        $id = $request->query->get('id');
+
+        if (null === $id) {
+            return $this->redirectToRoute('app_register');
+        }
+
+        $user = $userRepository->find($id);
+
+        if (null === $user) {
+            return $this->redirectToRoute('app_register');
+        }
+
+        // validate email confirmation link, sets User::isVerified=true and persists
+        try {
+            $this->emailVerifier->handleEmailConfirmation($request, $user);
+        } catch (VerifyEmailExceptionInterface $exception) {
+            $this->addFlash('verify_email_error', $translator->trans($exception->getReason(), [], 'VerifyEmailBundle'));
+
+            return $this->redirectToRoute('app_register');
+        }
+
+        $language = SupportedLocale::normalize($user->getProfile()?->getLanguage());
+        $request->getSession()->set('_locale', $language);
+        $this->addFlash('success', $translator->trans('flash.email_confirmed', locale: $language));
+
+        return $this->redirectToRoute('app_login');
+    }
+
+    /**
+     * Construit toujours le même courriel signé pour l'inscription et les renvois.
+     */
+    private function sendConfirmationEmail(
         User $user,
         TranslatorInterface $translator,
         string $language,

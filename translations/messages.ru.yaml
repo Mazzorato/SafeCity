@@ -1,0 +1,684 @@
+common:
+    back: Назад
+    cancel: Отмена
+    close: Закрыть
+    continue: Продолжить
+    back_home: 'Вернуться на главную'
+    search: Найти
+    all: Все
+    view_all: 'Показать все'
+    on_date: '%date%'
+    recent: Новые
+    oldest: Старые
+    remove_all: 'Удалить все'
+    view_detail: 'Подробнее'
+    share_email: 'Поделиться по электронной почте'
+    start_search: 'Начать поиск'
+    change_search_filter: 'Измените поисковый запрос или фильтр.'
+    change_search_retry: 'Измените поисковый запрос или повторите попытку позже.'
+    updated_at: 'Обновлено в %time%'
+    directions: Маршрут
+    near_you: 'Рядом с вами'
+    nearby: Рядом
+    result_count: 'Результаты: %count%'
+    results: Результаты
+    clear: Очистить
+    open: Открыто
+    call: Позвонить
+    no_result: 'Ничего не найдено'
+    add: Добавить
+    remove: Удалить
+    detail: Подробнее
+    edit: Изменить
+    submit: Отправить
+    total: Всего
+    settings: Настроить
+    back_list: 'Вернуться к списку'
+    save_changes: 'Сохранить изменения'
+    delete: Удалить
+    time_unavailable: 'Время недоступно'
+
+brand:
+    tagline: 'Сообщайте, информируйте, действуйте'
+
+nav:
+    main: 'Основная навигация'
+    home: Главная
+    map: Карта
+    report: Сообщить
+    services: Службы
+    news: Новости
+
+notification:
+    report_update_title: 'Обновление сообщения #%id%'
+    report_status:
+        reported: 'Ваше сообщение зарегистрировано.'
+        in_progress: 'Ваше сообщение принято в работу.'
+        resolved: 'Ваше сообщение отмечено как решённое.'
+    moderation_hidden_title: 'Материал скрыт после модерации'
+    moderation_hidden_message: 'Один из ваших материалов был скрыт. Причина: %reason%'
+    event_reminder_title: 'Напоминание: %event%'
+    event_reminder_message: 'Событие «%event%» начнётся %date% в месте: %location%.'
+    unread_count: 'Непрочитанных: %count%'
+    mark_all_read: 'Отметить все как прочитанные'
+    mark_read: 'Отметить как прочитанное'
+    none: 'Нет уведомлений'
+    none_help: 'Здесь будут отображаться оповещения SafeCity.'
+    enable_alerts: 'Включить оповещения'
+    title: Уведомления
+
+auth:
+    resend_confirmation: 'Отправить письмо с подтверждением повторно'
+    resend_confirmation_help: 'Введите адрес электронной почты, указанный при регистрации.'
+    login_title: 'Вход в SafeCity'
+    create_account_title: 'Создать учётную запись SafeCity'
+    create_account: 'Создайте учётную запись'
+    login: Вход
+    registration: Регистрация
+    toggle_password: 'Показать или скрыть пароль'
+    toggle_confirmation: 'Показать или скрыть подтверждение пароля'
+    create_account_button: 'Создать учётную запись'
+    already_account: 'Уже есть учётная запись?'
+    sign_in: Войти
+    logout: Выйти
+    invalid_credentials: 'Неверные данные для входа. Проверьте адрес электронной почты и пароль.'
+    account_disabled: 'Эта учётная запись отключена.'
+    email_not_verified: 'Перед входом подтвердите адрес электронной почты.'
+    logged_in_as: 'Вы вошли как %email%.'
+    forgot_password: 'Забыли пароль?'
+    login_terms: 'Входя в систему, вы принимаете наши Условия использования и Политику конфиденциальности.'
+
+legal:
+    terms_title: 'Условия использования'
+    privacy_title: 'Политика конфиденциальности'
+
+form:
+    first_name: Имя
+    last_name: Фамилия
+    email: 'Адрес электронной почты'
+    password: Пароль
+    password_minimum: 'Не менее 8 символов'
+    password_confirm: 'Подтвердите пароль'
+    new_password: 'Новый пароль'
+    password_repeat: 'Повторите пароль'
+    city: 'Город проживания'
+    city_placeholder: 'Выберите свой город'
+    interface_language: 'Язык интерфейса'
+    accept_terms: 'Я принимаю Условия использования и Политику конфиденциальности.'
+    emergency_notifications: 'Экстренные уведомления'
+    transport_notifications: 'Сбои в работе транспорта'
+    event_reminders: 'Напоминания о мероприятиях'
+    camera_access: 'Доступ к камере'
+    location_access: 'Доступ к местоположению'
+    language: Язык
+    report_category: 'Тип происшествия'
+    report_description: 'Описание происшествия'
+    report_description_placeholder: 'Кратко опишите происшествие…'
+    gravity: 'Степень опасности'
+    destination_service: 'Служба-получатель'
+    awaiting_assignment: 'Ожидает назначения'
+    add_comment: 'Добавить комментарий'
+    add_comment_placeholder: 'Добавить комментарий…'
+    add_photo: 'Добавить фотографию'
+
+profile:
+    title: Профиль
+    city_missing: 'Город не указан'
+    administrator: Администратор
+    personal_information: 'Личные данные'
+    update_information: 'Изменить данные'
+    preferences: Настройки
+    preferences_summary: 'Уведомления, разрешения и язык'
+    notifications_and_alerts: 'Уведомления и оповещения'
+    permissions: Разрешения
+    permissions_help: 'Доступ к камере позволяет делать снимки, не ограничивая выбор изображений из галереи. Если доступ к местоположению отключён, SafeCity никогда не запрашивает координаты GPS.'
+    save_preferences: 'Сохранить настройки'
+    links: 'Ссылки профиля'
+    report_history: 'История сообщений'
+    favorite_events: 'Избранные мероприятия'
+    admin_area: 'Раздел администратора'
+    disable_account: 'Отключить мою учётную запись'
+    disable_question: 'Отключить учётную запись?'
+    disable_explanation: 'Это действие завершит сеанс, заблокирует последующие входы, немедленно обезличит ваше имя и адрес электронной почты и отзовёт конфиденциальные разрешения. Уже отправленные сообщения сохранятся для контроля со стороны муниципальных служб.'
+    disable_confirm: 'Подтвердить отключение'
+    update_preferences: 'Изменить мои настройки'
+    administration: Администрирование
+    open: 'Открыть мой профиль'
+
+location:
+    disabled: 'Доступ к местоположению отключён в настройках.'
+    enable_for_city: 'Включите доступ к местоположению в профиле, чтобы определить свой город.'
+    unavailable: 'Определение местоположения недоступно на этом устройстве.'
+    searching: 'Определяем ваше местоположение…'
+    city_error: 'Не удалось определить местоположение. Проверьте разрешения браузера.'
+    no_city_coordinates: 'Ни у одного города нет подходящих координат.'
+    city_detected: 'Определён город: %city%. Обновление…'
+    confirmed: 'Местоположение подтверждено.'
+    enable_for_report: 'Включите местоположение в профиле, чтобы использовать свои координаты.'
+    report_error: 'Координаты недоступны. Проверьте разрешение браузера.'
+    address_searching: 'Координаты получены, выполняется поиск адреса…'
+    address_unavailable: 'Координаты подтверждены; подробный адрес недоступен.'
+    use_position: 'Использовать мои координаты'
+    address_provider: 'Адрес предоставлен'
+    unavailable_short: 'Местоположение недоступно.'
+    map_centered: 'Карта центрирована на вашем местоположении.'
+    position_error: 'Не удалось определить ваше местоположение.'
+    center_map: 'Центрировать карту на моём местоположении'
+
+city:
+    choose: 'Выбрать мой город'
+    toulouse_area: 'Тулузская агломерация'
+    search_placeholder: 'Найти город…'
+    search: 'Найти город'
+    current: 'Текущий выбранный город'
+    none: 'Город не выбран'
+    none_selected: 'Город не выбран'
+    selected: 'Выбранный город'
+    use_gps: 'Использовать координаты GPS'
+    gps_help: 'Автоматически определить ближайший доступный муниципалитет'
+    all: 'Все муниципалитеты'
+    count: 'Муниципалитеты: %count%'
+    no_result: 'Города по вашему запросу не найдены.'
+    postal_code: 'Почтовый индекс: %code%'
+    your_city: 'Ваш город'
+    center: '%city% - Центр'
+
+home:
+    title: 'Главная SafeCity'
+    quick_actions: 'Быстрые действия'
+    an_incident: 'о происшествии'
+    live_incidents: 'Происшествия в реальном времени'
+    health_emergencies: 'Неотложная медицинская помощь'
+    doctors_pharmacies: 'Врачи / Аптеки'
+    local_info: 'Местная информация'
+    no_local_info: 'Местной информации нет.'
+
+parking:
+    title: Парковки
+    free_and_paid: 'Бесплатные и платные'
+    nearby: 'Парковки поблизости'
+    nearby_count: 'Парковки поблизости: %count%'
+    view_spaces: 'Показать места'
+    view: 'Показать парковки'
+    search: 'Искать рядом с адресом'
+    search_placeholder: 'Адрес или район…'
+    filter: 'Фильтр парковок'
+    available_plural: Доступные
+    free_plural: Бесплатные
+    paid_plural: Платные
+    map_preview: 'Предварительный просмотр карты парковок'
+    referenced_preview: 'Предварительный просмотр зарегистрированных парковок'
+    none_found: 'Парковки не найдены'
+    free: Бесплатно
+    paid: Платно
+    hourly_rate: '%price% / ч'
+    space_count: 'Свободных мест: %count%'
+    out_of: 'из %total%'
+    near_me: 'Рядом со мной'
+    locate: 'Определить местоположение'
+    location_help: 'Введите адрес или используйте своё местоположение.'
+    location_disabled: 'Геолокация отключена в настройках.'
+    location_enable: 'Включите геолокацию в настройках.'
+    location_unavailable: 'Геолокация недоступна на этом устройстве.'
+    location_searching: 'Определение местоположения…'
+    location_error: 'Не удалось определить местоположение.'
+    geocoding_searching: 'Поиск адреса…'
+    geocoding_error: 'Сервис поиска адресов временно недоступен.'
+    address_not_found: 'Адрес не найден.'
+    change_location_preference: 'Изменить настройку геолокации'
+    sorted_by_device: 'Парковки отсортированы от ближайшей к самой дальней.'
+    sorted_by_address: 'Парковки отсортированы рядом с адресом «%address%».'
+    map_title: 'Карта парковок'
+    map_help: 'Нажмите на метку, чтобы просмотреть информацию.'
+    distance_km: 'В %distance% км'
+    your_position: 'Ваше местоположение'
+    search_origin: 'Искомый адрес'
+
+transport:
+    title: Транспорт
+    network: 'Сеть Tisséo'
+    network_title: 'Транспортная сеть'
+    local_network: '%city% · Местная сеть'
+    none: 'Информация о транспорте отсутствует.'
+    disrupted: Нарушено
+    disrupted_feminine: Нарушено
+    disrupted_plural: Нарушено
+    ok: Норма
+    traffic_info: 'Дорожная информация'
+    disruption_count: 'Текущие сбои: %count%'
+    no_disruption: 'О сбоях не сообщалось'
+    line_count: 'Зарегистрированные маршруты: %count%'
+    view_network: 'Показать сеть'
+    line_status: 'Состояние маршрутов'
+    normal_traffic: 'Движение в норме'
+    no_line_city: 'Для вашего города нет доступных маршрутов.'
+    search_line: 'Найти маршрут'
+    network_alerts: 'Оповещения сети'
+    network_status: 'Состояние сети'
+    filter: 'Фильтр транспорта'
+    no_line: 'Маршруты не найдены'
+    unknown: Недоступно
+    data_unavailable: 'Данные Tisséo недоступны'
+    data_unavailable_help: 'Общедоступный сервис сейчас не отвечает. Повторите попытку через несколько минут.'
+    realtime_unavailable: 'Данные в реальном времени временно недоступны'
+    theoretical_still_available: 'Маршруты и плановое расписание остаются доступными.'
+    schedules: 'Расписание по остановкам'
+    schedules_help: 'Выберите остановку метро, трамвая или Linéo L1.'
+    choose_stop: Остановка
+    choose_stop_placeholder: 'Выберите остановку'
+    show_departures: 'Показать ближайшие отправления'
+    next_departures: 'Ближайшие отправления'
+    next_hours: '6 часов'
+    no_departure: 'В ближайшие шесть часов отправлений не запланировано.'
+    direction_unavailable: 'Направление не указано'
+    realtime_time: 'Время в реальном времени'
+    theoretical_time: 'Плановое время'
+    opendata_attribution: 'Данные: Tisséo Voyageurs / Toulouse Métropole Open Data — лицензия ODbL.'
+    type:
+        metro: Метро
+        bus: Автобус
+        tram: Трамвай
+
+mobility:
+    title: Транспорт
+    back: 'Вернуться к транспорту'
+    realtime_travel: 'Ваши поездки в реальном времени'
+    access: 'Доступ к транспорту'
+    route_problem: 'Проблема на вашем маршруте?'
+    report_community: 'Сообщите сообществу'
+    transport_parking: 'Транспорт и парковки'
+
+service:
+    title: Службы
+    back: 'Вернуться к службам'
+    search: 'Найти службу'
+    main_city_hall: 'Главная мэрия'
+    your_city_hall: 'Ваша мэрия'
+    what_need: 'Что вам нужно?'
+    city_services: 'Городские службы'
+    city_services_help: 'Мэрия, культура, градостроительство'
+    pharmacies: Аптеки
+    on_duty_hours: 'Дежурства и часы работы'
+    doctors: Врачи
+    on_duty_doctors: 'Дежурные врачи'
+    on_duty_pharmacies: 'Дежурные аптеки'
+    no_result: 'По вашему запросу службы не найдены.'
+    search_city: 'Найти городскую службу'
+    search_city_placeholder: 'Мэрия, библиотека, градостроительство…'
+    none_found: 'Службы не найдены'
+    pharmacy_search: 'Название или адрес…'
+    doctor_search: 'Имя врача или адрес…'
+    filter_availability: 'Фильтр доступности'
+    on_duty: Дежурство
+    always_open: 'Открыто круглосуточно'
+    nearby_alternatives: 'Ближайшие дежурные учреждения'
+    emergency_call: 'В экстренной ситуации позвоните по номеру 15 или 112.'
+    availability_notice: 'Указанная доступность носит справочный характер и зависит от зарегистрированной местной информации.'
+    near_me: 'Рядом со мной'
+    locate: 'Определить местоположение'
+    location_disabled: 'Геолокация отключена в настройках.'
+    location_enable: 'Включите геолокацию в настройках.'
+    location_unavailable: 'Геолокация недоступна на этом устройстве.'
+    location_searching: 'Определение местоположения…'
+    location_error: 'Не удалось определить местоположение.'
+    location_help: 'Используйте местоположение для сортировки по расстоянию.'
+    change_location_preference: 'Изменить настройку геолокации'
+    sorted_by_distance: 'Результаты отсортированы от ближайшего к самому дальнему.'
+    map_title: 'Карта специалистов'
+    map_help: 'Нажмите на метку, чтобы просмотреть информацию.'
+    distance_km: 'В %distance% км'
+    your_position: 'Ваше местоположение'
+    section:
+        administrative: 'Административные службы'
+        culture_libraries: 'Культура и библиотеки'
+        education: Образование
+        urban_environment: 'Градостроительство и окружающая среда'
+
+report:
+    recent: 'Недавние сообщения'
+    no_recent: 'В вашем городе нет недавних сообщений.'
+    report_incident: 'Сообщить о происшествии'
+    title: Сообщения
+    new: 'Новое сообщение'
+    management: 'Управление сообщениями'
+    all: 'Все сообщения'
+    my_reports: 'Мои сообщения'
+    automatic_location: 'Автоматическое определение местоположения'
+    photos_max: 'Фотографии (не более 3)'
+    photo_preview: 'Предварительный просмотр фотографии'
+    remove_photo: 'Удалить эту фотографию'
+    delete_confirm: 'Удалить это обращение и его фотографии без возможности восстановления?'
+    take_photo: 'Сделать фотографию'
+    gallery_available: 'Галерея остаётся доступной.'
+    enable_camera: 'Включите камеру'
+    take_directly: 'чтобы сделать фотографию сразу.'
+    photo_formats: 'Форматы JPG, PNG или WebP · не более 5 МБ на фотографию.'
+    tracking: 'Отслеживание сообщения'
+    tracking_help: 'После отправки следите за ходом обработки в профиле или на интерактивной карте.'
+    submit: 'Отправить сообщение'
+    submit_help: 'Сообщение будет сохранено и передано ответственной команде.'
+    address_missing: 'Адрес не указан'
+    follow: Отслеживать
+    file_count: 'Дела: %count%'
+    list: 'Список сообщений'
+    assigned_to: 'Назначено службе %service%'
+    awaiting_assignment: 'Ожидает назначения'
+    comment_count: 'Комментарии: %count%'
+    take: 'Принять в работу'
+    resolve: Решить
+    none_recorded: 'Зарегистрированных сообщений нет.'
+    my_stats: 'Статистика моих сообщений'
+    filter_mine: 'Фильтр моих сообщений'
+    count: 'Сообщения: %count%'
+    none: 'Сообщений нет'
+    none_category: 'У вас нет сообщений в этой категории.'
+    show_map: 'Показать карту'
+    stats: 'Статистика сообщений'
+    search: 'Найти сообщение'
+    search_placeholder: 'Тип, место, ключевые слова…'
+    filter: 'Фильтр сообщений'
+    data_updated: 'Обновлено на основе зарегистрированных данных'
+    none_found: 'Сообщения не найдены'
+    map: 'Карта происшествий'
+    filter_incidents: 'Фильтр происшествий'
+    interactive_map: 'Интерактивная карта происшествий'
+    map_loading: 'Загрузка происшествий…'
+    map_load_error: 'Не удалось загрузить происшествия на карте.'
+    map_count: 'Происшествия с координатами: %count%'
+    incident: Происшествие
+    realtime_unavailable: 'Карта активна · обновления в реальном времени временно недоступны'
+    visible_incidents: 'Видимые происшествия'
+    none_city: 'Сейчас в вашем городе нет сообщений.'
+    follow_title: 'Отслеживание сообщения #%id%'
+    back: 'Вернуться к сообщению'
+    my_tracking: 'Отслеживание моего сообщения'
+    number: 'Сообщение #%id%'
+    transmitted_to: 'Передано'
+    transmission: Передача
+    event_history: 'История событий'
+    sent: 'Сообщение отправлено'
+    received_system: 'Получено системой'
+    triage_done: 'Оценка завершена'
+    gravity_value: 'Степень опасности: %gravity%'
+    routed_to: 'Направлено службе %service%'
+    service_received: 'Служба получила сообщение'
+    awaiting_handling: 'Ожидает обработки'
+    resolution: Решение
+    marked_resolved: 'Сообщение отмечено как решённое'
+    awaiting_intervention: 'Ожидает вмешательства'
+    tracking_notifications: 'Уведомления о ходе обработки'
+    security_alerts_on: 'Оповещения безопасности включены'
+    security_alerts_off: 'Оповещения безопасности отключены'
+    status_realtime_help: 'Изменения статуса отображаются на карте сообщений в реальном времени.'
+    edit_title: 'Изменить сообщение #%id%'
+    edit_short: 'Изменить #%id%'
+    active_services_only: 'Можно выбрать только активные службы.'
+    saved_location: 'Сохранённое местоположение'
+    back_map: 'Вернуться к карте'
+    detail: 'Подробности сообщения'
+    current_status: 'Текущий статус'
+    updated: 'Обновлено %date%'
+    reported_on: 'Сообщено %date%'
+    description_missing: 'Описание не предоставлено.'
+    photo_count: 'Фотографии: %count%'
+    report_photo: 'Фотография сообщения'
+    location: 'Местоположение сообщения'
+    view_tracking: 'Показать ход обработки'
+    comments_count: 'Комментарии: %count%'
+    safecity_user: 'Пользователь SafeCity'
+    added_photo_count: 'Добавленные фотографии: %count%'
+    added_photo_one: 'Добавлена 1 фотография'
+    comment_photo: 'Фотография, добавленная к комментарию'
+    no_comment: 'Комментариев пока нет.'
+    send_comment: 'Отправить комментарий'
+    gallery_camera_disabled: 'Галерея остаётся доступной; съёмка отключена в вашем профиле.'
+    category:
+        accident: Авария
+        accident_plural: Аварии
+        travaux: Работы
+        incivilite: 'Нарушение порядка'
+        incendie: Пожар
+        sante: Здоровье
+        route: 'Дорожное происшествие'
+        autre: Другое
+        emergency_plural: 'Экстренные ситуации'
+    status:
+        reported: Отправлено
+        in_progress: 'В работе'
+        resolved: Решено
+        sent: Отправлено
+        reported_plural: Получено
+        resolved_plural: Решено
+
+gravity:
+    low: Низкая
+    medium: Средняя
+    high: Высокая
+    low_help: 'Нет непосредственной опасности'
+    medium_help: 'Рекомендуется вмешательство'
+    high_help: 'Экстренная ситуация — требуется помощь'
+
+moderation:
+    title: Модерация
+    queue: 'Очередь модерации'
+    item_count: 'Элементов: %count%'
+    pending_count: 'Материалов на проверку: %count%'
+    awaiting_decision: 'Материалы ожидают вашего решения'
+    nothing_to_review: 'Нет материалов для проверки'
+    migration_pending: 'Ожидается миграция модерации'
+    actions_help: 'Скрывайте, отклоняйте или восстанавливайте без физического удаления.'
+    schema_pending: 'Миграция модерации создана, но не выполнена. Материалы не удаляются и не скрываются.'
+    comment: Комментарий
+    photo: Фото
+    reported_on: 'Отправлено %date%'
+    source_missing: 'Исходный материал больше не существует.'
+    photo_to_review: 'Фото для модерации'
+    author: Автор
+    account_unavailable: 'Учётная запись недоступна'
+    hide: Скрыть
+    dismiss: 'Отклонить жалобу'
+    reopen: 'Открыть дело повторно'
+    none: 'Нет материалов с жалобами.'
+    status:
+        flagged: 'На проверке'
+        hidden: Скрыто
+        dismissed: Отклонено
+    flag: Пожаловаться
+    flag_photo: 'Пожаловаться на эту фотографию'
+    reason:
+        inappropriate: 'Недопустимое содержание'
+        personal_data: 'Персональные данные'
+        dangerous: 'Опасное содержание'
+        spam: Спам
+
+admin:
+    navigation: 'Навигация администратора'
+    space: 'Раздел администратора'
+    dashboard: 'Панель управления'
+    citizen_space: 'Открыть раздел жителя'
+    statistics: Статистика
+    pending: Ожидают
+    routing: Маршрутизация
+    report_routing: 'Маршрутизация сообщений'
+    configurable: Настраивается
+    automatic_rules: 'Автоматические правила'
+    automatic_rules_help: 'Назначьте службу по категории, серьёзности и приоритету. Ручное назначение остаётся доступным.'
+    configure_routing: 'Настроить маршрутизацию'
+    reports_to_process: 'Сообщения в обработке'
+    no_report_to_process: 'Нет сообщений для обработки.'
+    users: Пользователи
+    user_search: 'Имя или адрес электронной почты…'
+    accounts: 'Учётные записи'
+    result_count: 'Результатов: %count%'
+    role: АДМИН
+    no_city: 'Город не указан'
+    registered_on: 'Дата регистрации: %date%'
+    active: Активна
+    disabled: Отключена
+    no_user: 'Пользователи не найдены.'
+    routing_automatic: 'Автоматическая маршрутизация'
+    routing_subtitle: 'Категория, серьёзность и приоритет'
+    routing_schema_pending: 'Миграция маршрутизации создана, но не выполнена. Для сообщений продолжает использоваться ручное назначение.'
+    new_rule: 'Новое правило'
+    configured_rules: 'Настроенные правила'
+    all_categories: 'Все категории'
+    priority_value: 'приоритет %priority%'
+    active_feminine: Активно
+    inactive_feminine: Неактивно
+    disable: Отключить
+    enable: Включить
+    no_rule: 'Нет доступных правил.'
+    edit_routing_rule: 'Изменить правило маршрутизации'
+    edit_rule: 'Изменить правило'
+    save_rule: 'Сохранить правило'
+    category: Категория
+    priority: Приоритет
+    priority_help: 'Сначала применяется наименьшее значение.'
+    rule_enabled: 'Правило активно'
+    back_dashboard: 'Вернуться к панели управления'
+    status:
+        reported: Получено
+        in_progress: 'В работе'
+        resolved: Решено
+
+community:
+    title: Сообщество
+    nearby_incidents: 'Происшествия, отмеченные рядом с вами'
+    statistics: 'Статистика сообщества'
+    active: Активные
+    this_month: 'В этом месяце'
+    around_me: 'рядом со мной'
+    map_preview: 'Предпросмотр карты происшествий'
+    local_view: 'Локальный вид — 500 м'
+    open_map: 'Открыть карту'
+    report_feed: 'Лента сообщений'
+    unknown_location: 'Неизвестное место'
+    no_city_report: 'Для вашего города сообщений нет.'
+    recent_comments: 'Недавние комментарии'
+    anonymous: Аноним
+
+news:
+    title: Новости
+    all_title: 'Все новости'
+    live: Прямой эфир
+    filter: 'Фильтр новостей'
+    featured_now: 'Сейчас в центре внимания'
+    reading_time: 'Чтение: %minutes% мин.'
+    latest: 'Последние новости'
+    none_city: 'Для вашего города новостей нет.'
+    back: 'Вернуться к новостям'
+    search_placeholder: 'Найти статью…'
+    count: 'Статьи: %count%'
+    no_result: 'По вашему запросу статей не найдено.'
+    category:
+        security: Безопасность
+        health: Здоровье
+        mobility: Транспорт
+        works: Работы
+
+event:
+    title: Мероприятия
+    favorites: Избранное
+    my_favorites: 'Избранные мероприятия'
+    my_favorites_short: 'Моё избранное'
+    city_area: '%city% и окрестности'
+    search_placeholder: 'Найти мероприятие…'
+    filter: 'Фильтр мероприятий'
+    featured: 'Рекомендуемое мероприятие'
+    add_favorite: 'Добавить в избранное'
+    remove_favorite: 'Удалить из избранного'
+    coming_soon: Скоро
+    upcoming: 'Предстоящие мероприятия'
+    none_upcoming: 'Предстоящих мероприятий нет.'
+    none_city: 'Сейчас в вашем городе нет мероприятий.'
+    back: 'Вернуться к мероприятиям'
+    reminders_disabled: 'Общие напоминания отключены'
+    reminders_disabled_help: 'Включите «Напоминания о мероприятиях» в профиле, чтобы получать выбранные напоминания.'
+    favorites_summary: 'Сводка избранного'
+    saved_count: 'Сохранённые мероприятия: %count%'
+    saved_help: 'Здесь находятся мероприятия, за которыми вы хотите следить.'
+    explore_category: 'Поиск по категории'
+    saved_events: 'Сохранённые мероприятия'
+    reminder_on: 'Напоминание включено'
+    reminder_off: 'Напоминание отключено'
+    none_saved: 'Сохранённых мероприятий нет.'
+    discover: 'Найти мероприятия'
+    discover_more: 'Найти другие мероприятия'
+    near_you: 'Все доступные мероприятия рядом с вами'
+    category:
+        music: Музыка
+        sport: Спорт
+        culture: Культура
+
+flash:
+    confirmation_email_requested: 'Если этому адресу соответствует неподтверждённая учётная запись, новое письмо с подтверждением отправлено.'
+    report_status_updated: 'Статус сообщения #%id% обновлён.'
+    moderation_decision_saved: 'Решение модерации сохранено.'
+    moderation_already_open: 'Этот материал уже проверяется.'
+    moderation_submitted: 'Материал отправлен на модерацию.'
+    moderation_schema_required: 'Перед отправкой жалобы необходимо применить миграцию модерации.'
+    routing_rule_created: 'Правило маршрутизации создано.'
+    routing_rule_updated: 'Правило маршрутизации обновлено.'
+    city_updated: 'Ваш город обновлён: %city%'
+    event_favorites_cleared: 'Все события удалены из избранного.'
+    event_favorite_removed: 'Событие удалено из избранного.'
+    event_favorite_added: 'Событие добавлено с автоматическим напоминанием за 24 часа.'
+    event_reminder_enabled: 'Напоминание об этом событии включено.'
+    event_reminder_disabled: 'Напоминание об этом событии отключено.'
+    choose_city_first: 'Выберите город перед созданием сообщения.'
+    media_upload_failed: 'Не удалось сохранить фото. Проверьте формат и размер и повторите попытку.'
+    report_save_failed: 'Не удалось сохранить сообщение. Неполное фото не было сохранено.'
+    report_sent: 'Ваше сообщение отправлено.'
+    comment_save_failed: 'Не удалось сохранить комментарий. Неполное фото не было сохранено.'
+    comment_added: 'Ваш комментарий добавлен.'
+    account_created: 'Ваша учётная запись создана. Подтвердите её по ссылке из электронного письма.'
+    email_confirmed: 'Ваш адрес электронной почты подтверждён.'
+    profile_updated: 'Ваши данные обновлены.'
+    preferences_updated: 'Ваши настройки обновлены.'
+
+email:
+    moderation:
+        subject: 'Один из ваших материалов был скрыт в SafeCity'
+        body: "Здравствуйте!\n\nМатериал, опубликованный из вашей учётной записи, был скрыт после модерации.\nПричина: %reason%\n\nКоманда SafeCity"
+    greeting: Здравствуйте!
+    signature: 'Команда SafeCity'
+    confirm:
+        subject: 'Подтвердите адрес электронной почты'
+        heading: 'Подтвердите адрес электронной почты'
+        instructions: 'Подтвердите адрес электронной почты, перейдя по следующей ссылке:'
+        action: 'Подтвердить адрес электронной почты'
+        expiry: 'Срок действия ссылки истекает %expiration%.'
+    reset:
+        subject: 'Сброс пароля'
+        instructions: 'Чтобы сбросить пароль, воспользуйтесь следующей ссылкой:'
+        expiry: 'Срок действия ссылки истекает %expiration%.'
+
+security:
+    invalid_token: 'Недействительный токен безопасности.'
+    city_unavailable: 'Этот город недоступен.'
+    favorite_not_owned: 'Этот элемент избранного вам не принадлежит.'
+    notification_not_owned: 'Это уведомление вам не принадлежит.'
+    content_wrong_city: 'Этот материал не относится к вашему городу.'
+    own_content: 'Нельзя жаловаться на собственный материал.'
+    report_wrong_city: 'Это сообщение не относится к вашему городу.'
+    report_not_owned: 'Вы не можете отслеживать это сообщение.'
+
+reset:
+    forgot_title: 'Забыли пароль'
+    back_to_login: 'Вернуться ко входу'
+    reset_password: 'Сбросить пароль'
+    request_help: 'Введите адрес электронной почты, связанный с учётной записью. Мы отправим защищённую ссылку с ограниченным сроком действия.'
+    send_link: 'Отправить ссылку для сброса'
+    limited_link: 'Ссылка с ограниченным сроком действия.'
+    expiry_help: 'Ссылка перестанет действовать по истечении установленного срока безопасности.'
+    email_sent_title: 'Письмо для сброса пароля отправлено'
+    check_inbox: 'Проверьте почту'
+    email_sent_security: 'Если этому адресу соответствует учётная запись, защищённая ссылка уже отправлена.'
+    email_sent: 'Письмо отправлено'
+    email_if_account: 'Если учётная запись с таким адресом существует, вы вскоре получите ссылку для сброса.'
+    email_expiry: 'Ссылка перестанет действовать %expiration%. Проверьте также папку со спамом.'
+    resend_link: 'Отправить ссылку ещё раз'
+    choose_new_title: 'Выберите новый пароль'
+    new_password: 'Новый пароль'
+    secure_account: 'Защитите учётную запись'
+    save_new_password: 'Сохранить новый пароль'
