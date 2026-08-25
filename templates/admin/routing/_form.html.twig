@@ -1,0 +1,17 @@
+{{ form_start(form, {attr: {class: 'space-y-4'}}) }}
+    {% for field in [form.gravityLevel, form.category, form.emergencyService, form.priority] %}
+        <div>
+            {{ form_label(field, null, {label_attr: {class: 'mb-2 block text-sm font-bold text-slate-700'}}) }}
+            {{ form_widget(field, {attr: {class: 'h-12 w-full rounded-2xl border border-slate-200 bg-white px-4 text-sm outline-none focus:border-red-500 focus:ring-2 focus:ring-red-100'}}) }}
+            {% if field.vars.help %}<p class="mt-1 text-xs text-slate-500">{{ field.vars.help }}</p>{% endif %}
+            <div class="mt-1 text-xs text-red-600">{{ form_errors(field) }}</div>
+        </div>
+    {% endfor %}
+
+    <label class="flex items-center justify-between rounded-2xl border border-slate-200 bg-white p-4">
+        <span class="font-semibold">{{ form.enabled.vars.label }}</span>
+        {{ form_widget(form.enabled, {attr: {class: 'size-5 accent-red-600'}}) }}
+    </label>
+
+    <button type="submit" class="h-12 w-full rounded-2xl bg-red-600 font-bold text-white">{{ button_label|default('admin.save_rule'|trans) }}</button>
+{{ form_end(form) }}
