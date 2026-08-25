@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Administration SafeCity{% endblock %}
+
+{% block body %}
+<main>
+    <h1>Espace administrateur</h1>
+    <nav>
+        <a href="{{ path('app_report_index') }}">Signalements</a>
+        <a href="{{ path('app_admin_users') }}">Utilisateurs</a>
+    </nav>
+
+    <section>
+        <h2>Tableau de bord</h2>
+        <p>Total : {{ stats.total }}</p>
+        <p>Signalés : {{ stats.reported }}</p>
+        <p>En cours : {{ stats.inProgress }}</p>
+        <p>Résolus : {{ stats.resolved }}</p>
+        <p>Utilisateurs actifs : {{ stats.users }}</p>
+    </section>
+
+    <section>
+        <h2>Signalements récents</h2>
+        {% for report in reports %}
+            <a href="{{ path('app_report_show', {id: report.id}) }}">
+                {{ report.category ? report.category.name : 'Autre' }}
+            </a>
+        {% else %}
+            <p>Aucun signalement.</p>
+        {% endfor %}
+    </section>
+</main>
+{% endblock %}

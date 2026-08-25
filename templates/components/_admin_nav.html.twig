@@ -1,0 +1,61 @@
+{# Navigation réutilisable de l’espace d’administration. #}
+{% set active = active|default('') %}
+
+{# La maquette administrative utilise cinq accès principaux. Le routage et
+   la modération restent accessibles depuis leurs blocs du tableau de bord. #}
+<nav class="fixed inset-x-0 bottom-0 z-40 mx-auto grid h-20 w-full max-w-md grid-cols-5 border-t border-slate-200 bg-white px-2 pb-1 pt-2 shadow-[0_-4px_18px_rgba(15,23,42,0.04)] lg:hidden" aria-label="{{ 'admin.navigation'|trans }}">
+    <a href="{{ path('app_admin') }}" class="flex flex-col items-center justify-center gap-1 {{ active == 'home' ? 'text-red-600' : 'text-stone-400' }}" {% if active == 'home' %}aria-current="page"{% endif %}>
+        {{ include('components/_icon.html.twig', {name: 'home', class: 'size-5'}) }}
+        <span class="text-[10px] {{ active == 'home' ? 'font-bold' : 'font-medium' }}">{{ 'nav.home'|trans }}</span>
+    </a>
+    <a href="{{ path('app_report_index') }}" class="flex flex-col items-center justify-center gap-1 {{ active == 'reports' ? 'text-red-600' : 'text-stone-400' }}" {% if active == 'reports' %}aria-current="page"{% endif %}>
+        {{ include('components/_icon.html.twig', {name: 'news', class: 'size-5'}) }}
+        <span class="text-[10px] {{ active == 'reports' ? 'font-bold' : 'font-medium' }}">{{ 'report.title'|trans }}</span>
+    </a>
+    <a href="{{ path('app_report_map') }}" class="flex flex-col items-center justify-center gap-1 text-stone-400">
+        {{ include('components/_icon.html.twig', {name: 'pin', class: 'size-5'}) }}
+        <span class="text-[10px] font-medium">{{ 'nav.map'|trans }}</span>
+    </a>
+    <a href="{{ path('app_admin_users') }}" class="flex flex-col items-center justify-center gap-1 {{ active == 'users' ? 'text-red-600' : 'text-stone-400' }}" {% if active == 'users' %}aria-current="page"{% endif %}>
+        {{ include('components/_icon.html.twig', {name: 'users', class: 'size-5'}) }}
+        <span class="text-[10px] {{ active == 'users' ? 'font-bold' : 'font-medium' }}">{{ 'admin.users'|trans }}</span>
+    </a>
+    <a href="{{ path('app_profile') }}" class="flex flex-col items-center justify-center gap-1 {{ active == 'settings' ? 'text-red-600' : 'text-stone-400' }}" {% if active == 'settings' %}aria-current="page"{% endif %}>
+        {{ include('components/_icon.html.twig', {name: 'settings', class: 'size-5'}) }}
+        <span class="text-[10px] {{ active == 'settings' ? 'font-bold' : 'font-medium' }}">{{ 'common.settings'|trans }}</span>
+    </a>
+</nav>
+
+{# L'administration dispose sur ordinateur d'un en-tête complet donnant accès aux outils de gestion. #}
+<header class="fixed inset-x-0 top-0 z-40 hidden h-20 border-b border-slate-200 bg-white/95 shadow-sm backdrop-blur lg:block">
+    <div class="mx-auto flex h-full max-w-7xl items-center gap-6 px-8">
+        <a href="{{ path('app_admin') }}" class="flex shrink-0 items-center gap-3">
+            <span class="flex size-10 items-center justify-center rounded-xl bg-red-600 text-white">
+                {{ include('components/_icon.html.twig', {name: 'brand-shield', class: 'size-6'}) }}
+            </span>
+            <span>
+                <strong class="block leading-none text-slate-950">SafeCity</strong>
+                <small class="text-red-600">{{ 'admin.space'|trans }}</small>
+            </span>
+        </a>
+
+        <nav class="ml-auto flex items-center gap-1" aria-label="{{ 'admin.navigation'|trans }}">
+            {% set adminLinks = [
+                {route: 'app_admin', label: 'nav.home', icon: 'home', key: 'home'},
+                {route: 'app_report_index', label: 'report.title', icon: 'news', key: 'reports'},
+                {route: 'app_admin_routing', label: 'admin.report_routing', icon: 'send', key: 'routing'},
+                {route: 'app_admin_moderation', label: 'moderation.queue', icon: 'alert', key: 'moderation'},
+                {route: 'app_admin_users', label: 'admin.users', icon: 'users', key: 'users'}
+            ] %}
+            {% for link in adminLinks %}
+                <a href="{{ path(link.route) }}" class="flex items-center gap-2 rounded-xl px-3 py-3 text-sm font-semibold transition hover:bg-red-50 hover:text-red-600 {{ active == link.key ? 'bg-red-50 text-red-600' : 'text-stone-500' }}" {% if active == link.key %}aria-current="page"{% endif %}>
+                    {{ include('components/_icon.html.twig', {name: link.icon, class: 'size-4'}) }}
+                    {{ link.label|trans }}
+                </a>
+            {% endfor %}
+            <a href="{{ path('app_profile') }}" class="ml-2 flex size-10 items-center justify-center rounded-xl bg-slate-950 text-white" aria-label="{{ 'profile.open'|trans }}">
+                {{ include('components/_icon.html.twig', {name: 'user', class: 'size-5'}) }}
+            </a>
+        </nav>
+    </div>
+</header>
