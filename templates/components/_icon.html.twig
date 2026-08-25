@@ -1,14 +1,272 @@
-{# templates/components/_icon.html.twig #}
-<svg class="{{ class|default('size-6') }}" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
-    {% if name == 'back' %}
-        <path stroke-linecap="round" stroke-linejoin="round" d="M9 15L3 9m0 0l6-6M3 9h12a6 6 0 010 12h-3" />
-    {% elseif name == 'search' %}
-        <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
-    {% elseif name == 'train' %}
-        <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18L9 11.25l4.306 4.307a11.95 11.95 0 015.814-5.519l2.74-1.22m0 0l-5.94-2.28m5.94 2.28l-2.28 5.941" />
-    {% elseif name == 'tram' or name == 'bus' %}
-        <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 01-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 00-3.213-9.193 2.056 2.056 0 00-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177v-.958c0-.568-.422-1.048-.987-1.106a48.554 48.554 0 00-10.026 0 1.106 1.106 0 00-.987 1.106v7.635m12-6.677v6.677m0 4.5v-4.5m0 0h-12" />
-    {% elseif name == 'alert' %}
-        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-    {% endif %}
-</svg>
+{#
+   Bibliothèque d’icônes locales de l’interface SafeCity.
+   Les tracés SVG utilisent currentColor afin que leur apparence reste
+   entièrement pilotée par les classes Tailwind du composant appelant.
+#}
+{% set iconClass = class|default('size-6') %}
+
+{% if name == 'brand-shield' %}
+    <svg class="{{ iconClass }}" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+        <path d="M32 11c6.4 6.2 13.5 8.5 21 7.7-.7 16.6-7.8 27.9-21 34.3-13.2-6.4-20.3-17.7-21-34.3 7.5.8 14.6-1.5 21-7.7Z" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+{% elseif name == 'home' %}
+    <svg class="{{ iconClass }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="m3 10 9-7 9 7"/>
+        <path d="M5 9v11h14V9"/>
+        <path d="M9 20v-6h6v6"/>
+    </svg>
+{% elseif name == 'map' %}
+    <svg class="{{ iconClass }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="m3 6 6-3 6 3 6-3v15l-6 3-6-3-6 3V6Z"/>
+        <path d="M9 3v15M15 6v15"/>
+    </svg>
+{% elseif name == 'plus' %}
+    <svg class="{{ iconClass }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+        <path d="M12 5v14M5 12h14"/>
+    </svg>
+{% elseif name == 'services' %}
+    <svg class="{{ iconClass }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <rect x="3" y="3" width="7" height="7" rx="1"/>
+        <rect x="14" y="3" width="7" height="7" rx="1"/>
+        <rect x="3" y="14" width="7" height="7" rx="1"/>
+        <rect x="14" y="14" width="7" height="7" rx="1"/>
+    </svg>
+{% elseif name == 'news' %}
+    <svg class="{{ iconClass }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M6 4h14v16H6a3 3 0 0 1-3-3V6"/>
+        <path d="M3 6a2 2 0 0 1 2-2h1v13a1 1 0 0 1-2 0V6Z"/>
+        <path d="M10 8h6M10 12h7M10 16h5"/>
+    </svg>
+{% elseif name == 'back' %}
+    <svg class="{{ iconClass }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="m15 18-6-6 6-6"/>
+    </svg>
+{% elseif name == 'mail' %}
+    <svg class="{{ iconClass }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <rect x="3" y="5" width="18" height="14" rx="2"/>
+        <path d="m3 7 9 6 9-6"/>
+    </svg>
+{% elseif name == 'lock' %}
+    <svg class="{{ iconClass }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <rect x="5" y="10" width="14" height="10" rx="2"/>
+        <path d="M8 10V7a4 4 0 0 1 8 0v3M12 14v2"/>
+    </svg>
+{% elseif name == 'eye' %}
+    <svg class="{{ iconClass }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12Z"/>
+        <circle cx="12" cy="12" r="2.5"/>
+    </svg>
+{% elseif name == 'user' %}
+    <svg class="{{ iconClass }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="12" cy="8" r="4"/>
+        <path d="M5 21a7 7 0 0 1 14 0"/>
+    </svg>
+{% elseif name == 'user-plus' %}
+    <svg class="{{ iconClass }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="10" cy="8" r="4"/>
+        <path d="M3 21a7 7 0 0 1 14 0M19 8v6M16 11h6"/>
+    </svg>
+{% elseif name == 'pin' %}
+    <svg class="{{ iconClass }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"/>
+        <circle cx="12" cy="10" r="2.5"/>
+    </svg>
+{% elseif name == 'language' %}
+    <svg class="{{ iconClass }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M4 5h10M9 3v2M6 9c2 3 5 5 8 6M13 5c-1 5-4 8-9 10M14 20l4-9 4 9M15.5 17h5"/>
+    </svg>
+{% elseif name == 'search' %}
+    <svg class="{{ iconClass }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="11" cy="11" r="7"/>
+        <path d="m20 20-4-4"/>
+    </svg>
+{% elseif name == 'building' %}
+    <svg class="{{ iconClass }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M5 21V4h11v17M3 21h18M9 8h1M9 12h1M9 16h1M13 8h1M13 12h1M13 16h1M17 10h2v11"/>
+    </svg>
+{% elseif name == 'check' %}
+    <svg class="{{ iconClass }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="m5 12 4 4L19 6"/>
+    </svg>
+{% elseif name == 'key' %}
+    <svg class="{{ iconClass }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="15" cy="8" r="5"/>
+        <path d="m11.5 11.5-8 8V22H6l2-2v-2h2l2.5-2.5"/>
+    </svg>
+{% elseif name == 'clock' %}
+    <svg class="{{ iconClass }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="12" cy="12" r="9"/>
+        <path d="M12 7v5l3 2"/>
+    </svg>
+{% elseif name == 'edit' %}
+    <svg class="{{ iconClass }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4L16.5 3.5Z"/>
+    </svg>
+{% elseif name == 'bell' %}
+    <svg class="{{ iconClass }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/>
+    </svg>
+{% elseif name == 'privacy' %}
+    <svg class="{{ iconClass }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M12 3 4 6v5c0 5 3.4 8.5 8 10 4.6-1.5 8-5 8-10V6l-8-3Z"/>
+        <path d="M9 12l2 2 4-4"/>
+    </svg>
+{% elseif name == 'globe' %}
+    <svg class="{{ iconClass }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="12" cy="12" r="9"/>
+        <path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/>
+    </svg>
+{% elseif name == 'history' %}
+    <svg class="{{ iconClass }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M3 12a9 9 0 1 0 3-6.7L3 8"/>
+        <path d="M3 3v5h5M12 7v5l3 2"/>
+    </svg>
+{% elseif name == 'chevron-right' %}
+    <svg class="{{ iconClass }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="m9 18 6-6-6-6"/>
+    </svg>
+{% elseif name == 'logout' %}
+    <svg class="{{ iconClass }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M10 17l5-5-5-5M15 12H3M15 4h5a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1h-5"/>
+    </svg>
+{% elseif name == 'heart' %}
+    <svg class="{{ iconClass }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8Z"/>
+    </svg>
+{% elseif name == 'settings' %}
+    <svg class="{{ iconClass }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="12" cy="12" r="3"/>
+        <path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-2.8 2.8-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6v.2h-4V21a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1L4.2 17l.1-.1a1.7 1.7 0 0 0 .3-1.9A1.7 1.7 0 0 0 3 14H2.8v-4H3a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9L4.2 7 7 4.2l.1.1a1.7 1.7 0 0 0 1.9.3A1.7 1.7 0 0 0 10 3V2.8h4V3a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1L19.8 7l-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.6 1h.2v4H21a1.7 1.7 0 0 0-1.6 1Z"/>
+    </svg>
+{% elseif name == 'alert' %}
+    <svg class="{{ iconClass }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="m8 2-6 6v8l6 6h8l6-6V8l-6-6H8Z"/>
+        <path d="M12 7v6M12 17h.01"/>
+    </svg>
+{% elseif name == 'car' %}
+    <svg class="{{ iconClass }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="m5 11 1.5-4h11l1.5 4M3 12h18v6H3v-6ZM5 18v2M19 18v2"/>
+        <circle cx="7" cy="15" r="1" fill="currentColor" stroke="none"/>
+        <circle cx="17" cy="15" r="1" fill="currentColor" stroke="none"/>
+    </svg>
+{% elseif name == 'construction' %}
+    <svg class="{{ iconClass }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="m14 6 4-4 4 4-4 4M3 21l8-8M8 3l13 13M3 8l5-5"/>
+    </svg>
+{% elseif name == 'fire' %}
+    <svg class="{{ iconClass }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M12 22c4.4 0 8-3.1 8-7.5 0-3.8-2.2-6.2-5-9.5-.5 3-2 4.5-3 5-1-2-2.7-3.5-4.5-4.5.3 3-3.5 5-3.5 9 0 4.4 3.6 7.5 8 7.5Z"/>
+        <path d="M9 17c0 1.7 1.3 3 3 3s3-1.3 3-3c0-1.5-.8-2.5-2-4-.3 1.2-.9 2-1.5 2.5-.5-1-1.3-1.7-2.2-2.2.2 1.4-.3 2.3-.3 3.7Z"/>
+    </svg>
+{% elseif name == 'health' %}
+    <svg class="{{ iconClass }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8Z"/>
+        <path d="M7 12h3l1-2 2 4 1-2h3"/>
+    </svg>
+{% elseif name == 'more' %}
+    <svg class="{{ iconClass }}" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+        <circle cx="5" cy="12" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="19" cy="12" r="1.7"/>
+    </svg>
+{% elseif name == 'comment' %}
+    <svg class="{{ iconClass }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4v8Z"/>
+    </svg>
+{% elseif name == 'calendar' %}
+    <svg class="{{ iconClass }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <rect x="3" y="5" width="18" height="16" rx="2"/>
+        <path d="M16 3v4M8 3v4M3 10h18"/>
+    </svg>
+{% elseif name == 'camera' %}
+    <svg class="{{ iconClass }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M14.5 5 13 3h-2L9.5 5H5a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-4.5Z"/>
+        <circle cx="12" cy="12" r="4"/>
+    </svg>
+{% elseif name == 'image' %}
+    <svg class="{{ iconClass }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <rect x="3" y="3" width="18" height="18" rx="2"/>
+        <circle cx="9" cy="9" r="2"/>
+        <path d="m21 15-5-5L5 21"/>
+    </svg>
+{% elseif name == 'send' %}
+    <svg class="{{ iconClass }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="m22 2-7 20-4-9-9-4 20-7Z"/>
+        <path d="M22 2 11 13"/>
+    </svg>
+{% elseif name == 'share' %}
+    <svg class="{{ iconClass }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
+        <path d="m8.6 10.5 6.8-4M8.6 13.5l6.8 4"/>
+    </svg>
+{% elseif name == 'filter' %}
+    <svg class="{{ iconClass }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M3 5h18l-7 8v6l-4 2v-8L3 5Z"/>
+    </svg>
+{% elseif name == 'layers' %}
+    <svg class="{{ iconClass }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="m12 2 9 5-9 5-9-5 9-5Z"/><path d="m3 12 9 5 9-5M3 17l9 5 9-5"/>
+    </svg>
+{% elseif name == 'target' %}
+    <svg class="{{ iconClass }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="2"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/>
+    </svg>
+{% elseif name == 'refresh' %}
+    <svg class="{{ iconClass }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M20 6v5h-5M4 18v-5h5"/><path d="M18 9a7 7 0 0 0-12-2M6 15a7 7 0 0 0 12 2"/>
+    </svg>
+{% elseif name == 'phone' %}
+    <svg class="{{ iconClass }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 2 .7 2.9a2 2 0 0 1-.5 2.1L8 10a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.5c.9.3 1.9.6 2.9.7a2 2 0 0 1 1.7 2Z"/>
+    </svg>
+{% elseif name == 'directions' %}
+    <svg class="{{ iconClass }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="m12 2 10 10-10 10L2 12 12 2Z"/><path d="M8 12h8M13 9l3 3-3 3"/>
+    </svg>
+{% elseif name == 'pharmacy' %}
+    <svg class="{{ iconClass }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true">
+        <path d="M9 3h6v6h6v6h-6v6H9v-6H3V9h6V3Z"/>
+    </svg>
+{% elseif name == 'doctor' %}
+    <svg class="{{ iconClass }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="12" cy="7" r="4"/><path d="M5 21a7 7 0 0 1 14 0M8 14v3a4 4 0 0 0 8 0v-3M4 16h4"/>
+    </svg>
+{% elseif name == 'train' %}
+    <svg class="{{ iconClass }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <rect x="5" y="2" width="14" height="17" rx="4"/><path d="M5 10h14M8 22l3-3M16 22l-3-3M8 6h.01M16 6h.01"/>
+    </svg>
+{% elseif name == 'tram' %}
+    <svg class="{{ iconClass }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M8 2h8M12 2v3"/><rect x="4" y="5" width="16" height="14" rx="3"/><path d="M4 11h16M8 22l3-3M16 22l-3-3"/>
+    </svg>
+{% elseif name == 'bus' %}
+    <svg class="{{ iconClass }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <rect x="4" y="3" width="16" height="17" rx="3"/><path d="M4 11h16M7 20v2M17 20v2M8 7h8"/><circle cx="8" cy="16" r="1" fill="currentColor" stroke="none"/><circle cx="16" cy="16" r="1" fill="currentColor" stroke="none"/>
+    </svg>
+{% elseif name == 'info' %}
+    <svg class="{{ iconClass }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7h.01"/>
+    </svg>
+{% elseif name == 'library' %}
+    <svg class="{{ iconClass }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M4 5a4 4 0 0 1 4-2h4v17H8a4 4 0 0 0-4 2V5ZM20 5a4 4 0 0 0-4-2h-4v17h4a4 4 0 0 1 4 2V5Z"/>
+    </svg>
+{% elseif name == 'education' %}
+    <svg class="{{ iconClass }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="m2 9 10-5 10 5-10 5L2 9Z"/><path d="M6 11v5c3 3 9 3 12 0v-5M22 9v6"/>
+    </svg>
+{% elseif name == 'bookmark' %}
+    <svg class="{{ iconClass }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M6 3h12v18l-6-4-6 4V3Z"/>
+    </svg>
+{% elseif name == 'music' %}
+    <svg class="{{ iconClass }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M9 18V5l10-2v13M9 9l10-2"/><circle cx="6" cy="18" r="3"/><circle cx="16" cy="16" r="3"/>
+    </svg>
+{% elseif name == 'sport' %}
+    <svg class="{{ iconClass }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="12" cy="12" r="9"/><path d="m8 4 2 4-4 3M16 4l-2 4 4 3M6 16l4-1 2 5M18 16l-4-1-2 5M10 8h4l2 4-4 3-4-3 2-4Z"/>
+    </svg>
+{% elseif name == 'users' %}
+    <svg class="{{ iconClass }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="9" cy="8" r="4"/><path d="M2 21a7 7 0 0 1 14 0M16 4a4 4 0 0 1 0 8M18 14a6 6 0 0 1 4 6"/>
+    </svg>
+{% endif %}
