@@ -5,6 +5,9 @@ namespace App\DataFixtures;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 
+/**
+ * Charge les données locales de démonstration gérées par AppFixtures.
+ */
 class AppFixtures extends Fixture
 {
     public function load(ObjectManager $manager): void
