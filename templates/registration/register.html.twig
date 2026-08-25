@@ -1,29 +1,136 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Register{% endblock %}
+{% block title %}{{ 'auth.create_account_title'|trans }}{% endblock %}
 
 {% block body %}
-    {% for flash_error in app.flashes('verify_email_error') %}
-        <div class="alert alert-danger" role="alert">{{ flash_error }}</div>
-    {% endfor %}
+    <div class="min-h-screen bg-stone-200 font-sans text-slate-950">
+        <main class="mx-auto min-h-screen w-full max-w-md bg-[#f8f8ff] px-5 pb-12 pt-6 shadow-xl lg:my-10 lg:min-h-0 lg:max-w-2xl lg:rounded-3xl lg:px-10 lg:py-10">
+            {{ include('components/_brand.html.twig') }}
+            <h1 class="mt-8 text-center text-2xl font-bold">{{ 'auth.create_account'|trans }}</h1>
 
-    <h1>Register</h1>
+            <div class="mt-7 grid grid-cols-2 overflow-hidden rounded-xl bg-slate-100 text-lg font-semibold">
+                <a href="{{ path('app_login') }}" class="flex h-14 items-center justify-center text-slate-950">{{ 'auth.login'|trans }}</a>
+                <span class="flex h-14 items-center justify-center bg-red-600 text-white">{{ 'auth.registration'|trans }}</span>
+            </div>
 
-    {{ form_errors(registrationForm) }}
+            {% for flash_error in app.flashes('verify_email_error') %}
+                <div class="mt-5 rounded-xl border-l-4 border-red-600 bg-red-50 px-4 py-3 text-sm text-red-700" role="alert">
+                    {{ flash_error }}
+                </div>
+            {% endfor %}
 
-    {{ form_start(registrationForm) }}
-        {{ form_row(registrationForm.firstName) }}
-        {{ form_row(registrationForm.lastName) }}
-        {{ form_row(registrationForm.email) }}
-        {{ form_row(registrationForm.plainPassword.first) }}
-        {{ form_row(registrationForm.plainPassword.second) }}
-        {{ form_row(registrationForm.city) }}
-        {{ form_row(registrationForm.agreeTerms) }}
-        <p>
-            <a href="{{ path('app_legal_terms') }}">Conditions générales d'utilisation</a>
-            <a href="{{ path('app_legal_privacy') }}">Politique de confidentialité</a>
-        </p>
+            {{ form_start(registrationForm, { attr: { class: 'mt-8 space-y-5', novalidate: 'novalidate' } }) }}
+                {% set globalFormErrors = form_errors(registrationForm) %}
+                {% if globalFormErrors|striptags|trim is not empty %}
+                    <div class="rounded-xl border-l-4 border-red-600 bg-red-50 px-4 py-3 text-sm text-red-700" role="alert">
+                        {{ globalFormErrors }}
+                    </div>
+                {% endif %}
 
-        <button type="submit" class="btn">Register</button>
-    {{ form_end(registrationForm) }}
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        {{ form_label(registrationForm.firstName, null, { label_attr: { class: 'mb-2 block text-sm font-semibold' } }) }}
+                        <div class="flex h-14 items-center gap-2 rounded-xl border border-red-200 bg-white px-3 focus-within:border-red-500 focus-within:ring-2 focus-within:ring-red-100">
+                            {{ include('components/_icon.html.twig', {name: 'user', class: 'size-5 shrink-0 text-stone-500'}) }}
+                            {{ form_widget(registrationForm.firstName, { attr: { class: 'min-w-0 flex-1 border-0 bg-transparent text-sm outline-none placeholder:text-stone-400' } }) }}
+                        </div>
+                        <div class="mt-1 text-xs text-red-600">{{ form_errors(registrationForm.firstName) }}</div>
+                    </div>
+                    <div>
+                        {{ form_label(registrationForm.lastName, null, { label_attr: { class: 'mb-2 block text-sm font-semibold' } }) }}
+                        <div class="flex h-14 items-center gap-2 rounded-xl border border-red-200 bg-white px-3 focus-within:border-red-500 focus-within:ring-2 focus-within:ring-red-100">
+                            {{ include('components/_icon.html.twig', {name: 'user', class: 'size-5 shrink-0 text-stone-500'}) }}
+                            {{ form_widget(registrationForm.lastName, { attr: { class: 'min-w-0 flex-1 border-0 bg-transparent text-sm outline-none placeholder:text-stone-400' } }) }}
+                        </div>
+                        <div class="mt-1 text-xs text-red-600">{{ form_errors(registrationForm.lastName) }}</div>
+                    </div>
+                </div>
+
+                <div>
+                    {{ form_label(registrationForm.email, null, { label_attr: { class: 'mb-2 block text-sm font-semibold' } }) }}
+                    <div class="flex h-14 items-center gap-3 rounded-xl border border-red-200 bg-white px-4 focus-within:border-red-500 focus-within:ring-2 focus-within:ring-red-100">
+                        {{ include('components/_icon.html.twig', {name: 'mail', class: 'size-5 shrink-0 text-stone-500'}) }}
+                        {{ form_widget(registrationForm.email, { attr: { class: 'min-w-0 flex-1 border-0 bg-transparent text-sm outline-none placeholder:text-stone-400' } }) }}
+                    </div>
+                    <div class="mt-1 text-xs text-red-600">{{ form_errors(registrationForm.email) }}</div>
+                </div>
+
+                <div>
+                    {{ form_label(registrationForm.plainPassword.first, null, { label_attr: { class: 'mb-2 block text-sm font-semibold' } }) }}
+                    <div class="flex h-14 items-center gap-3 rounded-xl border border-red-200 bg-white px-4 focus-within:border-red-500 focus-within:ring-2 focus-within:ring-red-100" data-controller="password-visibility">
+                        {{ include('components/_icon.html.twig', {name: 'lock', class: 'size-5 shrink-0 text-stone-500'}) }}
+                        {{ form_widget(registrationForm.plainPassword.first, {
+                            attr: {
+                                class: 'min-w-0 flex-1 border-0 bg-transparent text-sm outline-none placeholder:text-stone-400',
+                                'data-password-visibility-target': 'input'
+                            }
+                        }) }}
+                        <button type="button" class="flex size-9 items-center justify-center text-lg text-stone-500" data-action="password-visibility#toggle" aria-label="{{ 'auth.toggle_password'|trans }}" aria-pressed="false">
+                            <span data-password-visibility-target="icon" aria-hidden="true">{{ include('components/_icon.html.twig', {name: 'eye', class: 'size-5'}) }}</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div>
+                    {{ form_label(registrationForm.plainPassword.second, null, { label_attr: { class: 'mb-2 block text-sm font-semibold' } }) }}
+                    <div class="flex h-14 items-center gap-3 rounded-xl border border-red-200 bg-white px-4 focus-within:border-red-500 focus-within:ring-2 focus-within:ring-red-100" data-controller="password-visibility">
+                        {{ include('components/_icon.html.twig', {name: 'lock', class: 'size-5 shrink-0 text-stone-500'}) }}
+                        {{ form_widget(registrationForm.plainPassword.second, {
+                            attr: {
+                                class: 'min-w-0 flex-1 border-0 bg-transparent text-sm outline-none placeholder:text-stone-400',
+                                'data-password-visibility-target': 'input'
+                            }
+                        }) }}
+                        <button type="button" class="flex size-9 items-center justify-center text-lg text-stone-500" data-action="password-visibility#toggle" aria-label="{{ 'auth.toggle_confirmation'|trans }}" aria-pressed="false">
+                            <span data-password-visibility-target="icon" aria-hidden="true">{{ include('components/_icon.html.twig', {name: 'eye', class: 'size-5'}) }}</span>
+                        </button>
+                    </div>
+                    <div class="mt-1 text-xs text-red-600">{{ form_errors(registrationForm.plainPassword) }}</div>
+                </div>
+
+                <div>
+                    {{ form_label(registrationForm.city, null, { label_attr: { class: 'mb-2 block text-sm font-semibold' } }) }}
+                    <div class="flex h-14 items-center gap-3 rounded-xl border border-red-200 bg-white px-4 focus-within:border-red-500 focus-within:ring-2 focus-within:ring-red-100">
+                        {{ include('components/_icon.html.twig', {name: 'pin', class: 'size-5 shrink-0 text-stone-500'}) }}
+                        {{ form_widget(registrationForm.city, { attr: { class: 'min-w-0 flex-1 appearance-none border-0 bg-transparent text-sm outline-none' } }) }}
+                        <span class="text-stone-500" aria-hidden="true">⌄</span>
+                    </div>
+                    <div class="mt-1 text-xs text-red-600">{{ form_errors(registrationForm.city) }}</div>
+                </div>
+
+                <div>
+                    {{ form_label(registrationForm.interfaceLanguage, null, { label_attr: { class: 'mb-2 block text-sm font-semibold' } }) }}
+                    <div class="flex h-14 items-center gap-3 rounded-xl border border-red-200 bg-white px-4">
+                        {{ include('components/_icon.html.twig', {name: 'language', class: 'size-5 shrink-0 text-stone-500'}) }}
+                        {{ form_widget(registrationForm.interfaceLanguage, { attr: { class: 'min-w-0 flex-1 appearance-none border-0 bg-transparent text-sm outline-none' } }) }}
+                        <span class="text-stone-500" aria-hidden="true">⌄</span>
+                    </div>
+                </div>
+
+                <div class="pt-2">
+                    <div class="flex items-start gap-3 text-xs leading-relaxed text-stone-600">
+                        {{ form_widget(registrationForm.agreeTerms, { attr: { class: 'mt-0.5 size-5 shrink-0 accent-red-600' } }) }}
+                        <div>
+                            <label for="{{ registrationForm.agreeTerms.vars.id }}" class="cursor-pointer">{{ registrationForm.agreeTerms.vars.label }}</label>
+                            <span class="mt-1 flex flex-wrap gap-x-3 gap-y-1 font-semibold text-red-700">
+                                <a href="{{ path('app_legal_terms') }}" class="underline underline-offset-2">{{ 'legal.terms_title'|trans }}</a>
+                                <a href="{{ path('app_legal_privacy') }}" class="underline underline-offset-2">{{ 'legal.privacy_title'|trans }}</a>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="mt-1 text-xs text-red-600">{{ form_errors(registrationForm.agreeTerms) }}</div>
+                </div>
+
+                <button type="submit" class="flex h-[4.5rem] w-full items-center justify-center gap-3 rounded-[1.15rem] bg-red-600 text-xl font-semibold text-white shadow-sm transition hover:bg-red-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600">
+                    {{ include('components/_icon.html.twig', {name: 'user-plus', class: 'size-6'}) }}
+                    {{ 'auth.create_account_button'|trans }}
+                </button>
+            {{ form_end(registrationForm) }}
+
+            <p class="mt-6 text-center text-sm text-stone-500">
+                {{ 'auth.already_account'|trans }}
+                <a href="{{ path('app_login') }}" class="font-semibold text-red-600 underline">{{ 'auth.sign_in'|trans }}</a>
+            </p>
+        </main>
+    </div>
 {% endblock %}

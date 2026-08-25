@@ -1,0 +1,684 @@
+common:
+    back: Back
+    cancel: Cancel
+    close: Close
+    continue: Continue
+    back_home: 'Back to home'
+    search: Search
+    all: All
+    view_all: 'View all'
+    on_date: 'On %date%'
+    recent: Newest
+    oldest: Oldest
+    remove_all: 'Remove all'
+    view_detail: 'View details'
+    share_email: 'Share by email'
+    start_search: 'Start search'
+    change_search_filter: 'Change your search or filter.'
+    change_search_retry: 'Change your search or try again later.'
+    updated_at: 'Updated at %time%'
+    directions: Directions
+    near_you: 'Around you'
+    nearby: Nearby
+    result_count: 'Results: %count%'
+    results: Results
+    clear: Clear
+    open: Open
+    call: Call
+    no_result: 'No results found'
+    add: Add
+    remove: Remove
+    detail: Details
+    edit: Edit
+    submit: Submit
+    total: Total
+    settings: Settings
+    back_list: 'Back to list'
+    save_changes: 'Save changes'
+    delete: Delete
+    time_unavailable: 'Time unavailable'
+
+brand:
+    tagline: 'Report, inform, take action'
+
+nav:
+    main: 'Main navigation'
+    home: Home
+    map: Map
+    report: Report
+    services: Services
+    news: News
+
+notification:
+    report_update_title: 'Report #%id% updated'
+    report_status:
+        reported: 'Your report is now recorded.'
+        in_progress: 'Your report is now being handled.'
+        resolved: 'Your report is now resolved.'
+    moderation_hidden_title: 'Content hidden after moderation'
+    moderation_hidden_message: 'One of your posts has been hidden. Reason: %reason%'
+    event_reminder_title: 'Reminder: %event%'
+    event_reminder_message: 'Your event “%event%” starts on %date% at %location%.'
+    unread_count: '%count% unread'
+    mark_all_read: 'Mark all as read'
+    mark_read: 'Mark as read'
+    none: 'No notifications'
+    none_help: 'SafeCity alerts will appear here.'
+    enable_alerts: 'Enable alerts'
+    title: Notifications
+
+auth:
+    resend_confirmation: 'Resend confirmation email'
+    resend_confirmation_help: 'Enter the email address used when you registered.'
+    login_title: 'Log in to SafeCity'
+    create_account_title: 'Create a SafeCity account'
+    create_account: 'Create your account'
+    login: Log in
+    registration: Sign up
+    toggle_password: 'Show or hide password'
+    toggle_confirmation: 'Show or hide password confirmation'
+    create_account_button: 'Create an account'
+    already_account: 'Already have an account?'
+    sign_in: 'Log in'
+    logout: 'Log out'
+    invalid_credentials: 'Incorrect credentials. Check your email address and password.'
+    account_disabled: 'This account is disabled.'
+    email_not_verified: 'Please confirm your email address before logging in.'
+    logged_in_as: 'You are logged in as %email%.'
+    forgot_password: 'Forgot your password?'
+    login_terms: 'By logging in, you accept our Terms of Use and Privacy Policy.'
+
+legal:
+    terms_title: 'Terms of Use'
+    privacy_title: 'Privacy Policy'
+
+form:
+    first_name: 'First name'
+    last_name: 'Last name'
+    email: 'Email address'
+    password: Password
+    password_minimum: 'At least 8 characters'
+    password_confirm: 'Confirm password'
+    new_password: 'New password'
+    password_repeat: 'Repeat password'
+    city: 'City of residence'
+    city_placeholder: 'Choose your city'
+    interface_language: 'Interface language'
+    accept_terms: 'I accept the Terms of Use and the Privacy Policy.'
+    emergency_notifications: 'Emergency notifications'
+    transport_notifications: 'Transport disruptions'
+    event_reminders: 'Event reminders'
+    camera_access: 'Camera access'
+    location_access: 'Location access'
+    language: Language
+    report_category: 'Incident type'
+    report_description: 'Incident description'
+    report_description_placeholder: 'Describe the incident briefly…'
+    gravity: Severity
+    destination_service: 'Recipient service'
+    awaiting_assignment: 'Awaiting assignment'
+    add_comment: 'Add a comment'
+    add_comment_placeholder: 'Add a comment…'
+    add_photo: 'Add a photo'
+
+profile:
+    title: Profile
+    city_missing: 'City not specified'
+    administrator: Administrator
+    personal_information: 'Personal information'
+    update_information: 'Update information'
+    preferences: Preferences
+    preferences_summary: 'Notifications, permissions and language'
+    notifications_and_alerts: 'Notifications and alerts'
+    permissions: Permissions
+    permissions_help: 'Camera access enables taking photos without blocking images from your gallery. If location access is disabled, SafeCity never requests your GPS position.'
+    save_preferences: 'Save preferences'
+    links: 'Profile links'
+    report_history: 'Report history'
+    favorite_events: 'My favourite events'
+    admin_area: 'Administrator area'
+    disable_account: 'Disable my account'
+    disable_question: 'Disable your account?'
+    disable_explanation: 'This action logs you out, blocks future logins, immediately anonymises your name and email address, and removes sensitive permissions. Reports already submitted are kept for municipal follow-up.'
+    disable_confirm: 'Confirm deactivation'
+    update_preferences: 'Update my preferences'
+    administration: Administration
+    open: 'Open my profile'
+
+location:
+    disabled: 'Location access is disabled in your preferences.'
+    enable_for_city: 'Enable location access in your profile to detect your city.'
+    unavailable: 'Location services are not available on this device.'
+    searching: 'Finding your position…'
+    city_error: 'Unable to get your position. Check your browser permissions.'
+    no_city_coordinates: 'No city has usable coordinates.'
+    city_detected: 'City detected: %city%. Updating…'
+    confirmed: 'Location confirmed.'
+    enable_for_report: 'Enable location access in your profile to use your position.'
+    report_error: 'Position unavailable. Check the browser permission.'
+    address_searching: 'Coordinates received, looking up the address…'
+    address_unavailable: 'Coordinates confirmed; detailed address unavailable.'
+    use_position: 'Use my position'
+    address_provider: 'Address provided by'
+    unavailable_short: 'Location unavailable.'
+    map_centered: 'Map centred on your position.'
+    position_error: 'Unable to get your position.'
+    center_map: 'Centre map on my position'
+
+city:
+    choose: 'Choose my city'
+    toulouse_area: 'Toulouse metropolitan area'
+    search_placeholder: 'Search for a city…'
+    search: 'Search for a city'
+    current: 'Currently selected city'
+    none: 'No city'
+    none_selected: 'No city selected'
+    selected: 'Selected city'
+    use_gps: 'Use my GPS position'
+    gps_help: 'Automatically detect the nearest available city'
+    all: 'All municipalities'
+    count: 'Municipalities: %count%'
+    no_result: 'No city matches your search.'
+    postal_code: 'Postcode: %code%'
+    your_city: 'Your city'
+    center: '%city% - Centre'
+
+home:
+    title: 'SafeCity Home'
+    quick_actions: 'Quick actions'
+    an_incident: 'an incident'
+    live_incidents: 'Live incidents'
+    health_emergencies: 'Health emergencies'
+    doctors_pharmacies: 'Doctors / Pharmacies'
+    local_info: 'Local information'
+    no_local_info: 'No local information.'
+
+parking:
+    title: Car parks
+    free_and_paid: 'Free and paid'
+    nearby: 'Nearby car parks'
+    nearby_count: 'Nearby car parks: %count%'
+    view_spaces: 'View spaces'
+    view: 'View car parks'
+    search: 'Search around an address'
+    search_placeholder: 'Address or area…'
+    filter: 'Filter car parks'
+    available_plural: Available
+    free_plural: Free
+    paid_plural: Paid
+    map_preview: 'Map preview of car parks'
+    referenced_preview: 'Preview of listed car parks'
+    none_found: 'No car park found'
+    free: Free
+    paid: Paid
+    hourly_rate: '%price% / hour'
+    space_count: 'Available spaces: %count%'
+    out_of: 'of %total%'
+    near_me: 'Near me'
+    locate: 'Locate me'
+    location_help: 'Enter an address or use your location.'
+    location_disabled: 'Location is disabled in your preferences.'
+    location_enable: 'Enable location in your preferences.'
+    location_unavailable: 'Location is not available on this device.'
+    location_searching: 'Finding your location…'
+    location_error: 'Your location could not be obtained.'
+    geocoding_searching: 'Searching for this address…'
+    geocoding_error: 'The address search service is temporarily unavailable.'
+    address_not_found: 'This address could not be found.'
+    change_location_preference: 'Change location preference'
+    sorted_by_device: 'Car parks sorted from nearest to farthest.'
+    sorted_by_address: 'Car parks sorted around “%address%”.'
+    map_title: 'Car park map'
+    map_help: 'Tap a marker to view its information.'
+    distance_km: '%distance% km away'
+    your_position: 'Your location'
+    search_origin: 'Searched address'
+
+transport:
+    title: Transport
+    network: 'Tisséo network'
+    network_title: 'Transport network'
+    local_network: '%city% · Local network'
+    none: 'No transport information available.'
+    disrupted: Disrupted
+    disrupted_feminine: Disrupted
+    disrupted_plural: Disrupted
+    ok: Normal
+    traffic_info: 'Traffic information'
+    disruption_count: 'Current disruptions: %count%'
+    no_disruption: 'No reported disruptions'
+    line_count: 'Listed lines: %count%'
+    view_network: 'View network'
+    line_status: 'Line status'
+    normal_traffic: 'Normal service'
+    no_line_city: 'No lines are available for your city.'
+    search_line: 'Search for a line'
+    network_alerts: 'Network alerts'
+    network_status: 'Network status'
+    filter: 'Filter transport'
+    no_line: 'No line found'
+    unknown: Unavailable
+    data_unavailable: 'Tisséo data unavailable'
+    data_unavailable_help: 'The public service is not responding at the moment. Please try again shortly.'
+    realtime_unavailable: 'Real-time data temporarily unavailable'
+    theoretical_still_available: 'Lines and scheduled timetables remain available.'
+    schedules: 'Timetables by stop'
+    schedules_help: 'Choose a metro, tram or Linéo L1 stop.'
+    choose_stop: Stop
+    choose_stop_placeholder: 'Choose a stop'
+    show_departures: 'Show next departures'
+    next_departures: 'Next departures'
+    next_hours: '6 hours'
+    no_departure: 'No departure is scheduled in the next six hours.'
+    direction_unavailable: 'Direction unavailable'
+    realtime_time: 'Real-time departure'
+    theoretical_time: 'Scheduled departure'
+    opendata_attribution: 'Data: Tisséo Voyageurs / Toulouse Métropole Open Data — ODbL licence.'
+    type:
+        metro: Metro
+        bus: Bus
+        tram: Tram
+
+mobility:
+    title: Mobility
+    back: 'Back to mobility'
+    realtime_travel: 'Your journeys in real time'
+    access: 'Mobility access'
+    route_problem: 'A problem on your journey?'
+    report_community: 'Report it to the community'
+    transport_parking: 'Transport and car parks'
+
+service:
+    title: Services
+    back: 'Back to services'
+    search: 'Search for a service'
+    main_city_hall: 'Main town hall'
+    your_city_hall: 'Your town hall'
+    what_need: 'What do you need?'
+    city_services: 'City services'
+    city_services_help: 'Town hall, culture, urban planning'
+    pharmacies: Pharmacies
+    on_duty_hours: 'On-call services and opening hours'
+    doctors: Doctors
+    on_duty_doctors: 'On-call doctors'
+    on_duty_pharmacies: 'On-call pharmacies'
+    no_result: 'No service matches your search.'
+    search_city: 'Search for a municipal service'
+    search_city_placeholder: 'Town hall, library, urban planning…'
+    none_found: 'No service found'
+    pharmacy_search: 'Name or address…'
+    doctor_search: 'Doctor’s name or address…'
+    filter_availability: 'Filter availability'
+    on_duty: 'On call'
+    always_open: 'Open 24/7'
+    nearby_alternatives: 'Nearby on-call alternatives'
+    emergency_call: 'In an emergency, call 15 or 112.'
+    availability_notice: 'Displayed availability is indicative and depends on the local information recorded.'
+    near_me: 'Near me'
+    locate: 'Locate me'
+    location_disabled: 'Location is disabled in your preferences.'
+    location_enable: 'Enable location in your preferences.'
+    location_unavailable: 'Location is not available on this device.'
+    location_searching: 'Finding your location…'
+    location_error: 'Your location could not be obtained.'
+    location_help: 'Use your location to sort results by distance.'
+    change_location_preference: 'Change location preference'
+    sorted_by_distance: 'Results sorted from nearest to farthest.'
+    map_title: 'Map of professionals'
+    map_help: 'Tap a marker to view its information.'
+    distance_km: '%distance% km away'
+    your_position: 'Your location'
+    section:
+        administrative: 'Administrative services'
+        culture_libraries: 'Culture and libraries'
+        education: Education
+        urban_environment: 'Urban planning and environment'
+
+report:
+    recent: 'Recent reports'
+    no_recent: 'No recent reports in your city.'
+    report_incident: 'Report an incident'
+    title: Reports
+    new: 'New report'
+    management: 'Report management'
+    all: 'All reports'
+    my_reports: 'My reports'
+    automatic_location: 'Automatic location'
+    photos_max: 'Photos (maximum 3)'
+    photo_preview: 'Photo preview'
+    remove_photo: 'Remove this photo'
+    delete_confirm: 'Permanently delete this report and its photos?'
+    take_photo: 'Take a photo'
+    gallery_available: 'The gallery remains available.'
+    enable_camera: 'Enable the camera'
+    take_directly: 'to take a photo directly.'
+    photo_formats: 'JPG, PNG or WebP · maximum 5 MB per photo.'
+    tracking: 'Track your report'
+    tracking_help: 'After submitting, track progress from your profile or the interactive map.'
+    submit: 'Submit report'
+    submit_help: 'The report will be saved and then handled by the response team.'
+    address_missing: 'Address not provided'
+    follow: Track
+    file_count: 'Cases: %count%'
+    list: 'List of reports'
+    assigned_to: 'Assigned to %service%'
+    awaiting_assignment: 'Awaiting assignment'
+    comment_count: 'Comments: %count%'
+    take: Accept
+    resolve: Resolve
+    none_recorded: 'No reports recorded.'
+    my_stats: 'My report statistics'
+    filter_mine: 'Filter my reports'
+    count: 'Reports: %count%'
+    none: 'No reports'
+    none_category: 'You have no reports in this category.'
+    show_map: 'Show map'
+    stats: 'Report statistics'
+    search: 'Search reports'
+    search_placeholder: 'Type, place, keywords…'
+    filter: 'Filter reports'
+    data_updated: 'Updated with recorded data'
+    none_found: 'No report found'
+    map: 'Incident map'
+    filter_incidents: 'Filter incidents'
+    interactive_map: 'Interactive incident map'
+    map_loading: 'Loading incidents…'
+    map_load_error: 'The map cannot load the incidents.'
+    map_count: 'Geolocated incidents: %count%'
+    incident: Incident
+    realtime_unavailable: 'Map active · real-time updates temporarily unavailable'
+    visible_incidents: 'Visible incidents'
+    none_city: 'There are currently no reports in your city.'
+    follow_title: 'Report #%id% tracking'
+    back: 'Back to report'
+    my_tracking: 'Track my report'
+    number: 'Report #%id%'
+    transmitted_to: 'Sent to'
+    transmission: Transmission
+    event_history: 'Event history'
+    sent: 'Report submitted'
+    received_system: 'Received by the system'
+    triage_done: 'Triage completed'
+    gravity_value: 'Severity: %gravity%'
+    routed_to: 'Routed to %service%'
+    service_received: 'A service has received the report'
+    awaiting_handling: 'Awaiting handling'
+    resolution: Resolution
+    marked_resolved: 'The report has been marked as resolved'
+    awaiting_intervention: 'Awaiting intervention'
+    tracking_notifications: 'Tracking notifications'
+    security_alerts_on: 'Safety alerts enabled'
+    security_alerts_off: 'Safety alerts disabled'
+    status_realtime_help: 'Status changes are broadcast in real time on the report map.'
+    edit_title: 'Edit report #%id%'
+    edit_short: 'Edit #%id%'
+    active_services_only: 'Only active services can be selected.'
+    saved_location: 'Saved location'
+    back_map: 'Back to map'
+    detail: 'Report details'
+    current_status: 'Current status'
+    updated: 'Updated on %date%'
+    reported_on: 'Reported on %date%'
+    description_missing: 'No description provided.'
+    photo_count: 'Photos: %count%'
+    report_photo: 'Report photo'
+    location: 'Report location'
+    view_tracking: 'View tracking'
+    comments_count: 'Comments: %count%'
+    safecity_user: 'SafeCity user'
+    added_photo_count: 'Photos added: %count%'
+    added_photo_one: '1 photo added'
+    comment_photo: 'Photo added to the comment'
+    no_comment: 'No comments yet.'
+    send_comment: 'Send comment'
+    gallery_camera_disabled: 'The gallery remains available; taking photos is disabled in your profile.'
+    category:
+        accident: Accident
+        accident_plural: Accidents
+        travaux: Roadworks
+        incivilite: 'Antisocial behaviour'
+        incendie: Fire
+        sante: Health
+        route: 'Road incident'
+        autre: Other
+        emergency_plural: Emergencies
+    status:
+        reported: Reported
+        in_progress: 'In progress'
+        resolved: Resolved
+        sent: Sent
+        reported_plural: Reported
+        resolved_plural: Resolved
+
+gravity:
+    low: Low
+    medium: Moderate
+    high: High
+    low_help: 'No immediate emergency'
+    medium_help: 'Intervention recommended'
+    high_help: 'Emergency — assistance required'
+
+moderation:
+    title: Moderation
+    queue: 'Moderation queue'
+    item_count: '%count% item(s)'
+    pending_count: '%count% item(s) to review'
+    awaiting_decision: 'Content is awaiting your decision'
+    nothing_to_review: 'No content to review'
+    migration_pending: 'Moderation migration pending'
+    actions_help: 'Hide, dismiss or restore without physically deleting content.'
+    schema_pending: 'The moderation migration has been created but not run. No content is deleted or hidden.'
+    comment: Comment
+    photo: Photo
+    reported_on: 'Reported on %date%'
+    source_missing: 'The source content no longer exists.'
+    photo_to_review: 'Photo to review'
+    author: Author
+    account_unavailable: 'Account unavailable'
+    hide: Hide
+    dismiss: 'Dismiss report'
+    reopen: 'Reopen case'
+    none: 'No reported content.'
+    status:
+        flagged: 'To review'
+        hidden: Hidden
+        dismissed: Dismissed
+    flag: Report
+    flag_photo: 'Report this photo'
+    reason:
+        inappropriate: 'Inappropriate content'
+        personal_data: 'Personal data'
+        dangerous: 'Dangerous content'
+        spam: Spam
+
+admin:
+    navigation: 'Administrator navigation'
+    space: 'Administrator area'
+    dashboard: Dashboard
+    citizen_space: 'View citizen area'
+    statistics: Statistics
+    pending: Pending
+    routing: Routing
+    report_routing: 'Report routing'
+    configurable: Configurable
+    automatic_rules: 'Automatic rules'
+    automatic_rules_help: 'Set the service according to category, severity and priority. Manual assignment remains available.'
+    configure_routing: 'Configure routing'
+    reports_to_process: 'Reports to process'
+    no_report_to_process: 'No reports to process.'
+    users: Users
+    user_search: 'Name or email address…'
+    accounts: Accounts
+    result_count: '%count% result(s)'
+    role: ADMIN
+    no_city: 'No city'
+    registered_on: 'Registered on %date%'
+    active: Active
+    disabled: Disabled
+    no_user: 'No users found.'
+    routing_automatic: 'Automatic routing'
+    routing_subtitle: 'Category, severity and priority'
+    routing_schema_pending: 'The routing migration has been created but not run. Reports continue to use manual assignment.'
+    new_rule: 'New rule'
+    configured_rules: 'Configured rules'
+    all_categories: 'All categories'
+    priority_value: 'priority %priority%'
+    active_feminine: Active
+    inactive_feminine: Inactive
+    disable: Disable
+    enable: Enable
+    no_rule: 'No rules available.'
+    edit_routing_rule: 'Edit a routing rule'
+    edit_rule: 'Edit rule'
+    save_rule: 'Save rule'
+    category: Category
+    priority: Priority
+    priority_help: 'The lowest value is applied first.'
+    rule_enabled: 'Rule enabled'
+    back_dashboard: 'Back to dashboard'
+    status:
+        reported: Received
+        in_progress: 'In progress'
+        resolved: Resolved
+
+community:
+    title: Community
+    nearby_incidents: 'Incidents reported around you'
+    statistics: 'Community statistics'
+    active: Active
+    this_month: 'This month'
+    around_me: 'around me'
+    map_preview: 'Incident map preview'
+    local_view: 'Local view – 500 m'
+    open_map: 'Open map'
+    report_feed: 'Report feed'
+    unknown_location: 'Unknown location'
+    no_city_report: 'No reports for your city.'
+    recent_comments: 'Recent comments'
+    anonymous: Anonymous
+
+news:
+    title: News
+    all_title: 'All news'
+    live: Live
+    filter: 'Filter news'
+    featured_now: 'Featured now'
+    reading_time: '%minutes% min read'
+    latest: 'Latest news'
+    none_city: 'No news is available for your city.'
+    back: 'Back to news'
+    search_placeholder: 'Search articles…'
+    count: 'Articles: %count%'
+    no_result: 'No article matches your search.'
+    category:
+        security: Safety
+        health: Health
+        mobility: Mobility
+        works: Roadworks
+
+event:
+    title: Events
+    favorites: Favourites
+    my_favorites: 'My favourite events'
+    my_favorites_short: 'My favourites'
+    city_area: '%city% and surrounding area'
+    search_placeholder: 'Search for an event…'
+    filter: 'Filter events'
+    featured: 'Featured event'
+    add_favorite: 'Add to favourites'
+    remove_favorite: 'Remove from favourites'
+    coming_soon: 'Coming soon'
+    upcoming: 'Upcoming events'
+    none_upcoming: 'No upcoming events.'
+    none_city: 'There are currently no events in your city.'
+    back: 'Back to events'
+    reminders_disabled: 'General reminders disabled'
+    reminders_disabled_help: 'Enable “Event reminders” in your profile to receive the reminders you select.'
+    favorites_summary: 'Favourites summary'
+    saved_count: 'Saved events: %count%'
+    saved_help: 'Find the events you want to follow here.'
+    explore_category: 'Explore by category'
+    saved_events: 'Saved events'
+    reminder_on: 'Reminder enabled'
+    reminder_off: 'Reminder disabled'
+    none_saved: 'No saved events.'
+    discover: 'Discover events'
+    discover_more: 'Discover more events'
+    near_you: 'All events available near you'
+    category:
+        music: Music
+        sport: Sport
+        culture: Culture
+
+flash:
+    confirmation_email_requested: 'If an unverified account matches this address, a new confirmation email has been sent.'
+    report_status_updated: 'Report #%id% status has been updated.'
+    moderation_decision_saved: 'The moderation decision has been saved.'
+    moderation_already_open: 'This content is already under review.'
+    moderation_submitted: 'The content has been sent for moderation.'
+    moderation_schema_required: 'The moderation migration must be applied before content can be reported.'
+    routing_rule_created: 'The routing rule has been created.'
+    routing_rule_updated: 'The routing rule has been updated.'
+    city_updated: 'Your city has been updated: %city%'
+    event_favorites_cleared: 'All events have been removed from your favorites.'
+    event_favorite_removed: 'The event has been removed from your favorites.'
+    event_favorite_added: 'Event added with an automatic reminder 24 hours beforehand.'
+    event_reminder_enabled: 'The reminder for this event is enabled.'
+    event_reminder_disabled: 'The reminder for this event is disabled.'
+    choose_city_first: 'Choose your city before creating a report.'
+    media_upload_failed: 'A photo could not be saved. Check its format and size, then try again.'
+    report_save_failed: 'The report could not be saved. No incomplete photo was kept.'
+    report_sent: 'Your report has been submitted.'
+    comment_save_failed: 'The comment could not be saved. No incomplete photo was kept.'
+    comment_added: 'Your comment has been added.'
+    account_created: 'Your account has been created. Check your email to confirm it.'
+    email_confirmed: 'Your email address has been confirmed.'
+    profile_updated: 'Your information has been updated.'
+    preferences_updated: 'Your preferences have been updated.'
+
+email:
+    moderation:
+        subject: 'One of your posts has been hidden on SafeCity'
+        body: "Hello,\n\nContent posted from your account was hidden after moderation.\nReason: %reason%\n\nThe SafeCity team"
+    greeting: Hello!
+    signature: 'The SafeCity team'
+    confirm:
+        subject: 'Confirm your email address'
+        heading: 'Confirm your email address'
+        instructions: 'Confirm your email address by clicking the following link:'
+        action: 'Confirm my email address'
+        expiry: 'This link will expire %expiration%.'
+    reset:
+        subject: 'Reset your password'
+        instructions: 'To reset your password, use the following link:'
+        expiry: 'This link will expire %expiration%.'
+
+security:
+    invalid_token: 'Invalid security token.'
+    city_unavailable: 'This city is not available.'
+    favorite_not_owned: 'This favorite does not belong to you.'
+    notification_not_owned: 'This notification does not belong to you.'
+    content_wrong_city: 'This content does not concern your city.'
+    own_content: 'You cannot report your own content.'
+    report_wrong_city: 'This report does not concern your city.'
+    report_not_owned: 'You cannot track this report.'
+
+reset:
+    forgot_title: 'Forgot your password'
+    back_to_login: 'Back to login'
+    reset_password: 'Reset your password'
+    request_help: 'Enter the email address associated with your account. We will send you a secure, time-limited link.'
+    send_link: 'Send reset link'
+    limited_link: 'Time-limited link.'
+    expiry_help: 'The link will expire after the specified security period.'
+    email_sent_title: 'Password reset email sent'
+    check_inbox: 'Check your inbox'
+    email_sent_security: 'If an account matches this address, a secure link has just been sent.'
+    email_sent: 'Email sent'
+    email_if_account: 'If an account exists for this address, you will receive a reset link shortly.'
+    email_expiry: 'The link will expire %expiration%. Also check your spam folder.'
+    resend_link: 'Send another link'
+    choose_new_title: 'Choose a new password'
+    new_password: 'New password'
+    secure_account: 'Secure your account'
+    save_new_password: 'Save new password'

@@ -1,0 +1,943 @@
+common:
+    back: Retour
+    cancel: Annuler
+    close: Fermer
+    continue: Continuer
+    back_home: 'Retour à l’accueil'
+    search: Chercher
+    all: Tous
+    view_all: 'Voir tout'
+    on_date: 'Le %date%'
+    recent: Récents
+    oldest: 'Plus anciens'
+    remove_all: 'Tout supprimer'
+    view_detail: 'Voir le détail'
+    share_email: 'Partager par e-mail'
+    start_search: 'Lancer la recherche'
+    change_search_filter: 'Modifiez votre recherche ou votre filtre.'
+    change_search_retry: 'Modifiez votre recherche ou réessayez plus tard.'
+    updated_at: 'Mis à jour à %time%'
+    directions: Itinéraire
+    near_you: 'Autour de vous'
+    nearby: 'À proximité'
+    result_count: 'Résultats : %count%'
+    results: Résultats
+    clear: Effacer
+    open: Ouvert
+    call: Appeler
+    no_result: 'Aucun résultat trouvé'
+    add: Ajouter
+    remove: Retirer
+    detail: Détail
+    edit: Modifier
+    submit: Transmettre
+    total: Total
+    settings: Réglages
+    back_list: 'Retour à la liste'
+    save_changes: 'Enregistrer les modifications'
+    delete: Supprimer
+    time_unavailable: 'Heure indisponible'
+
+brand:
+    tagline: 'Signalez, informez, agissez'
+
+nav:
+    main: 'Navigation principale'
+    home: Accueil
+    map: Carte
+    report: Signaler
+    services: Services
+    news: Actualités
+
+notification:
+    report_update_title: 'Mise à jour du signalement #%id%'
+    report_status:
+        reported: 'Votre signalement est maintenant enregistré.'
+        in_progress: 'Votre signalement est maintenant pris en compte.'
+        resolved: 'Votre signalement est maintenant résolu.'
+    moderation_hidden_title: 'Contenu masqué après modération'
+    moderation_hidden_message: 'Un de vos contenus a été masqué. Motif : %reason%'
+    event_reminder_title: 'Rappel : %event%'
+    event_reminder_message: 'Votre événement « %event% » commence le %date% à %location%.'
+    unread_count: '%count% non lue(s)'
+    mark_all_read: 'Tout marquer comme lu'
+    mark_read: 'Marquer comme lu'
+    none: 'Aucune notification'
+    none_help: 'Les alertes SafeCity apparaîtront ici.'
+    enable_alerts: 'Activer les alertes'
+    title: Notifications
+
+auth:
+    resend_confirmation: 'Renvoyer l’e-mail de confirmation'
+    resend_confirmation_help: 'Saisissez l’adresse e-mail utilisée lors de votre inscription.'
+    login_title: 'Connexion à SafeCity'
+    create_account_title: 'Créer un compte SafeCity'
+    create_account: 'Créez votre compte'
+    login: Connexion
+    registration: Inscription
+    toggle_password: 'Afficher ou masquer le mot de passe'
+    toggle_confirmation: 'Afficher ou masquer la confirmation'
+    create_account_button: 'Créer un compte'
+    already_account: 'Déjà un compte ?'
+    sign_in: 'Se connecter'
+    logout: 'Se déconnecter'
+    invalid_credentials: 'Identifiants incorrects. Vérifiez votre adresse e-mail et votre mot de passe.'
+    account_disabled: 'Ce compte est désactivé.'
+    email_not_verified: 'Veuillez confirmer votre adresse e-mail avant de vous connecter.'
+    logged_in_as: 'Vous êtes connecté avec %email%.'
+    forgot_password: 'Mot de passe oublié ?'
+    login_terms: 'En vous connectant, vous acceptez nos Conditions Générales d’Utilisation et notre politique de confidentialité.'
+
+legal:
+    terms_title: 'Conditions Générales d’Utilisation'
+    privacy_title: 'Politique de confidentialité'
+
+form:
+    first_name: Prénom
+    last_name: Nom
+    email: 'Adresse e-mail'
+    password: 'Mot de passe'
+    password_minimum: '8 caractères minimum'
+    password_confirm: 'Confirmer le mot de passe'
+    new_password: 'Nouveau mot de passe'
+    password_repeat: 'Répéter le mot de passe'
+    city: 'Ville de résidence'
+    city_placeholder: 'Choisissez votre ville'
+    interface_language: 'Langue de l’interface'
+    accept_terms: 'J’accepte les Conditions Générales d’Utilisation et la politique de confidentialité.'
+    emergency_notifications: 'Notifications d’urgence'
+    transport_notifications: 'Perturbations de transport'
+    event_reminders: 'Rappels d’événement'
+    camera_access: 'Accès à la caméra'
+    location_access: 'Accès à la géolocalisation'
+    language: Langue
+    report_category: 'Type d’incident'
+    report_description: 'Description de l’incident'
+    report_description_placeholder: 'Décrivez l’incident en quelques mots…'
+    gravity: 'Degré de gravité'
+    destination_service: 'Service destinataire'
+    awaiting_assignment: 'En attente d’attribution'
+    add_comment: 'Ajouter un commentaire'
+    add_comment_placeholder: 'Ajouter un commentaire…'
+    add_photo: 'Ajouter une photo'
+
+profile:
+    title: Profil
+    city_missing: 'Ville non renseignée'
+    administrator: Administrateur
+    personal_information: 'Informations personnelles'
+    update_information: 'Modifier les informations'
+    preferences: Préférences
+    preferences_summary: 'Notifications, permissions et langue'
+    notifications_and_alerts: 'Notifications et alertes'
+    permissions: Permissions
+    permissions_help: 'La caméra active la prise de vue sans bloquer les images de votre galerie. Si la géolocalisation est désactivée, SafeCity ne demande jamais votre position GPS.'
+    save_preferences: 'Enregistrer les préférences'
+    links: 'Liens du profil'
+    report_history: 'Historique des signalements'
+    favorite_events: 'Mes événements favoris'
+    admin_area: 'Espace administrateur'
+    disable_account: 'Désactiver mon compte'
+    disable_question: 'Désactiver votre compte ?'
+    disable_explanation: 'Cette action vous déconnecte, bloque les futures connexions, anonymise immédiatement votre nom et votre adresse e-mail, et retire les permissions sensibles. Les signalements déjà transmis restent conservés pour le suivi municipal.'
+    disable_confirm: 'Confirmer la désactivation'
+    update_preferences: 'Modifier mes préférences'
+    administration: Administration
+    open: 'Ouvrir mon profil'
+
+location:
+    disabled: 'Géolocalisation désactivée dans vos préférences.'
+    enable_for_city: 'Activez la géolocalisation dans votre profil pour détecter votre ville.'
+    unavailable: 'La géolocalisation n’est pas disponible sur cet appareil.'
+    searching: 'Recherche de votre position…'
+    city_error: 'Impossible d’obtenir votre position. Vérifiez les autorisations du navigateur.'
+    no_city_coordinates: 'Aucune ville ne possède de coordonnées utilisables.'
+    city_detected: 'Ville détectée : %city%. Mise à jour…'
+    confirmed: 'Localisation confirmée.'
+    enable_for_report: 'Activez la géolocalisation dans votre profil pour utiliser votre position.'
+    report_error: 'Position indisponible. Vérifiez l’autorisation du navigateur.'
+    address_searching: 'Coordonnées obtenues, recherche de l’adresse…'
+    address_unavailable: 'Coordonnées confirmées, adresse détaillée indisponible.'
+    use_position: 'Utiliser ma position'
+    address_provider: 'Adresse fournie par'
+    unavailable_short: 'Géolocalisation indisponible.'
+    map_centered: 'Carte centrée sur votre position.'
+    position_error: 'Impossible d’obtenir votre position.'
+    center_map: 'Centrer la carte sur ma position'
+
+city:
+    choose: 'Choisir ma ville'
+    toulouse_area: 'Agglomération toulousaine'
+    search_placeholder: 'Rechercher une ville…'
+    search: 'Rechercher une ville'
+    current: 'Ville actuellement sélectionnée'
+    none: 'Aucune ville'
+    none_selected: 'Aucune ville sélectionnée'
+    selected: 'Ville sélectionnée'
+    use_gps: 'Utiliser ma position GPS'
+    gps_help: 'Détecter automatiquement la commune disponible la plus proche'
+    all: 'Toutes les communes'
+    count: 'Communes : %count%'
+    no_result: 'Aucune ville ne correspond à votre recherche.'
+    postal_code: 'Code postal : %code%'
+    your_city: 'Votre ville'
+    center: '%city% - Centre'
+
+home:
+    title: 'Accueil SafeCity'
+    quick_actions: 'Actions rapides'
+    an_incident: 'un incident'
+    live_incidents: 'Incidents en direct'
+    health_emergencies: 'Urgences santé'
+    doctors_pharmacies: 'Médecins / Pharmacies'
+    local_info: 'Infos locales'
+    no_local_info: 'Aucune information locale.'
+
+parking:
+    title: Parkings
+    free_and_paid: 'Gratuits et payants'
+    nearby: 'Parkings à proximité'
+    nearby_count: 'Parkings à proximité : %count%'
+    view_spaces: 'Voir les places'
+    view: 'Voir les parkings'
+    search: 'Rechercher autour d’une adresse'
+    search_placeholder: 'Adresse ou quartier…'
+    filter: 'Filtrer les parkings'
+    available_plural: Disponibles
+    free_plural: Gratuits
+    paid_plural: Payants
+    map_preview: 'Aperçu cartographique des parkings'
+    referenced_preview: 'Aperçu des parkings référencés'
+    none_found: 'Aucun parking trouvé'
+    free: Gratuit
+    paid: Payant
+    hourly_rate: '%price% / h'
+    space_count: 'Places disponibles : %count%'
+    out_of: 'sur %total%'
+    near_me: 'Autour de moi'
+    locate: 'Me localiser'
+    location_help: 'Saisissez une adresse ou utilisez votre position.'
+    location_disabled: 'Géolocalisation désactivée dans vos préférences.'
+    location_enable: 'Activez la géolocalisation dans vos préférences.'
+    location_unavailable: 'La géolocalisation n’est pas disponible sur cet appareil.'
+    location_searching: 'Recherche de votre position…'
+    location_error: 'Votre position n’a pas pu être obtenue.'
+    geocoding_searching: 'Recherche de cette adresse…'
+    geocoding_error: 'Le service de recherche d’adresse est momentanément indisponible.'
+    address_not_found: 'Cette adresse n’a pas été trouvée.'
+    change_location_preference: 'Modifier la préférence de géolocalisation'
+    sorted_by_device: 'Parkings classés du plus proche au plus éloigné.'
+    sorted_by_address: 'Parkings classés autour de « %address% ».'
+    map_title: 'Carte des parkings'
+    map_help: 'Touchez un repère pour afficher ses informations.'
+    distance_km: 'À %distance% km'
+    your_position: 'Votre position'
+    search_origin: 'Adresse recherchée'
+
+transport:
+    title: Transports
+    network: 'Réseau Tisséo'
+    network_title: 'Réseau de transport'
+    local_network: '%city% · Réseau local'
+    none: 'Aucune information transport disponible.'
+    disrupted: Perturbé
+    disrupted_feminine: Perturbée
+    disrupted_plural: Perturbées
+    ok: Normal
+    traffic_info: 'Info trafic'
+    disruption_count: 'Perturbations en cours : %count%'
+    no_disruption: 'Aucune perturbation signalée'
+    line_count: 'Lignes référencées : %count%'
+    view_network: 'Voir le réseau'
+    line_status: 'État des lignes'
+    normal_traffic: 'Trafic normal'
+    no_line_city: 'Aucune ligne disponible pour votre ville.'
+    search_line: 'Rechercher une ligne'
+    network_alerts: 'Alertes réseau'
+    network_status: 'État du réseau'
+    filter: 'Filtrer les transports'
+    no_line: 'Aucune ligne trouvée'
+    unknown: Indisponiblecommon:
+    back: Retour
+    cancel: Annuler
+    close: Fermer
+    continue: Continuer
+    back_home: 'Retour à l’accueil'
+    search: Chercher
+    all: Tous
+    view_all: 'Voir tout'
+    on_date: 'Le %date%'
+    recent: Récents
+    oldest: 'Plus anciens'
+    remove_all: 'Tout supprimer'
+    view_detail: 'Voir le détail'
+    share_email: 'Partager par e-mail'
+    start_search: 'Lancer la recherche'
+    change_search_filter: 'Modifiez votre recherche ou votre filtre.'
+    change_search_retry: 'Modifiez votre recherche ou réessayez plus tard.'
+    updated_at: 'Mis à jour à %time%'
+    directions: Itinéraire
+    near_you: 'Autour de vous'
+    nearby: 'À proximité'
+    result_count: 'Résultats : %count%'
+    results: Résultats
+    clear: Effacer
+    open: Ouvert
+    call: Appeler
+    no_result: 'Aucun résultat trouvé'
+    add: Ajouter
+    remove: Retirer
+    detail: Détail
+    edit: Modifier
+    submit: Transmettre
+    total: Total
+    settings: Réglages
+    back_list: 'Retour à la liste'
+    save_changes: 'Enregistrer les modifications'
+    delete: Supprimer
+    time_unavailable: 'Heure indisponible'
+
+brand:
+    tagline: 'Signalez, informez, agissez'
+
+nav:
+    main: 'Navigation principale'
+    home: Accueil
+    map: Carte
+    report: Signaler
+    services: Services
+    news: Actualités
+
+notification:
+    report_update_title: 'Mise à jour du signalement #%id%'
+    report_status:
+        reported: 'Votre signalement est maintenant enregistré.'
+        in_progress: 'Votre signalement est maintenant pris en compte.'
+        resolved: 'Votre signalement est maintenant résolu.'
+    moderation_hidden_title: 'Contenu masqué après modération'
+    moderation_hidden_message: 'Un de vos contenus a été masqué. Motif : %reason%'
+    event_reminder_title: 'Rappel : %event%'
+    event_reminder_message: 'Votre événement « %event% » commence le %date% à %location%.'
+    unread_count: '%count% non lue(s)'
+    mark_all_read: 'Tout marquer comme lu'
+    mark_read: 'Marquer comme lu'
+    none: 'Aucune notification'
+    none_help: 'Les alertes SafeCity apparaîtront ici.'
+    enable_alerts: 'Activer les alertes'
+    title: Notifications
+
+auth:
+    resend_confirmation: 'Renvoyer l’e-mail de confirmation'
+    resend_confirmation_help: 'Saisissez l’adresse e-mail utilisée lors de votre inscription.'
+    login_title: 'Connexion à SafeCity'
+    create_account_title: 'Créer un compte SafeCity'
+    create_account: 'Créez votre compte'
+    login: Connexion
+    registration: Inscription
+    toggle_password: 'Afficher ou masquer le mot de passe'
+    toggle_confirmation: 'Afficher ou masquer la confirmation'
+    create_account_button: 'Créer un compte'
+    already_account: 'Déjà un compte ?'
+    sign_in: 'Se connecter'
+    logout: 'Se déconnecter'
+    invalid_credentials: 'Identifiants incorrects. Vérifiez votre adresse e-mail et votre mot de passe.'
+    account_disabled: 'Ce compte est désactivé.'
+    email_not_verified: 'Veuillez confirmer votre adresse e-mail avant de vous connecter.'
+    logged_in_as: 'Vous êtes connecté avec %email%.'
+    forgot_password: 'Mot de passe oublié ?'
+    login_terms: 'En vous connectant, vous acceptez nos Conditions Générales d’Utilisation et notre politique de confidentialité.'
+
+legal:
+    terms_title: 'Conditions Générales d’Utilisation'
+    privacy_title: 'Politique de confidentialité'
+
+form:
+    first_name: Prénom
+    last_name: Nom
+    email: 'Adresse e-mail'
+    password: 'Mot de passe'
+    password_minimum: '8 caractères minimum'
+    password_confirm: 'Confirmer le mot de passe'
+    new_password: 'Nouveau mot de passe'
+    password_repeat: 'Répéter le mot de passe'
+    city: 'Ville de résidence'
+    city_placeholder: 'Choisissez votre ville'
+    interface_language: 'Langue de l’interface'
+    accept_terms: 'J’accepte les Conditions Générales d’Utilisation et la politique de confidentialité.'
+    emergency_notifications: 'Notifications d’urgence'
+    transport_notifications: 'Perturbations de transport'
+    event_reminders: 'Rappels d’événement'
+    camera_access: 'Accès à la caméra'
+    location_access: 'Accès à la géolocalisation'
+    language: Langue
+    report_category: 'Type d’incident'
+    report_description: 'Description de l’incident'
+    report_description_placeholder: 'Décrivez l’incident en quelques mots…'
+    gravity: 'Degré de gravité'
+    destination_service: 'Service destinataire'
+    awaiting_assignment: 'En attente d’attribution'
+    add_comment: 'Ajouter un commentaire'
+    add_comment_placeholder: 'Ajouter un commentaire…'
+    add_photo: 'Ajouter une photo'
+
+profile:
+    title: Profil
+    city_missing: 'Ville non renseignée'
+    administrator: Administrateur
+    personal_information: 'Informations personnelles'
+    update_information: 'Modifier les informations'
+    preferences: Préférences
+    preferences_summary: 'Notifications, permissions et langue'
+    notifications_and_alerts: 'Notifications et alertes'
+    permissions: Permissions
+    permissions_help: 'La caméra active la prise de vue sans bloquer les images de votre galerie. Si la géolocalisation est désactivée, SafeCity ne demande jamais votre position GPS.'
+    save_preferences: 'Enregistrer les préférences'
+    links: 'Liens du profil'
+    report_history: 'Historique des signalements'
+    favorite_events: 'Mes événements favoris'
+    admin_area: 'Espace administrateur'
+    disable_account: 'Désactiver mon compte'
+    disable_question: 'Désactiver votre compte ?'
+    disable_explanation: 'Cette action vous déconnecte, bloque les futures connexions, anonymise immédiatement votre nom et votre adresse e-mail, et retire les permissions sensibles. Les signalements déjà transmis restent conservés pour le suivi municipal.'
+    disable_confirm: 'Confirmer la désactivation'
+    update_preferences: 'Modifier mes préférences'
+    administration: Administration
+    open: 'Ouvrir mon profil'
+
+location:
+    disabled: 'Géolocalisation désactivée dans vos préférences.'
+    enable_for_city: 'Activez la géolocalisation dans votre profil pour détecter votre ville.'
+    unavailable: 'La géolocalisation n’est pas disponible sur cet appareil.'
+    searching: 'Recherche de votre position…'
+    city_error: 'Impossible d’obtenir votre position. Vérifiez les autorisations du navigateur.'
+    no_city_coordinates: 'Aucune ville ne possède de coordonnées utilisables.'
+    city_detected: 'Ville détectée : %city%. Mise à jour…'
+    confirmed: 'Localisation confirmée.'
+    enable_for_report: 'Activez la géolocalisation dans votre profil pour utiliser votre position.'
+    report_error: 'Position indisponible. Vérifiez l’autorisation du navigateur.'
+    address_searching: 'Coordonnées obtenues, recherche de l’adresse…'
+    address_unavailable: 'Coordonnées confirmées, adresse détaillée indisponible.'
+    use_position: 'Utiliser ma position'
+    address_provider: 'Adresse fournie par'
+    unavailable_short: 'Géolocalisation indisponible.'
+    map_centered: 'Carte centrée sur votre position.'
+    position_error: 'Impossible d’obtenir votre position.'
+    center_map: 'Centrer la carte sur ma position'
+
+city:
+    choose: 'Choisir ma ville'
+    toulouse_area: 'Agglomération toulousaine'
+    search_placeholder: 'Rechercher une ville…'
+    search: 'Rechercher une ville'
+    current: 'Ville actuellement sélectionnée'
+    none: 'Aucune ville'
+    none_selected: 'Aucune ville sélectionnée'
+    selected: 'Ville sélectionnée'
+    use_gps: 'Utiliser ma position GPS'
+    gps_help: 'Détecter automatiquement la commune disponible la plus proche'
+    all: 'Toutes les communes'
+    count: 'Communes : %count%'
+    no_result: 'Aucune ville ne correspond à votre recherche.'
+    postal_code: 'Code postal : %code%'
+    your_city: 'Votre ville'
+    center: '%city% - Centre'
+
+home:
+    title: 'Accueil SafeCity'
+    quick_actions: 'Actions rapides'
+    an_incident: 'un incident'
+    live_incidents: 'Incidents en direct'
+    health_emergencies: 'Urgences santé'
+    doctors_pharmacies: 'Médecins / Pharmacies'
+    local_info: 'Infos locales'
+    no_local_info: 'Aucune information locale.'
+
+parking:
+    title: Parkings
+    free_and_paid: 'Gratuits et payants'
+    nearby: 'Parkings à proximité'
+    nearby_count: 'Parkings à proximité : %count%'
+    view_spaces: 'Voir les places'
+    view: 'Voir les parkings'
+    search: 'Rechercher autour d’une adresse'
+    search_placeholder: 'Adresse ou quartier…'
+    filter: 'Filtrer les parkings'
+    available_plural: Disponibles
+    free_plural: Gratuits
+    paid_plural: Payants
+    map_preview: 'Aperçu cartographique des parkings'
+    referenced_preview: 'Aperçu des parkings référencés'
+    none_found: 'Aucun parking trouvé'
+    free: Gratuit
+    paid: Payant
+    hourly_rate: '%price% / h'
+    space_count: 'Places disponibles : %count%'
+    out_of: 'sur %total%'
+    near_me: 'Autour de moi'
+    locate: 'Me localiser'
+    location_help: 'Saisissez une adresse ou utilisez votre position.'
+    location_disabled: 'Géolocalisation désactivée dans vos préférences.'
+    location_enable: 'Activez la géolocalisation dans vos préférences.'
+    location_unavailable: 'La géolocalisation n’est pas disponible sur cet appareil.'
+    location_searching: 'Recherche de votre position…'
+    location_error: 'Votre position n’a pas pu être obtenue.'
+    geocoding_searching: 'Recherche de cette adresse…'
+    geocoding_error: 'Le service de recherche d’adresse est momentanément indisponible.'
+    address_not_found: 'Cette adresse n’a pas été trouvée.'
+    change_location_preference: 'Modifier la préférence de géolocalisation'
+    sorted_by_device: 'Parkings classés du plus proche au plus éloigné.'
+    sorted_by_address: 'Parkings classés autour de « %address% ».'
+    map_title: 'Carte des parkings'
+    map_help: 'Touchez un repère pour afficher ses informations.'
+    distance_km: 'À %distance% km'
+    your_position: 'Votre position'
+    search_origin: 'Adresse recherchée'
+
+transport:
+    title: Transports
+    network: 'Réseau Tisséo'
+    network_title: 'Réseau de transport'
+    local_network: '%city% · Réseau local'
+    none: 'Aucune information transport disponible.'
+    disrupted: Perturbé
+    disrupted_feminine: Perturbée
+    disrupted_plural: Perturbées
+    ok: Normal
+    traffic_info: 'Info trafic'
+    disruption_count: 'Perturbations en cours : %count%'
+    no_disruption: 'Aucune perturbation signalée'
+    line_count: 'Lignes référencées : %count%'
+    view_network: 'Voir le réseau'
+    line_status: 'État des lignes'
+    normal_traffic: 'Trafic normal'
+    no_line_city: 'Aucune ligne disponible pour votre ville.'
+    search_line: 'Rechercher une ligne'
+    network_alerts: 'Alertes réseau'
+    network_status: 'État du réseau'
+    filter: 'Filtrer les transports'
+    no_line: 'Aucune ligne trouvée'
+    unknown: Indisponible
+    data_unavailable: 'Données Tisséo indisponibles'
+    data_unavailable_help: 'Le service public ne répond pas pour le moment. Réessayez dans quelques instants.'
+    realtime_unavailable: 'Temps réel momentanément indisponible'
+    theoretical_still_available: 'Les lignes et les horaires théoriques restent consultables.'
+    schedules: 'Horaires par arrêt'
+    schedules_help: 'Choisissez un arrêt des métros, du tram ou du Linéo L1.'
+    choose_stop: Arrêt
+    choose_stop_placeholder: 'Choisir un arrêt'
+    show_departures: 'Voir les prochains passages'
+    next_departures: 'Prochains passages'
+    next_hours: '6 heures'
+    no_departure: 'Aucun passage prévu dans les six prochaines heures.'
+    direction_unavailable: 'Direction non renseignée'
+    realtime_time: 'Horaire temps réel'
+    theoretical_time: 'Horaire théorique'
+    opendata_attribution: 'Données Tisséo Voyageurs / Toulouse Métropole Open Data — licence ODbL.'
+    type:
+        metro: Métro
+        bus: Bus
+        tram: Tram
+
+mobility:
+    title: Mobilité
+    back: 'Retour à la mobilité'
+    realtime_travel: 'Vos déplacements en temps réel'
+    access: 'Accès mobilité'
+    route_problem: 'Un problème sur votre trajet ?'
+    report_community: 'Signalez-le à la communauté'
+    transport_parking: 'Transports et parkings'
+
+service:
+    title: Services
+    back: 'Retour aux services'
+    search: 'Rechercher un service'
+    main_city_hall: 'Mairie principale'
+    your_city_hall: 'Votre mairie'
+    what_need: 'De quoi avez-vous besoin ?'
+    city_services: 'Services de la ville'
+    city_services_help: 'Mairie, culture, urbanisme'
+    pharmacies: Pharmacies
+    on_duty_hours: 'Gardes et horaires'
+    doctors: Médecins
+    on_duty_doctors: 'Médecins de garde'
+    on_duty_pharmacies: 'Pharmacies de garde'
+    no_result: 'Aucun service ne correspond à votre recherche.'
+    search_city: 'Rechercher un service municipal'
+    search_city_placeholder: 'Mairie, bibliothèque, urbanisme…'
+    none_found: 'Aucun service trouvé'
+    pharmacy_search: 'Nom ou adresse…'
+    doctor_search: 'Nom du médecin ou adresse…'
+    filter_availability: 'Filtrer les disponibilités'
+    on_duty: 'De garde'
+    always_open: 'Ouvert 24 h/24'
+    nearby_alternatives: 'Alternatives de garde proches'
+    emergency_call: 'En cas d’urgence, appelez le 15 ou le 112.'
+    availability_notice: 'Les disponibilités affichées sont indicatives et dépendent des informations locales enregistrées.'
+    near_me: 'Autour de moi'
+    locate: 'Me localiser'
+    location_disabled: 'Géolocalisation désactivée dans vos préférences.'
+    location_enable: 'Activez la géolocalisation dans vos préférences.'
+    location_unavailable: 'La géolocalisation n’est pas disponible sur cet appareil.'
+    location_searching: 'Recherche de votre position…'
+    location_error: 'Votre position n’a pas pu être obtenue.'
+    location_help: 'Utilisez votre position pour classer les résultats par distance.'
+    change_location_preference: 'Modifier la préférence de géolocalisation'
+    sorted_by_distance: 'Résultats classés du plus proche au plus éloigné.'
+    map_title: 'Carte des professionnels'
+    map_help: 'Touchez un repère pour afficher ses informations.'
+    distance_km: 'À %distance% km'
+    your_position: 'Votre position'
+    section:
+        administrative: 'Services administratifs'
+        culture_libraries: 'Culture et bibliothèques'
+        education: Éducation
+        urban_environment: 'Urbanisme et environnement'
+
+report:
+    recent: 'Signalements récents'
+    no_recent: 'Aucun signalement récent dans votre ville.'
+    report_incident: 'Signaler un incident'
+    title: Signalements
+    new: 'Nouveau signalement'
+    management: 'Gestion des signalements'
+    all: 'Tous les signalements'
+    my_reports: 'Mes signalements'
+    automatic_location: 'Localisation automatique'
+    photos_max: 'Photos (maximum 3)'
+    photo_preview: 'Prévisualisation de la photo'
+    remove_photo: 'Retirer cette photo'
+    delete_confirm: 'Supprimer définitivement ce signalement et ses photos ?'
+    take_photo: 'Prendre une photo'
+    gallery_available: 'La galerie reste disponible.'
+    enable_camera: 'Activez la caméra'
+    take_directly: 'pour prendre directement une photo.'
+    photo_formats: 'Formats JPG, PNG ou WebP · 5 Mo maximum par photo.'
+    tracking: 'Suivi de votre signalement'
+    tracking_help: 'Après l’envoi, suivez l’avancement depuis votre profil ou la carte interactive.'
+    submit: 'Envoyer le signalement'
+    submit_help: 'Le signalement sera enregistré puis pris en charge par l’équipe de traitement.'
+    address_missing: 'Adresse non renseignée'
+    follow: Suivre
+    file_count: 'Dossiers : %count%'
+    list: 'Liste des signalements'
+    assigned_to: 'Attribué à %service%'
+    awaiting_assignment: 'En attente d’attribution'
+    comment_count: 'Commentaires : %count%'
+    take: Prendre
+    resolve: Résoudre
+    none_recorded: 'Aucun signalement enregistré.'
+    my_stats: 'Statistiques de mes signalements'
+    filter_mine: 'Filtrer mes signalements'
+    count: 'Signalements : %count%'
+    none: 'Aucun signalement'
+    none_category: 'Vous n’avez aucun signalement dans cette catégorie.'
+    show_map: 'Afficher la carte'
+    stats: 'Statistiques des signalements'
+    search: 'Rechercher un signalement'
+    search_placeholder: 'Type, lieu, mots-clés…'
+    filter: 'Filtrer les signalements'
+    data_updated: 'Mis à jour avec les données enregistrées'
+    none_found: 'Aucun signalement trouvé'
+    map: 'Carte des incidents'
+    filter_incidents: 'Filtrer les incidents'
+    interactive_map: 'Carte interactive des incidents'
+    map_loading: 'Chargement des incidents…'
+    map_load_error: 'La carte ne peut pas charger les incidents.'
+    map_count: 'Incidents géolocalisés : %count%'
+    incident: Incident
+    realtime_unavailable: 'Carte active · temps réel momentanément indisponible'
+    visible_incidents: 'Incidents visibles'
+    none_city: 'Aucun signalement dans votre ville pour le moment.'
+    follow_title: 'Suivi du signalement #%id%'
+    back: 'Retour au signalement'
+    my_tracking: 'Suivi de mon signalement'
+    number: 'Signalement #%id%'
+    transmitted_to: 'Transmis à'
+    transmission: Transmission
+    event_history: 'Historique des événements'
+    sent: 'Signalement envoyé'
+    received_system: 'Reçu par le système'
+    triage_done: 'Triage effectué'
+    gravity_value: 'Gravité %gravity%'
+    routed_to: 'Routage vers %service%'
+    service_received: 'Un service a réceptionné le signalement'
+    awaiting_handling: 'En attente de prise en charge'
+    resolution: Résolution
+    marked_resolved: 'Le signalement a été marqué comme résolu'
+    awaiting_intervention: 'En attente d’intervention'
+    tracking_notifications: 'Notifications de suivi'
+    security_alerts_on: 'Alertes de sécurité activées'
+    security_alerts_off: 'Alertes de sécurité désactivées'
+    status_realtime_help: 'Les changements de statut sont diffusés en temps réel sur la carte des signalements.'
+    edit_title: 'Modifier le signalement #%id%'
+    edit_short: 'Modifier #%id%'
+    active_services_only: 'Seuls les services actifs peuvent être sélectionnés.'
+    saved_location: 'Localisation enregistrée'
+    back_map: 'Retour à la carte'
+    detail: 'Détail du signalement'
+    current_status: 'Statut actuel'
+    updated: 'Mis à jour le %date%'
+    reported_on: 'Signalé le %date%'
+    description_missing: 'Aucune description fournie.'
+    photo_count: 'Photos : %count%'
+    report_photo: 'Photo du signalement'
+    location: 'Localisation du signalement'
+    view_tracking: 'Voir le suivi'
+    comments_count: 'Commentaires : %count%'
+    safecity_user: 'Utilisateur SafeCity'
+    added_photo_count: 'Photos ajoutées : %count%'
+    added_photo_one: '1 photo ajoutée'
+    comment_photo: 'Photo ajoutée au commentaire'
+    no_comment: 'Aucun commentaire pour le moment.'
+    send_comment: 'Envoyer le commentaire'
+    gallery_camera_disabled: 'La galerie reste disponible ; la prise de vue est désactivée dans votre profil.'
+    category:
+        accident: Accident
+        accident_plural: Accidents
+        travaux: Travaux
+        incivilite: Incivilité
+        incendie: Incendie
+        sante: Santé
+        route: 'Incident routier'
+        autre: Autre
+        emergency_plural: Urgences
+    status:
+        reported: Signalé
+        in_progress: 'En cours'
+        resolved: Résolu
+        sent: Envoyé
+        reported_plural: Signalés
+        resolved_plural: Résolus
+
+gravity:
+    low: Faible
+    medium: Modérée
+    high: Élevée
+    low_help: 'Pas d’urgence immédiate'
+    medium_help: 'Intervention conseillée'
+    high_help: 'Urgence — secours requis'
+
+moderation:
+    title: Modération
+    queue: 'File de modération'
+    item_count: '%count% élément(s)'
+    pending_count: '%count% contenu(s) à vérifier'
+    awaiting_decision: 'Des contenus attendent votre décision'
+    nothing_to_review: 'Aucun contenu à vérifier'
+    migration_pending: 'Migration de modération en attente'
+    actions_help: 'Masquer, rejeter ou restaurer sans suppression physique.'
+    schema_pending: 'La migration de modération a été créée mais n’a pas été exécutée. Aucun contenu n’est supprimé ou masqué.'
+    comment: Commentaire
+    photo: Photo
+    reported_on: 'Signalé le %date%'
+    source_missing: 'Le contenu source n’existe plus.'
+    photo_to_review: 'Photo à modérer'
+    author: Auteur
+    account_unavailable: 'Compte indisponible'
+    hide: Masquer
+    dismiss: 'Rejeter le signalement'
+    reopen: 'Rouvrir le dossier'
+    none: 'Aucun contenu signalé.'
+    status:
+        flagged: 'À vérifier'
+        hidden: Masqué
+        dismissed: Rejeté
+    flag: Signaler
+    flag_photo: 'Signaler cette photo'
+    reason:
+        inappropriate: 'Contenu inapproprié'
+        personal_data: 'Données personnelles'
+        dangerous: 'Contenu dangereux'
+        spam: Spam
+
+admin:
+    navigation: 'Navigation administrateur'
+    space: 'Espace administrateur'
+    dashboard: 'Tableau de bord'
+    citizen_space: 'Voir l’espace citoyen'
+    statistics: Statistiques
+    pending: 'En attente'
+    routing: Routage
+    report_routing: 'Routage des signalements'
+    configurable: Configurable
+    automatic_rules: 'Règles automatiques'
+    automatic_rules_help: 'Définissez le service selon la catégorie, la gravité et la priorité. L’attribution manuelle reste disponible.'
+    configure_routing: 'Configurer le routage'
+    reports_to_process: 'Signalements à traiter'
+    no_report_to_process: 'Aucun signalement à traiter.'
+    users: Utilisateurs
+    user_search: 'Nom ou adresse e-mail…'
+    accounts: Comptes
+    result_count: '%count% résultat(s)'
+    role: ADMIN
+    no_city: 'Sans ville'
+    registered_on: 'Inscrit le %date%'
+    active: Actif
+    disabled: Désactivé
+    no_user: 'Aucun utilisateur trouvé.'
+    routing_automatic: 'Routage automatique'
+    routing_subtitle: 'Catégorie, gravité et priorité'
+    routing_schema_pending: 'La migration de routage a été créée mais n’a pas été exécutée. Les signalements continuent à utiliser l’attribution manuelle.'
+    new_rule: 'Nouvelle règle'
+    configured_rules: 'Règles configurées'
+    all_categories: 'Toutes les catégories'
+    priority_value: 'priorité %priority%'
+    active_feminine: Active
+    inactive_feminine: Inactive
+    disable: Désactiver
+    enable: Activer
+    no_rule: 'Aucune règle disponible.'
+    edit_routing_rule: 'Modifier une règle de routage'
+    edit_rule: 'Modifier la règle'
+    save_rule: 'Enregistrer la règle'
+    category: Catégorie
+    priority: Priorité
+    priority_help: 'La valeur la plus basse est appliquée en premier.'
+    rule_enabled: 'Règle active'
+    back_dashboard: 'Retour au tableau de bord'
+    status:
+        reported: Reçu
+        in_progress: 'En cours'
+        resolved: Résolu
+
+community:
+    title: Communauté
+    nearby_incidents: 'Incidents signalés autour de vous'
+    statistics: 'Statistiques communautaires'
+    active: Actifs
+    this_month: 'Ce mois'
+    around_me: 'autour de moi'
+    map_preview: 'Aperçu de la carte des incidents'
+    local_view: 'Vue locale – 500 m'
+    open_map: 'Ouvrir la carte'
+    report_feed: 'Fil des signalements'
+    unknown_location: 'Localisation inconnue'
+    no_city_report: 'Aucun signalement pour votre ville.'
+    recent_comments: 'Commentaires récents'
+    anonymous: Anonyme
+
+news:
+    title: Actualités
+    all_title: 'Toutes les actualités'
+    live: Direct
+    filter: 'Filtrer les actualités'
+    featured_now: 'À la une maintenant'
+    reading_time: '%minutes% min de lecture'
+    latest: 'Dernières nouvelles'
+    none_city: 'Aucune actualité disponible pour votre ville.'
+    back: 'Retour aux actualités'
+    search_placeholder: 'Rechercher un article…'
+    count: 'Articles : %count%'
+    no_result: 'Aucun article ne correspond à votre recherche.'
+    category:
+        security: Sécurité
+        health: Santé
+        mobility: Mobilité
+        works: Travaux
+
+event:
+    title: Événements
+    favorites: Favoris
+    my_favorites: 'Mes événements favoris'
+    my_favorites_short: 'Mes favoris'
+    city_area: '%city% et agglomération'
+    search_placeholder: 'Rechercher un événement…'
+    filter: 'Filtrer les événements'
+    featured: 'Événement à la une'
+    add_favorite: 'Ajouter aux favoris'
+    remove_favorite: 'Retirer des favoris'
+    coming_soon: Prochainement
+    upcoming: 'Événements à venir'
+    none_upcoming: 'Aucun événement prochainement.'
+    none_city: 'Aucun événement dans votre ville pour le moment.'
+    back: 'Retour aux événements'
+    reminders_disabled: 'Rappels généraux désactivés'
+    reminders_disabled_help: 'Activez « Rappels d’événement » dans votre profil pour recevoir les rappels sélectionnés.'
+    favorites_summary: 'Résumé des favoris'
+    saved_count: 'Événements enregistrés : %count%'
+    saved_help: 'Retrouvez ici les événements que vous souhaitez suivre.'
+    explore_category: 'Explorer par catégorie'
+    saved_events: 'Événements sauvegardés'
+    reminder_on: 'Rappel activé'
+    reminder_off: 'Rappel désactivé'
+    none_saved: 'Aucun événement sauvegardé.'
+    discover: 'Découvrir les événements'
+    discover_more: 'Découvrir plus d’événements'
+    near_you: 'Tous les événements disponibles près de chez vous'
+    category:
+        music: Musique
+        sport: Sport
+        culture: Culture
+
+flash:
+    confirmation_email_requested: 'Si un compte non vérifié correspond à cette adresse, un nouvel e-mail de confirmation a été envoyé.'
+    report_status_updated: 'Le statut du signalement #%id% a été mis à jour.'
+    moderation_decision_saved: 'La décision de modération a été enregistrée.'
+    moderation_already_open: 'Ce contenu est déjà en cours de vérification.'
+    moderation_submitted: 'Le contenu a été transmis à la modération.'
+    moderation_schema_required: 'La migration de modération doit être appliquée avant de pouvoir signaler un contenu.'
+    routing_rule_created: 'La règle de routage a été créée.'
+    routing_rule_updated: 'La règle de routage a été modifiée.'
+    city_updated: 'Votre ville a été mise à jour : %city%'
+    event_favorites_cleared: 'Tous les événements ont été retirés de vos favoris.'
+    event_favorite_removed: 'L’événement a été retiré de vos favoris.'
+    event_favorite_added: 'Événement ajouté avec un rappel automatique 24 h avant.'
+    event_reminder_enabled: 'Le rappel de cet événement est activé.'
+    event_reminder_disabled: 'Le rappel de cet événement est désactivé.'
+    choose_city_first: 'Choisissez votre ville avant de créer un signalement.'
+    media_upload_failed: 'Une photo n’a pas pu être enregistrée. Vérifiez son format et sa taille, puis réessayez.'
+    report_save_failed: 'Le signalement n’a pas pu être enregistré. Aucune photo incomplète n’a été conservée.'
+    report_sent: 'Votre signalement a bien été envoyé.'
+    comment_save_failed: 'Le commentaire n’a pas pu être enregistré. Aucune photo incomplète n’a été conservée.'
+    comment_added: 'Votre commentaire a été ajouté.'
+    account_created: 'Votre compte a été créé. Consultez votre e-mail pour le confirmer.'
+    email_confirmed: 'Votre adresse e-mail a bien été confirmée.'
+    profile_updated: 'Vos informations ont été mises à jour.'
+    preferences_updated: 'Vos préférences ont été mises à jour.'
+
+email:
+    moderation:
+        subject: 'Un de vos contenus a été masqué sur SafeCity'
+        body: "Bonjour,\n\nUn contenu publié depuis votre compte a été masqué après modération.\nMotif : %reason%\n\nL’équipe SafeCity"
+    greeting: Bonjour !
+    signature: 'L’équipe SafeCity'
+    confirm:
+        subject: 'Confirmez votre adresse e-mail'
+        heading: 'Confirmez votre adresse e-mail'
+        instructions: 'Confirmez votre adresse e-mail en cliquant sur le lien suivant :'
+        action: 'Confirmer mon adresse e-mail'
+        expiry: 'Ce lien expirera %expiration%.'
+    reset:
+        subject: 'Réinitialisation de votre mot de passe'
+        instructions: 'Pour réinitialiser votre mot de passe, utilisez le lien suivant :'
+        expiry: 'Ce lien expirera %expiration%.'
+
+security:
+    invalid_token: 'Jeton de sécurité invalide.'
+    city_unavailable: 'Cette ville n’est pas disponible.'
+    favorite_not_owned: 'Ce favori ne vous appartient pas.'
+    notification_not_owned: 'Cette notification ne vous appartient pas.'
+    content_wrong_city: 'Ce contenu ne concerne pas votre ville.'
+    own_content: 'Vous ne pouvez pas signaler votre propre contenu.'
+    report_wrong_city: 'Ce signalement ne concerne pas votre ville.'
+    report_not_owned: 'Vous ne pouvez pas suivre ce signalement.'
+
+reset:
+    forgot_title: 'Mot de passe oublié'
+    back_to_login: 'Retour à la connexion'
+    reset_password: 'Réinitialiser votre mot de passe'
+    request_help: 'Saisissez l’adresse e-mail associée à votre compte. Nous vous enverrons un lien sécurisé à durée limitée.'
+    send_link: 'Envoyer le lien de réinitialisation'
+    limited_link: 'Lien à durée limitée.'
+    expiry_help: 'Le lien expirera après la durée de sécurité prévue.'
+    email_sent_title: 'E-mail de réinitialisation envoyé'
+    check_inbox: 'Consultez votre messagerie'
+    email_sent_security: 'Si un compte correspond à cette adresse, un lien sécurisé vient d’être envoyé.'
+    email_sent: 'E-mail envoyé'
+    email_if_account: 'Si un compte existe pour cette adresse, vous recevrez un lien de réinitialisation sous peu.'
+    email_expiry: 'Le lien expirera %expiration%. Vérifiez également vos courriers indésirables.'
+    resend_link: 'Renvoyer un lien'
+    choose_new_title: 'Choisir un nouveau mot de passe'
+    new_password: 'Nouveau mot de passe'
+    secure_account: 'Sécurisez votre compte'
+    save_new_password: 'Enregistrer le nouveau mot de passe'

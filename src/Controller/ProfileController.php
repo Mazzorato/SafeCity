@@ -2,24 +2,25 @@
 
 namespace App\Controller;
 
-use Symfony\Contracts\Translation\TranslatorInterface;
-
-use App\Localization\SupportedLocale;
-
 use App\Entity\Profile;
 use App\Entity\User;
 use App\Form\ProfileFormType;
 use App\Form\UserFormType;
+use App\Localization\SupportedLocale;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[Route('/profile')]
+/**
+ * Gère la consultation, la modification et la suppression du profil.
+ */
 final class ProfileController extends AbstractController
 {
-#[Route('', name: 'app_profile', methods: ['GET', 'POST'])]
+    #[Route('', name: 'app_profile', methods: ['GET', 'POST'])]
     public function index(
         Request $request,
         EntityManagerInterface $entityManager,
@@ -68,7 +69,15 @@ final class ProfileController extends AbstractController
         ]);
     }
 
-#[Route('/delete', name: 'app_profile_delete', methods: ['POST'])]
+    #[Route('/delete/confirm', name: 'app_profile_delete_confirm', methods: ['GET'])]
+    public function confirmDelete(): Response
+    {
+        $this->denyAccessUnlessGranted('ROLE_USER');
+
+        return $this->render('profile/delete_confirm.html.twig');
+    }
+
+    #[Route('/delete', name: 'app_profile_delete', methods: ['POST'])]
     public function delete(
         EntityManagerInterface $entityManager,
         Request $request,
@@ -102,9 +111,7 @@ final class ProfileController extends AbstractController
         return $this->redirectToRoute('app_logout');
     }
 
-    
-
-private function createDefaultProfile(Request $request): Profile
+    private function createDefaultProfile(Request $request): Profile
     {
         $profile = new Profile();
 
@@ -115,13 +122,5 @@ private function createDefaultProfile(Request $request): Profile
             ->setCameraAccess(false)
             ->setLocationAccess(false)
             ->setLanguage(SupportedLocale::DEFAULT);
-    }
-
-#[Route('/delete/confirm', name: 'app_profile_delete_confirm', methods: ['GET'])]
-    public function confirmDelete(): Response
-    {
-        $this->denyAccessUnlessGranted('ROLE_USER');
-
-        return $this->render('profile/delete_confirm.html.twig');
     }
 }

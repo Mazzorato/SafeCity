@@ -1,0 +1,684 @@
+common:
+    back: 戻る
+    cancel: キャンセル
+    close: 閉じる
+    continue: 続ける
+    back_home: 'ホームに戻る'
+    search: 検索
+    all: すべて
+    view_all: 'すべて表示'
+    on_date: '%date%'
+    recent: 新しい順
+    oldest: 古い順
+    remove_all: 'すべて削除'
+    view_detail: '詳細を見る'
+    share_email: 'メールで共有'
+    start_search: '検索を開始'
+    change_search_filter: '検索条件またはフィルターを変更してください。'
+    change_search_retry: '検索条件を変更するか、後でもう一度お試しください。'
+    updated_at: '%time%に更新'
+    directions: 経路
+    near_you: '周辺'
+    nearby: '近く'
+    result_count: '結果：%count%'
+    results: 検索結果
+    clear: クリア
+    open: 営業中
+    call: 電話
+    no_result: '結果が見つかりません'
+    add: 追加
+    remove: 削除
+    detail: 詳細
+    edit: 編集
+    submit: 送信
+    total: 合計
+    settings: 設定
+    back_list: '一覧に戻る'
+    save_changes: '変更を保存'
+    delete: 削除
+    time_unavailable: '時刻を取得できません'
+
+brand:
+    tagline: '通報し、知らせ、行動する'
+
+nav:
+    main: メインナビゲーション
+    home: ホーム
+    map: 地図
+    report: 通報
+    services: サービス
+    news: ニュース
+
+notification:
+    report_update_title: '通報 #%id% の更新'
+    report_status:
+        reported: '通報が登録されました。'
+        in_progress: '通報への対応を開始しました。'
+        resolved: '通報は解決済みになりました。'
+    moderation_hidden_title: 'モデレーションによりコンテンツを非表示にしました'
+    moderation_hidden_message: 'あなたのコンテンツの一つが非表示になりました。理由：%reason%'
+    event_reminder_title: 'リマインダー：%event%'
+    event_reminder_message: 'イベント「%event%」は%date%に%location%で始まります。'
+    unread_count: '未読 %count% 件'
+    mark_all_read: 'すべて既読にする'
+    mark_read: '既読にする'
+    none: '通知はありません'
+    none_help: 'SafeCityの通知がここに表示されます。'
+    enable_alerts: '通知を有効にする'
+    title: 通知
+
+auth:
+    resend_confirmation: '確認メールを再送信'
+    resend_confirmation_help: '登録時に使用したメールアドレスを入力してください。'
+    login_title: 'SafeCityにログイン'
+    create_account_title: 'SafeCityアカウントを作成'
+    create_account: 'アカウントを作成'
+    login: ログイン
+    registration: 新規登録
+    toggle_password: 'パスワードの表示・非表示を切り替える'
+    toggle_confirmation: '確認用パスワードの表示・非表示を切り替える'
+    create_account_button: 'アカウントを作成'
+    already_account: 'すでにアカウントをお持ちですか？'
+    sign_in: ログイン
+    logout: ログアウト
+    invalid_credentials: 'ログイン情報が正しくありません。メールアドレスとパスワードを確認してください。'
+    account_disabled: 'このアカウントは無効になっています。'
+    email_not_verified: 'ログインする前にメールアドレスを確認してください。'
+    logged_in_as: '%email% としてログインしています。'
+    forgot_password: 'パスワードをお忘れですか？'
+    login_terms: 'ログインすることで、利用規約およびプライバシーポリシーに同意したものとみなされます。'
+
+legal:
+    terms_title: 利用規約
+    privacy_title: プライバシーポリシー
+
+form:
+    first_name: 名
+    last_name: 姓
+    email: メールアドレス
+    password: パスワード
+    password_minimum: '8文字以上'
+    password_confirm: 'パスワードの確認'
+    new_password: '新しいパスワード'
+    password_repeat: 'パスワードを再入力'
+    city: 居住都市
+    city_placeholder: '都市を選択してください'
+    interface_language: 表示言語
+    accept_terms: '利用規約およびプライバシーポリシーに同意します。'
+    emergency_notifications: 緊急通知
+    transport_notifications: 交通機関の障害情報
+    event_reminders: イベントのリマインダー
+    camera_access: カメラへのアクセス
+    location_access: 位置情報へのアクセス
+    language: 言語
+    report_category: '事故・問題の種類'
+    report_description: '事故・問題の説明'
+    report_description_placeholder: '事故・問題の内容を簡潔に入力してください…'
+    gravity: 深刻度
+    destination_service: 対応機関
+    awaiting_assignment: '割り当て待ち'
+    add_comment: 'コメントを追加'
+    add_comment_placeholder: 'コメントを追加…'
+    add_photo: '写真を追加'
+
+profile:
+    title: プロフィール
+    city_missing: '都市が設定されていません'
+    administrator: 管理者
+    personal_information: 個人情報
+    update_information: '情報を変更'
+    preferences: 設定
+    preferences_summary: '通知、権限、言語'
+    notifications_and_alerts: '通知とアラート'
+    permissions: 権限
+    permissions_help: 'カメラへのアクセスを有効にすると、ギャラリーの画像を引き続き利用しながら写真を撮影できます。位置情報を無効にした場合、SafeCityがGPS位置情報を要求することはありません。'
+    save_preferences: '設定を保存'
+    links: プロフィールのリンク
+    report_history: 通報履歴
+    favorite_events: 'お気に入りのイベント'
+    admin_area: 管理者エリア
+    disable_account: 'アカウントを無効にする'
+    disable_question: 'アカウントを無効にしますか？'
+    disable_explanation: 'この操作を行うとログアウトされ、今後のログインがブロックされます。氏名とメールアドレスは直ちに匿名化され、機密性の高い権限が解除されます。送信済みの通報は、自治体による対応状況の確認のため保持されます。'
+    disable_confirm: '無効化を確認'
+    update_preferences: '設定を変更'
+    administration: 管理
+    open: 'プロフィールを開く'
+
+location:
+    disabled: '設定で位置情報が無効になっています。'
+    enable_for_city: '都市を検出するには、プロフィールで位置情報を有効にしてください。'
+    unavailable: 'この端末では位置情報を利用できません。'
+    searching: '現在地を検索しています…'
+    city_error: '現在地を取得できません。ブラウザーの権限を確認してください。'
+    no_city_coordinates: '利用可能な座標を持つ都市がありません。'
+    city_detected: '検出された都市：%city%。更新しています…'
+    confirmed: '位置情報を確認しました。'
+    enable_for_report: '現在地を使用するには、プロフィールで位置情報を有効にしてください。'
+    report_error: '現在地を取得できません。ブラウザーの権限を確認してください。'
+    address_searching: '座標を取得しました。住所を検索しています…'
+    address_unavailable: '座標を確認しました。詳しい住所は取得できません。'
+    use_position: '現在地を使用'
+    address_provider: '住所情報提供：'
+    unavailable_short: '位置情報を利用できません。'
+    map_centered: '地図を現在地に合わせました。'
+    position_error: '現在地を取得できません。'
+    center_map: '地図を現在地に合わせる'
+
+city:
+    choose: '都市を選択'
+    toulouse_area: 'トゥールーズ都市圏'
+    search_placeholder: '都市を検索…'
+    search: '都市を検索'
+    current: '現在選択中の都市'
+    none: '都市なし'
+    none_selected: '都市が選択されていません'
+    selected: '選択中の都市'
+    use_gps: 'GPS位置情報を使用'
+    gps_help: '利用可能な最寄りの自治体を自動検出'
+    all: 'すべての自治体'
+    count: '自治体：%count%'
+    no_result: '検索条件に一致する都市はありません。'
+    postal_code: '郵便番号：%code%'
+    your_city: 'お住まいの都市'
+    center: '%city% - 中心部'
+
+home:
+    title: 'SafeCityホーム'
+    quick_actions: クイック操作
+    an_incident: '事故・問題'
+    live_incidents: 'リアルタイムの通報'
+    health_emergencies: '医療緊急情報'
+    doctors_pharmacies: '医師 / 薬局'
+    local_info: '地域情報'
+    no_local_info: '地域情報はありません。'
+
+parking:
+    title: 駐車場
+    free_and_paid: '無料・有料'
+    nearby: '近くの駐車場'
+    nearby_count: '近くの駐車場：%count%'
+    view_spaces: '空き状況を見る'
+    view: '駐車場を見る'
+    search: '住所周辺を検索'
+    search_placeholder: '住所または地区…'
+    filter: '駐車場を絞り込む'
+    available_plural: 空きあり
+    free_plural: 無料
+    paid_plural: 有料
+    map_preview: '駐車場の地図プレビュー'
+    referenced_preview: '登録済み駐車場のプレビュー'
+    none_found: '駐車場が見つかりません'
+    free: 無料
+    paid: 有料
+    hourly_rate: '%price% / 時間'
+    space_count: '空き：%count%台'
+    out_of: '全%total%台'
+    near_me: 現在地周辺
+    locate: 現在地を使用
+    location_help: '住所を入力するか、現在地を使用してください。'
+    location_disabled: '設定で位置情報が無効になっています。'
+    location_enable: '設定で位置情報を有効にしてください。'
+    location_unavailable: 'この端末では位置情報を利用できません。'
+    location_searching: '現在地を検索しています…'
+    location_error: '現在地を取得できませんでした。'
+    geocoding_searching: '住所を検索しています…'
+    geocoding_error: '住所検索サービスは一時的に利用できません。'
+    address_not_found: '住所が見つかりませんでした。'
+    change_location_preference: '位置情報の設定を変更'
+    sorted_by_device: '近い駐車場から順に表示しています。'
+    sorted_by_address: '「%address%」周辺の駐車場を表示しています。'
+    map_title: '駐車場マップ'
+    map_help: 'マーカーをタップすると情報を表示します。'
+    distance_km: '%distance% km先'
+    your_position: 現在地
+    search_origin: 検索した住所
+
+transport:
+    title: 交通
+    network: 'Tisséo交通網'
+    network_title: 交通網
+    local_network: '%city%・地域交通網'
+    none: '交通情報はありません。'
+    disrupted: 運行に乱れ
+    disrupted_feminine: 運行に乱れ
+    disrupted_plural: 運行に乱れ
+    ok: 通常運行
+    traffic_info: 交通情報
+    disruption_count: '発生中の障害：%count%'
+    no_disruption: '障害情報はありません'
+    line_count: '登録路線：%count%'
+    view_network: '交通網を見る'
+    line_status: '路線の状況'
+    normal_traffic: 通常運行
+    no_line_city: 'この都市で利用できる路線はありません。'
+    search_line: '路線を検索'
+    network_alerts: '交通網の警報'
+    network_status: '交通網の状況'
+    filter: '交通機関を絞り込む'
+    no_line: '路線が見つかりません'
+    unknown: 利用不可
+    data_unavailable: 'Tisséoのデータを利用できません'
+    data_unavailable_help: '現在、公開サービスが応答していません。しばらくしてからもう一度お試しください。'
+    realtime_unavailable: 'リアルタイム情報を一時的に利用できません'
+    theoretical_still_available: '路線と予定時刻表は引き続き確認できます。'
+    schedules: '停留所別の時刻表'
+    schedules_help: '地下鉄、トラム、Linéo L1の停留所を選択してください。'
+    choose_stop: 停留所
+    choose_stop_placeholder: '停留所を選択'
+    show_departures: '次の出発を見る'
+    next_departures: '次の出発'
+    next_hours: 6時間
+    no_departure: '今後6時間以内に予定されている出発はありません。'
+    direction_unavailable: '行き先情報なし'
+    realtime_time: リアルタイム時刻
+    theoretical_time: 予定時刻
+    opendata_attribution: 'データ：Tisséo Voyageurs / Toulouse Métropole Open Data — ODbLライセンス。'
+    type:
+        metro: 地下鉄
+        bus: バス
+        tram: トラム
+
+mobility:
+    title: 交通
+    back: '交通情報に戻る'
+    realtime_travel: 'リアルタイムの移動情報'
+    access: '交通情報へのアクセス'
+    route_problem: '移動中に問題がありましたか？'
+    report_community: 'コミュニティに知らせる'
+    transport_parking: '交通機関と駐車場'
+
+service:
+    title: サービス
+    back: 'サービスに戻る'
+    search: 'サービスを検索'
+    main_city_hall: '主要市役所'
+    your_city_hall: 'お住まいの市役所'
+    what_need: '何をお探しですか？'
+    city_services: '市のサービス'
+    city_services_help: '市役所、文化、都市計画'
+    pharmacies: 薬局
+    on_duty_hours: '当番と営業時間'
+    doctors: 医師
+    on_duty_doctors: 当番医
+    on_duty_pharmacies: 当番薬局
+    no_result: '検索条件に一致するサービスはありません。'
+    search_city: '市のサービスを検索'
+    search_city_placeholder: '市役所、図書館、都市計画…'
+    none_found: 'サービスが見つかりません'
+    pharmacy_search: '名称または住所…'
+    doctor_search: '医師名または住所…'
+    filter_availability: '利用状況を絞り込む'
+    on_duty: 当番
+    always_open: '24時間営業'
+    nearby_alternatives: '近くの当番施設'
+    emergency_call: '緊急の場合は15または112に電話してください。'
+    availability_notice: '表示される利用状況は目安であり、登録されている地域情報に基づきます。'
+    near_me: 現在地周辺
+    locate: 現在地を使用
+    location_disabled: '設定で位置情報が無効になっています。'
+    location_enable: '設定で位置情報を有効にしてください。'
+    location_unavailable: 'この端末では位置情報を利用できません。'
+    location_searching: '現在地を検索しています…'
+    location_error: '現在地を取得できませんでした。'
+    location_help: '現在地を使用して距離順に並べ替えます。'
+    change_location_preference: '位置情報の設定を変更'
+    sorted_by_distance: '近い順に表示しています。'
+    map_title: '医療従事者の地図'
+    map_help: 'マーカーをタップすると情報を表示します。'
+    distance_km: '%distance% km先'
+    your_position: 現在地
+    section:
+        administrative: 行政サービス
+        culture_libraries: '文化・図書館'
+        education: 教育
+        urban_environment: '都市計画・環境'
+
+report:
+    recent: '最近の通報'
+    no_recent: 'この都市に最近の通報はありません。'
+    report_incident: '事故・問題を通報'
+    title: 通報
+    new: '新しい通報'
+    management: '通報の管理'
+    all: 'すべての通報'
+    my_reports: '自分の通報'
+    automatic_location: '位置情報を自動取得'
+    photos_max: '写真（最大3枚）'
+    photo_preview: '写真のプレビュー'
+    remove_photo: 'この写真を削除'
+    delete_confirm: 'この通報と写真を完全に削除しますか？'
+    take_photo: '写真を撮る'
+    gallery_available: 'ギャラリーは引き続き利用できます。'
+    enable_camera: 'カメラを有効にする'
+    take_directly: 'と、その場で写真を撮影できます。'
+    photo_formats: 'JPG、PNG、WebP形式 · 1枚あたり最大5 MB。'
+    tracking: '通報の進捗'
+    tracking_help: '送信後は、プロフィールまたはインタラクティブ地図から進捗を確認できます。'
+    submit: '通報を送信'
+    submit_help: '通報は保存され、担当チームが対応します。'
+    address_missing: '住所が入力されていません'
+    follow: 追跡
+    file_count: '案件：%count%'
+    list: '通報一覧'
+    assigned_to: '%service%に割り当て済み'
+    awaiting_assignment: '割り当て待ち'
+    comment_count: 'コメント：%count%'
+    take: 対応開始
+    resolve: 解決
+    none_recorded: '登録された通報はありません。'
+    my_stats: '自分の通報の統計'
+    filter_mine: '自分の通報を絞り込む'
+    count: '通報：%count%'
+    none: '通報はありません'
+    none_category: 'このカテゴリーの通報はありません。'
+    show_map: '地図を表示'
+    stats: '通報の統計'
+    search: '通報を検索'
+    search_placeholder: '種類、場所、キーワード…'
+    filter: '通報を絞り込む'
+    data_updated: '登録済みデータで更新'
+    none_found: '通報が見つかりません'
+    map: '事故・問題の地図'
+    filter_incidents: '事故・問題を絞り込む'
+    interactive_map: '事故・問題のインタラクティブ地図'
+    map_loading: '通報を読み込んでいます…'
+    map_load_error: '地図で通報を読み込めません。'
+    map_count: '位置情報付き通報：%count%'
+    incident: '事故・問題'
+    realtime_unavailable: '地図は利用可能 · リアルタイム更新は一時的に利用できません'
+    visible_incidents: '表示中の事故・問題'
+    none_city: '現在、この都市に通報はありません。'
+    follow_title: '通報 #%id% の進捗'
+    back: '通報に戻る'
+    my_tracking: '自分の通報の進捗'
+    number: '通報 #%id%'
+    transmitted_to: 送信先
+    transmission: 送信
+    event_history: '履歴'
+    sent: '通報を送信'
+    received_system: 'システムで受信'
+    triage_done: '優先度の判定完了'
+    gravity_value: '深刻度：%gravity%'
+    routed_to: '%service%へ転送'
+    service_received: '担当機関が通報を受信しました'
+    awaiting_handling: '対応待ち'
+    resolution: 解決
+    marked_resolved: '通報は解決済みになりました'
+    awaiting_intervention: '対応待ち'
+    tracking_notifications: '進捗通知'
+    security_alerts_on: '安全アラート有効'
+    security_alerts_off: '安全アラート無効'
+    status_realtime_help: '状態の変更は通報地図にリアルタイムで反映されます。'
+    edit_title: '通報 #%id% を編集'
+    edit_short: '#%id% を編集'
+    active_services_only: '稼働中の機関のみ選択できます。'
+    saved_location: '保存済みの位置情報'
+    back_map: '地図に戻る'
+    detail: '通報の詳細'
+    current_status: '現在の状態'
+    updated: '%date%に更新'
+    reported_on: '%date%に通報'
+    description_missing: '説明はありません。'
+    photo_count: '写真：%count%'
+    report_photo: '通報の写真'
+    location: '通報の位置'
+    view_tracking: '進捗を見る'
+    comments_count: 'コメント：%count%'
+    safecity_user: 'SafeCityユーザー'
+    added_photo_count: '追加写真：%count%'
+    added_photo_one: '写真を1枚追加'
+    comment_photo: 'コメントに追加された写真'
+    no_comment: 'コメントはまだありません。'
+    send_comment: 'コメントを送信'
+    gallery_camera_disabled: 'ギャラリーは利用できますが、プロフィールで写真撮影が無効になっています。'
+    category:
+        accident: 事故
+        accident_plural: 事故
+        travaux: 工事
+        incivilite: 迷惑行為
+        incendie: 火災
+        sante: 健康
+        route: 道路事故
+        autre: その他
+        emergency_plural: 緊急
+    status:
+        reported: 通報済み
+        in_progress: 対応中
+        resolved: 解決済み
+        sent: 送信済み
+        reported_plural: 受付済み
+        resolved_plural: 解決済み
+
+gravity:
+    low: 低
+    medium: 中
+    high: 高
+    low_help: '緊急性なし'
+    medium_help: '対応を推奨'
+    high_help: '緊急 — 救助が必要'
+
+moderation:
+    title: モデレーション
+    queue: 'モデレーション一覧'
+    item_count: '%count% 件'
+    pending_count: '確認待ち %count% 件'
+    awaiting_decision: '判断を待っているコンテンツがあります'
+    nothing_to_review: '確認するコンテンツはありません'
+    migration_pending: 'モデレーションのマイグレーション待ち'
+    actions_help: '物理的に削除せず、非表示、却下、復元ができます。'
+    schema_pending: 'モデレーションのマイグレーションは作成済みですが、まだ実行されていません。コンテンツは削除も非表示もされません。'
+    comment: コメント
+    photo: 写真
+    reported_on: '%date% に報告'
+    source_missing: '元のコンテンツは存在しません。'
+    photo_to_review: '確認対象の写真'
+    author: 投稿者
+    account_unavailable: 'アカウントを利用できません'
+    hide: 非表示
+    dismiss: '報告を却下'
+    reopen: '案件を再開'
+    none: '報告されたコンテンツはありません。'
+    status:
+        flagged: 要確認
+        hidden: 非表示
+        dismissed: 却下済み
+    flag: 報告
+    flag_photo: 'この写真を報告'
+    reason:
+        inappropriate: '不適切なコンテンツ'
+        personal_data: '個人情報'
+        dangerous: '危険なコンテンツ'
+        spam: スパム
+
+admin:
+    navigation: '管理者ナビゲーション'
+    space: '管理者エリア'
+    dashboard: ダッシュボード
+    citizen_space: '市民向け画面を表示'
+    statistics: 統計
+    pending: 保留中
+    routing: 振り分け
+    report_routing: '通報の振り分け'
+    configurable: 設定可能
+    automatic_rules: '自動ルール'
+    automatic_rules_help: 'カテゴリ、重大度、優先度に応じて担当サービスを設定します。手動割り当ても引き続き利用できます。'
+    configure_routing: '振り分けを設定'
+    reports_to_process: '対応が必要な通報'
+    no_report_to_process: '対応が必要な通報はありません。'
+    users: ユーザー
+    user_search: '名前またはメールアドレス…'
+    accounts: アカウント
+    result_count: '%count% 件'
+    role: 管理者
+    no_city: '都市未設定'
+    registered_on: '%date% に登録'
+    active: 有効
+    disabled: 無効
+    no_user: 'ユーザーが見つかりません。'
+    routing_automatic: '自動振り分け'
+    routing_subtitle: 'カテゴリ、重大度、優先度'
+    routing_schema_pending: '振り分けのマイグレーションは作成済みですが、まだ実行されていません。通報には引き続き手動割り当てが使用されます。'
+    new_rule: '新しいルール'
+    configured_rules: '設定済みルール'
+    all_categories: 'すべてのカテゴリ'
+    priority_value: '優先度 %priority%'
+    active_feminine: 有効
+    inactive_feminine: 無効
+    disable: 無効にする
+    enable: 有効にする
+    no_rule: '利用できるルールはありません。'
+    edit_routing_rule: '振り分けルールを編集'
+    edit_rule: 'ルールを編集'
+    save_rule: 'ルールを保存'
+    category: カテゴリ
+    priority: 優先度
+    priority_help: '数値が小さいものから適用されます。'
+    rule_enabled: 'ルールを有効にする'
+    back_dashboard: 'ダッシュボードに戻る'
+    status:
+        reported: 受付済み
+        in_progress: 対応中
+        resolved: 解決済み
+
+community:
+    title: コミュニティ
+    nearby_incidents: '周辺で報告された事案'
+    statistics: 'コミュニティ統計'
+    active: 対応中
+    this_month: 今月
+    around_me: 周辺
+    map_preview: '事案マップのプレビュー'
+    local_view: '周辺表示 – 500 m'
+    open_map: 'マップを開く'
+    report_feed: '通報フィード'
+    unknown_location: '場所不明'
+    no_city_report: 'お住まいの都市には通報がありません。'
+    recent_comments: '最近のコメント'
+    anonymous: 匿名
+
+news:
+    title: ニュース
+    all_title: 'すべてのニュース'
+    live: 速報
+    filter: 'ニュースを絞り込む'
+    featured_now: '注目のニュース'
+    reading_time: '読了時間 %minutes% 分'
+    latest: '最新ニュース'
+    none_city: 'この都市のニュースはありません。'
+    back: 'ニュースに戻る'
+    search_placeholder: '記事を検索…'
+    count: '記事：%count%'
+    no_result: '検索条件に一致する記事はありません。'
+    category:
+        security: 安全
+        health: 健康
+        mobility: 交通
+        works: 工事
+
+event:
+    title: イベント
+    favorites: お気に入り
+    my_favorites: 'お気に入りのイベント'
+    my_favorites_short: 'お気に入り'
+    city_area: '%city%とその周辺'
+    search_placeholder: 'イベントを検索…'
+    filter: 'イベントを絞り込む'
+    featured: '注目イベント'
+    add_favorite: 'お気に入りに追加'
+    remove_favorite: 'お気に入りから削除'
+    coming_soon: 開催予定
+    upcoming: '今後のイベント'
+    none_upcoming: '今後のイベントはありません。'
+    none_city: '現在、この都市にイベントはありません。'
+    back: 'イベントに戻る'
+    reminders_disabled: '全般のリマインダーが無効です'
+    reminders_disabled_help: '選択したリマインダーを受け取るには、プロフィールで「イベントのリマインダー」を有効にしてください。'
+    favorites_summary: 'お気に入りの概要'
+    saved_count: '保存済みイベント：%count%'
+    saved_help: 'フォローしたいイベントをここで確認できます。'
+    explore_category: 'カテゴリーから探す'
+    saved_events: '保存済みイベント'
+    reminder_on: 'リマインダー有効'
+    reminder_off: 'リマインダー無効'
+    none_saved: '保存済みイベントはありません。'
+    discover: 'イベントを探す'
+    discover_more: 'さらにイベントを探す'
+    near_you: '周辺で開催されるすべてのイベント'
+    category:
+        music: 音楽
+        sport: スポーツ
+        culture: 文化
+
+flash:
+    confirmation_email_requested: 'このアドレスに未確認のアカウントがある場合、新しい確認メールを送信しました。'
+    report_status_updated: '通報 #%id% のステータスを更新しました。'
+    moderation_decision_saved: 'モデレーションの判断を保存しました。'
+    moderation_already_open: 'このコンテンツはすでに確認中です。'
+    moderation_submitted: 'コンテンツをモデレーションに送信しました。'
+    moderation_schema_required: 'コンテンツを報告するには、モデレーションのマイグレーションを適用する必要があります。'
+    routing_rule_created: '振り分けルールを作成しました。'
+    routing_rule_updated: '振り分けルールを更新しました。'
+    city_updated: '都市を更新しました：%city%'
+    event_favorites_cleared: 'お気に入りからすべてのイベントを削除しました。'
+    event_favorite_removed: 'お気に入りからイベントを削除しました。'
+    event_favorite_added: 'イベントを追加し、24時間前の自動リマインダーを設定しました。'
+    event_reminder_enabled: 'このイベントのリマインダーを有効にしました。'
+    event_reminder_disabled: 'このイベントのリマインダーを無効にしました。'
+    choose_city_first: '通報を作成する前に都市を選択してください。'
+    media_upload_failed: '写真を保存できませんでした。形式とサイズを確認して、もう一度お試しください。'
+    report_save_failed: '通報を保存できませんでした。不完全な写真は保存されていません。'
+    report_sent: '通報を送信しました。'
+    comment_save_failed: 'コメントを保存できませんでした。不完全な写真は保存されていません。'
+    comment_added: 'コメントを追加しました。'
+    account_created: 'アカウントを作成しました。確認メールをご覧ください。'
+    email_confirmed: 'メールアドレスを確認しました。'
+    profile_updated: '情報を更新しました。'
+    preferences_updated: '設定を更新しました。'
+
+email:
+    moderation:
+        subject: 'SafeCityであなたのコンテンツの一つが非表示になりました'
+        body: "こんにちは。\n\nあなたのアカウントから投稿されたコンテンツがモデレーションにより非表示になりました。\n理由：%reason%\n\nSafeCityチーム"
+    greeting: こんにちは！
+    signature: 'SafeCityチーム'
+    confirm:
+        subject: 'メールアドレスを確認してください'
+        heading: 'メールアドレスを確認してください'
+        instructions: '次のリンクをクリックしてメールアドレスを確認してください：'
+        action: 'メールアドレスを確認'
+        expiry: 'このリンクの有効期限は%expiration%です。'
+    reset:
+        subject: 'パスワードの再設定'
+        instructions: 'パスワードを再設定するには、次のリンクを使用してください：'
+        expiry: 'このリンクの有効期限は%expiration%です。'
+
+security:
+    invalid_token: 'セキュリティトークンが無効です。'
+    city_unavailable: 'この都市は利用できません。'
+    favorite_not_owned: 'このお気に入りはあなたのものではありません。'
+    notification_not_owned: 'この通知はあなたのものではありません。'
+    content_wrong_city: 'このコンテンツはお住まいの都市に関するものではありません。'
+    own_content: '自分のコンテンツを報告することはできません。'
+    report_wrong_city: 'この通報はお住まいの都市に関するものではありません。'
+    report_not_owned: 'この通報を追跡することはできません。'
+
+reset:
+    forgot_title: 'パスワードをお忘れですか'
+    back_to_login: 'ログイン画面に戻る'
+    reset_password: 'パスワードを再設定'
+    request_help: 'アカウントに登録したメールアドレスを入力してください。有効期限付きの安全なリンクをお送りします。'
+    send_link: '再設定リンクを送信'
+    limited_link: '有効期限付きリンクです。'
+    expiry_help: 'リンクは所定のセキュリティ期間が過ぎると無効になります。'
+    email_sent_title: 'パスワード再設定メールを送信しました'
+    check_inbox: '受信トレイをご確認ください'
+    email_sent_security: 'このアドレスに対応するアカウントがある場合、安全なリンクを送信しました。'
+    email_sent: 'メールを送信しました'
+    email_if_account: 'このアドレスのアカウントがある場合、まもなく再設定リンクが届きます。'
+    email_expiry: 'リンクの有効期限は%expiration%です。迷惑メールフォルダーもご確認ください。'
+    resend_link: 'リンクを再送信'
+    choose_new_title: '新しいパスワードを設定'
+    new_password: '新しいパスワード'
+    secure_account: 'アカウントを保護'
+    save_new_password: '新しいパスワードを保存'

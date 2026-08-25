@@ -6,6 +6,9 @@ use App\Repository\ProfileRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ProfileRepository::class)]
+/**
+ * Modèle Doctrine représentant les données persistées de Profile.
+ */
 class Profile
 {
     #[ORM\Id]
@@ -108,5 +111,3 @@ class Profile
         return $this;
     }
 }
-
-
